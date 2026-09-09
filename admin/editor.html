@@ -169,8 +169,8 @@
             </div>
 
             <div class="field-group">
-                <label>Vídeo Padrão (YouTube Embed URL)</label>
-                <input type="text" id="defaultVideo" placeholder="https://www.youtube.com/embed/XXX" oninput="updatePreview()">
+                <label>Vídeo Padrão (iframe, URL ou link do YouTube)</label>
+                <input type="text" id="defaultVideo" placeholder="Cole o iframe, https://www.youtube.com/embed/XXX ou https://youtube.com/watch?v=XXX" oninput="updatePreview()">
             </div>
 
             <div class="field-group">
@@ -302,7 +302,7 @@
                 <div class="field-group"><label>Duração / Áudio</label>
                     <input type="text" class="ep-meta" value="24 min • Dublado & Legendado" oninput="updatePreview()"></div>
                 <div class="field-group"><label>URL do Vídeo (opcional)</label>
-                    <input type="text" class="ep-video" placeholder="https://www.youtube.com/embed/XXX" oninput="updatePreview()"></div>
+                    <input type="text" class="ep-video" placeholder="Cole iframe, URL de embed ou link do YouTube" oninput="updatePreview()"></div>
                 <button class="btn-remove-ep" onclick="removeEpisode(this)">✕ Remover</button>`;
             document.getElementById('episodeList').appendChild(div);
             updatePreview();
@@ -350,7 +350,7 @@
                 const thumb = ep.video
                     ? `<img src="https://img.youtube.com/vi/${ytId(ep.video)}/mqdefault.jpg" class="episode-thumb" alt="EP${i+1}">`
                     : `<div class="episode-thumb" style="background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:10px;color:#444;">EP${String(i+1).padStart(2,'0')}</div>`;
-                return `<a href="#" class="episode-item${isNew?' active':''}" onclick="changeEpisode(this,'${esc(ep.video||d.defaultVideo||'')}');return false;">
+                return `<a href="#" class="episode-item${isNew?' active':''}" onclick="changeEpisode(this,'${esc(toEmbedUrl(ep.video||d.defaultVideo))}');return false;">
                     ${thumb}
                     <div class="episode-info"><div class="ep-title">${esc(ep.title||'Episódio '+(i+1))}</div><div class="ep-meta">${esc(ep.meta||'')}</div></div>
                     ${isNew?'<span class="episode-badge">NOVO</span>':''}
@@ -397,7 +397,7 @@ ${d.genres?d.genres.split(',').map(g=>'<span>'+esc(g.trim())+'</span>').join('')
 <main class="post-body">
 ${d.synopsis?'<p class="post-synopsis">'+esc(d.synopsis)+'</p>':''}
 <div class="section-label">Assistir Agora</div>
-<div class="video-player" id="vp"><iframe src="${esc(d.defaultVideo||'')}" title="Vídeo" allowfullscreen loading="lazy"></iframe></div>
+<div class="video-player" id="vp"><iframe src="${esc(toEmbedUrl(d.defaultVideo||''))}" title="Vídeo" allowfullscreen loading="lazy"></iframe></div>
 <div class="section-label">Episódios</div>
 <div class="episode-list">\n${eps}\n</div>
 </main>
@@ -407,7 +407,27 @@ ${d.synopsis?'<p class="post-synopsis">'+esc(d.synopsis)+'</p>':''}
         }
 
         function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-        function ytId(url) { if (!url) return ''; const m = url.match(/[?&]v=([^&]+)/)||url.match(/embed\/([^?]+)/); return m?m[1]:''; }
+        function ytId(url) {
+            if (!url) return '';
+            // Iframe embed code
+            const iframeMatch = url.match(/src=["'](https:\/\/www\.youtube\.com\/embed\/[^"']+)["']/i);
+            if (iframeMatch) return iframeMatch[1].match(/embed\/([^?]+)/)?.[1] || '';
+            // Direct embed URL
+            const embedMatch = url.match(/youtube\.com\/embed\/([^?&]+)/);
+            if (embedMatch) return embedMatch[1];
+            // Watch URL
+            const watchMatch = url.match(/[?&]v=([^&]+)/);
+            if (watchMatch) return watchMatch[1];
+            // Short URL youtu.be/
+            const shortMatch = url.match(/youtu\.be\/([^?&]+)/);
+            if (shortMatch) return shortMatch[1];
+            return '';
+        }
+        function toEmbedUrl(input) {
+            if (!input) return '';
+            const id = ytId(input);
+            return id ? 'https://www.youtube.com/embed/' + id : input;
+        }
 
         // ========== PUBLISH ==========
         async function publishPost() {
