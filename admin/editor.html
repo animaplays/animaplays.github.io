@@ -12,29 +12,31 @@
         .nav-links { display: flex; gap: 16px; align-items: center; }
         .nav-links a { color: #888; text-decoration: none; font-size: 14px; }
         .nav-links a:hover { color: #fff; }
-        .btn-config { background: none; border: 1px solid #333; color: #888; padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
-        .btn-config:hover { border-color: #555; color: #fff; }
         .user-badge { display: flex; align-items: center; gap: 10px; background: #1a1a1a; padding: 6px 12px; border-radius: 8px; }
         .user-avatar { width: 28px; height: 28px; border-radius: 50%; }
         .btn-logout { background: none; border: none; color: #666; cursor: pointer; font-size: 12px; }
         .btn-logout:hover { color: #e50914; }
 
+        /* Login */
         .login-page { display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 60px); }
-        .login-card { background: #111; border: 1px solid #222; border-radius: 16px; padding: 40px; max-width: 400px; width: 100%; text-align: center; }
+        .login-card { background: #111; border: 1px solid #222; border-radius: 16px; padding: 40px; max-width: 440px; width: 100%; text-align: center; }
         .login-card h1 { font-size: 28px; color: #e50914; margin-bottom: 12px; }
         .login-card p { color: #888; font-size: 14px; margin-bottom: 24px; line-height: 1.6; }
-        .btn-github { display: inline-flex; align-items: center; gap: 10px; background: #fff; color: #000; border: none; padding: 12px 24px; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
-        .btn-github:hover { opacity: 0.9; }
-        .btn-github svg { width: 20px; height: 20px; }
-        .login-hint { margin-top: 20px; font-size: 12px; color: #555; }
+        .field-group { margin-bottom: 16px; text-align: left; }
+        .field-group label { display: block; font-size: 12px; color: #666; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .field-group input { width: 100%; background: #15191d; border: 1px solid #2a2a2a; border-radius: 8px; color: #fff; padding: 10px 14px; font-size: 14px; outline: none; transition: border-color 0.2s; }
+        .field-group input:focus { border-color: #e50914; }
+        .btn-login { background: #e50914; color: #fff; border: none; padding: 12px 28px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.2s; width: 100%; margin-top: 8px; }
+        .btn-login:hover { background: #f0151f; }
+        .login-hint { margin-top: 16px; font-size: 11px; color: #555; line-height: 1.6; }
+        .login-hint a { color: #e50914; }
         .login-error { color: #f87171; font-size: 13px; margin-top: 12px; display: none; }
 
+        /* Editor */
         .editor-layout { display: grid; grid-template-columns: 1fr 1fr; min-height: calc(100vh - 60px); }
         @media (max-width: 900px) { .editor-layout { grid-template-columns: 1fr; } }
-
         .form-panel { padding: 30px; overflow-y: auto; max-height: calc(100vh - 60px); border-right: 1px solid #1a1a1a; }
         .form-panel h2 { font-size: 18px; color: #e50914; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 1px; }
-        .field-group { margin-bottom: 18px; }
         .field-group label { display: block; font-size: 12px; color: #888; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
         .field-group input, .field-group textarea, .field-group select { width: 100%; background: #15191d; border: 1px solid #2a2a2a; border-radius: 8px; color: #fff; padding: 10px 14px; font-size: 14px; transition: border-color 0.2s; outline: none; }
         .field-group input:focus, .field-group textarea:focus { border-color: #e50914; }
@@ -67,7 +69,6 @@
         .preview-header { padding: 14px 30px; background: #111; border-bottom: 1px solid #222; display: flex; align-items: center; }
         .preview-label-dot { display: inline-block; width: 8px; height: 8px; background: #4ade80; border-radius: 50%; margin-right: 6px; }
         .preview-frame { width: 100%; min-height: calc(100vh - 110px); border: none; }
-
         .hidden { display: none !important; }
     </style>
 </head>
@@ -76,17 +77,6 @@
         <div class="logo">Anima Play</div>
         <div class="nav-links">
             <a href="/">← Voltar ao site</a>
-            <button class="btn-config" onclick="toggleConfig()">⚙ Config OAuth</button>
-            <div id="configPanel" class="hidden" style="position:absolute;top:50px;right:30px;background:#111;border:1px solid #333;border-radius:12px;padding:16px;width:380px;z-index:200;">
-                <p style="font-size:12px;color:#888;margin-bottom:12px;">Crie um GitHub OAuth App e cole as credenciais abaixo:</p>
-                <div class="field-group"><label>Client ID</label><input id="cfgClientId" oninput="saveConfig()"></div>
-                <div class="field-group"><label>Client Secret</label><input id="cfgClientSecret" type="password" oninput="saveConfig()"></div>
-                <p style="font-size:11px;color:#555;margin-top:8px;line-height:1.6">
-                    1. Acesse <a href="https://github.com/settings/developers" target="_blank" style="color:#e50914">github.com/settings/developers</a><br>
-                    2. "New OAuth App" → Callback: <code style="color:#aaa">https://animaplays.github.io/admin/callback.html</code><br>
-                    3. Cole o Client ID e Secret
-                </p>
-            </div>
             <div id="userArea" class="hidden">
                 <div class="user-badge">
                     <img id="userAvatar" class="user-avatar" src="" alt="">
@@ -97,21 +87,25 @@
         </div>
     </div>
 
-    <!-- LOGIN PAGE -->
+    <!-- LOGIN -->
     <div id="loginPage" class="login-page">
         <div class="login-card">
             <h1>Anima Play</h1>
             <p>Faça login com GitHub para criar e gerenciar postagens do blog.</p>
-            <button class="btn-github" onclick="loginWithGitHub()">
-                <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.866-.013-1.7-2.782.604-3.369-1.341-3.369-1.341-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.337-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.416 22 12c0-5.523-4.477-10-10-10z"/></svg>
-                Entrar com GitHub
-            </button>
+            <div class="field-group">
+                <label>Token de Acesso Pessoal</label>
+                <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+            </div>
+            <button class="btn-login" onclick="doLogin()">Entrar</button>
             <div id="loginError" class="login-error"></div>
-            <p class="login-hint">Configure o OAuth App clicando em ⚙ Config antes de fazer login.</p>
+            <p class="login-hint">
+                Crie um token em <a href="https://github.com/settings/tokens/new" target="_blank">GitHub → Settings → Developer settings → Personal access tokens</a><br>
+                Permissões necessárias: <strong>repo</strong>
+            </p>
         </div>
     </div>
 
-    <!-- EDITOR PAGE -->
+    <!-- EDITOR -->
     <div id="editorPage" class="editor-layout hidden">
         <div class="form-panel">
             <h2>✏️ Nova Postagem</h2>
@@ -200,61 +194,45 @@
     </div>
 
     <script>
-        // ========== AUTH (PKCE OAuth — sem servidor necessário) ==========
         const REPO = 'animaplays/animaplays.github.io';
-        const CALLBACK_URL = 'https://animaplays.github.io/admin/callback.html';
 
-        function getClientId() { return localStorage.getItem('animaplay_client_id') || ''; }
-        function getClientSecret() { return localStorage.getItem('animaplay_client_secret') || ''; }
         function getToken() { return localStorage.getItem('animaplay_token') || ''; }
+        function saveToken(t) { localStorage.setItem('animaplay_token', t); }
 
-        function generatePKCECode() {
-            return Array.from(crypto.getRandomValues(new Uint8Array(32)))
-                .map(b => b.toString(16).padStart(2, '0')).join('');
-        }
+        async function doLogin() {
+            const input = document.getElementById('tokenInput');
+            const err = document.getElementById('loginError');
+            const token = input.value.trim();
 
-        async function sha256(code) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(code);
-            const hash = await crypto.subtle.digest('SHA-256', data);
-            // Base64url encoding: replace + with -, / with _, remove = padding
-            return btoa(String.fromCharCode(...new Uint8Array(hash)))
-                .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-        }
-
-        async function loginWithGitHub() {
-            const errorEl = document.getElementById('loginError');
-            errorEl.style.display = 'none';
-
-            if (!getClientId() || !getClientSecret()) {
-                errorEl.textContent = '⚠ Configure o Client ID e Secret em ⚙ Config OAuth antes de login.';
-                errorEl.style.display = 'block';
+            if (!token) {
+                err.textContent = '⚠ Cole seu token de acesso pessoal.';
+                err.style.display = 'block';
                 return;
             }
 
+            err.style.display = 'none';
+            input.disabled = true;
+            input.value = '';
+            err.textContent = 'Verificando token...';
+            err.style.color = '#60a5fa';
+            err.style.display = 'block';
+
             try {
-                const verifier = generatePKCECode();
-                const challenge = await sha256(verifier);
-                const state = Array.from(crypto.getRandomValues(new Uint8Array(16)))
-                    .map(b => b.toString(16).padStart(2, '0')).join('');
-
-                sessionStorage.setItem('animaplay_pkce_verifier', verifier);
-                sessionStorage.setItem('animaplay_state', state);
-
-                const authUrl =
-                    'https://github.com/login/oauth/authorize?' +
-                    'client_id=' + encodeURIComponent(getClientId()) +
-                    '&redirect_uri=' + encodeURIComponent(CALLBACK_URL) +
-                    '&state=' + encodeURIComponent(state) +
-                    '&code_challenge=' + encodeURIComponent(challenge) +
-                    '&code_challenge_method=S256';
-
-                window.location.href = authUrl;
-            } catch (err) {
-                errorEl.textContent = '❌ Erro: ' + err.message;
-                errorEl.style.display = 'block';
+                const res = await fetch('https://api.github.com/user', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if (!res.ok) throw new Error('Token inválido ou sem permissão.');
+                const user = await res.json();
+                saveToken(token);
+                showEditor(user);
+            } catch (e) {
+                input.disabled = false;
+                err.style.color = '#f87171';
+                err.textContent = '❌ ' + e.message;
             }
         }
+
+        document.getElementById('tokenInput').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 
         function logout() {
             localStorage.removeItem('animaplay_token');
@@ -292,22 +270,6 @@
             updatePreview();
         }
 
-        function toggleConfig() {
-            const p = document.getElementById('configPanel');
-            if (p.classList.contains('hidden')) {
-                document.getElementById('cfgClientId').value = getClientId();
-                document.getElementById('cfgClientSecret').value = getClientSecret();
-                p.classList.remove('hidden');
-            } else {
-                p.classList.add('hidden');
-            }
-        }
-
-        function saveConfig() {
-            localStorage.setItem('animaplay_client_id', document.getElementById('cfgClientId').value);
-            localStorage.setItem('animaplay_client_secret', document.getElementById('cfgClientSecret').value);
-        }
-
         // ========== SLUG ==========
         function onTitleInput() {
             const title = document.getElementById('title').value;
@@ -329,38 +291,29 @@
 
         // ========== EPISODES ==========
         let epCount = 0;
-
         function addEpisode() {
             epCount++;
             const div = document.createElement('div');
             div.className = 'episode-item-editor';
-            div.dataset.idx = epCount;
             div.innerHTML = `
-                <span class="ep-num">EP ${String(epCount).padStart(2, '0')}</span>
+                <span class="ep-num">EP ${String(epCount).padStart(2,'0')}</span>
                 <div class="field-group"><label>Título</label>
                     <input type="text" class="ep-title" placeholder="Episódio ${epCount}" oninput="updatePreview()"></div>
                 <div class="field-group"><label>Duração / Áudio</label>
                     <input type="text" class="ep-meta" value="24 min • Dublado & Legendado" oninput="updatePreview()"></div>
                 <div class="field-group"><label>URL do Vídeo (opcional)</label>
                     <input type="text" class="ep-video" placeholder="https://www.youtube.com/embed/XXX" oninput="updatePreview()"></div>
-                <button class="btn-remove-ep" onclick="removeEpisode(this)">✕ Remover</button>
-            `;
+                <button class="btn-remove-ep" onclick="removeEpisode(this)">✕ Remover</button>`;
             document.getElementById('episodeList').appendChild(div);
             updatePreview();
         }
-
         function removeEpisode(btn) {
             btn.closest('.episode-item-editor').remove();
-            renumberEpisodes();
-            updatePreview();
-        }
-
-        function renumberEpisodes() {
             document.querySelectorAll('.episode-item-editor').forEach((item, i) => {
-                item.querySelector('.ep-num').textContent = 'EP ' + String(i + 1).padStart(2, '0');
-                item.dataset.idx = i + 1;
+                item.querySelector('.ep-num').textContent = 'EP ' + String(i+1).padStart(2,'0');
             });
             epCount = document.querySelectorAll('.episode-item-editor').length;
+            updatePreview();
         }
 
         // ========== DATA ==========
@@ -376,27 +329,22 @@
                 image: document.getElementById('image').value,
                 synopsis: document.getElementById('synopsis').value,
                 defaultVideo: document.getElementById('defaultVideo').value,
-                episodes: []
+                episodes: Array.from(document.querySelectorAll('.episode-item-editor')).map(item => ({
+                    title: item.querySelector('.ep-title').value,
+                    meta: item.querySelector('.ep-meta').value,
+                    video: item.querySelector('.ep-video').value
+                }))
             };
-        }
-
-        function getEpisodes() {
-            return Array.from(document.querySelectorAll('.episode-item-editor')).map(item => ({
-                title: item.querySelector('.ep-title').value,
-                meta: item.querySelector('.ep-meta').value,
-                video: item.querySelector('.ep-video').value
-            }));
         }
 
         // ========== PREVIEW ==========
         function updatePreview() {
             const d = getFormData();
-            d.episodes = getEpisodes();
-            const blob = new Blob([buildPostHTML(d)], { type: 'text/html' });
+            const blob = new Blob([buildHTML(d)], { type: 'text/html' });
             document.getElementById('previewFrame').src = URL.createObjectURL(blob);
         }
 
-        function buildPostHTML(d) {
+        function buildHTML(d) {
             const eps = d.episodes.map((ep, i) => {
                 const isNew = i === 0;
                 const thumb = ep.video
@@ -411,8 +359,7 @@
             }).join('\n');
 
             return `<!DOCTYPE html>
-<html lang="pt-BR">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>${esc(d.title)} — Anima Play</title>
 <link rel="stylesheet" href="../style.css">
 <style>
@@ -436,20 +383,17 @@
 .episode-badge{background:#e50914;color:#fff;font-size:10px;padding:2px 8px;border-radius:4px;font-weight:700}
 .btn-play{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.15);border:none;color:#fff;font-size:16px;cursor:pointer;flex-shrink:0;transition:background .2s}
 .btn-play:hover{background:#e50914}
-</style>
-</head>
+</style></head>
 <body>
 <header class="main-header"><div class="logo"><a href="/" style="color:inherit;text-decoration:none">Anima Play</a></div>
 <nav><ul class="nav-links"><li><a href="/">Início</a></li><li><a href="/">Catálogo</a></li></ul></nav></header>
 <a href="/" class="back-link">← Voltar ao catálogo</a>
 <div class="post-hero"><img src="${esc(d.image||'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200&auto=format&fit=crop')}" alt="${esc(d.title)}">
 <div class="post-hero-overlay"><h1>${esc(d.title)}</h1>
-<div class="post-meta">
-<span>${esc(d.year)}</span><span>${esc(d.type)}</span>
+<div class="post-meta"><span>${esc(d.year)}</span><span>${esc(d.type)}</span>
 ${d.totalEpisodes?'<span>'+esc(d.totalEpisodes)+' episódios</span>':''}
 ${d.genres?d.genres.split(',').map(g=>'<span>'+esc(g.trim())+'</span>').join(''):''}
-<span>${esc(d.audio)}</span>
-</div></div></div>
+<span>${esc(d.audio)}</span></div></div></div>
 <main class="post-body">
 ${d.synopsis?'<p class="post-synopsis">'+esc(d.synopsis)+'</p>':''}
 <div class="section-label">Assistir Agora</div>
@@ -458,89 +402,53 @@ ${d.synopsis?'<p class="post-synopsis">'+esc(d.synopsis)+'</p>':''}
 <div class="episode-list">\n${eps}\n</div>
 </main>
 <footer class="main-footer"><p>&copy; 2026 Anima Play</p></footer>
-<script>
-function changeEpisode(el,src){document.querySelectorAll('.episode-item').forEach(i=>i.classList.remove('active'));el.classList.add('active');document.getElementById('vp').querySelector('iframe').src=src}
-<\/script>
+<script>function changeEpisode(el,src){document.querySelectorAll('.episode-item').forEach(i=>i.classList.remove('active'));el.classList.add('active');document.getElementById('vp').querySelector('iframe').src=src}<\/script>
 </body></html>`;
         }
 
         function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-        function ytId(url) {
-            if (!url) return '';
-            const m = url.match(/[?&]v=([^&]+)/) || url.match(/embed\/([^?]+)/);
-            return m ? m[1] : '';
-        }
+        function ytId(url) { if (!url) return ''; const m = url.match(/[?&]v=([^&]+)/)||url.match(/embed\/([^?]+)/); return m?m[1]:''; }
 
         // ========== PUBLISH ==========
         async function publishPost() {
             const btn = document.getElementById('btnPublish');
             const status = document.getElementById('statusMsg');
             const data = getFormData();
-            data.episodes = getEpisodes();
-
             if (!data.title || !data.slug) {
-                status.className = 'status-msg error';
-                status.textContent = '⚠ Preencha o título e o slug.';
-                return;
+                status.className = 'status-msg error'; status.textContent = '⚠ Preencha título e slug.'; return;
             }
-
-            btn.disabled = true;
-            btn.textContent = '⏳ Publicando...';
-            status.className = 'status-msg loading';
-            status.textContent = '🔄 Enviando ao GitHub...';
-
-            const html = buildPostHTML(data);
+            btn.disabled = true; btn.textContent = '⏳ Publicando...';
+            status.className = 'status-msg loading'; status.textContent = '🔄 Enviando ao GitHub...';
+            const html = buildHTML(data);
             const content = btoa(unescape(encodeURIComponent(html)));
             const path = 'posts/' + data.slug + '.html';
             const token = getToken();
-
             try {
                 const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + path, {
                     method: 'PUT',
-                    headers: {
-                        'Authorization': 'Bearer ' + token,
-                        'Content-Type': 'application/json',
-                        'User-Agent': 'AnimaPlay'
-                    },
+                    headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'User-Agent': 'AnimaPlay' },
                     body: JSON.stringify({ message: 'Nova postagem: ' + data.title, content })
                 });
-                if (!res.ok) {
-                    const err = await res.json();
-                    throw new Error(err.message || 'Falha ao publicar');
-                }
-                status.className = 'status-msg success';
-                status.textContent = '✅ Publicada!';
+                if (!res.ok) { const err = await res.json(); throw new Error(err.message || 'Falha ao publicar'); }
+                status.className = 'status-msg success'; status.textContent = '✅ Publicada!';
                 window.open('https://animaplays.github.io/' + path, '_blank');
             } catch (err) {
-                status.className = 'status-msg error';
-                status.textContent = '❌ ' + err.message;
-            } finally {
-                btn.disabled = false;
-                btn.textContent = '🚀 Publicar';
-            }
+                status.className = 'status-msg error'; status.textContent = '❌ ' + err.message;
+            } finally { btn.disabled = false; btn.textContent = '🚀 Publicar'; }
         }
 
         // ========== DOWNLOAD ==========
         function downloadPost() {
             const data = getFormData();
-            data.episodes = getEpisodes();
-            const html = buildPostHTML(data);
-            const blob = new Blob([html], { type: 'text/html' });
+            const blob = new Blob([buildHTML(data)], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'posts/' + (data.slug || 'anime') + '.html';
-            a.click();
+            const a = document.createElement('a'); a.href = url;
+            a.download = 'posts/' + (data.slug || 'anime') + '.html'; a.click();
             URL.revokeObjectURL(url);
         }
 
         // ========== INIT ==========
-        window.addEventListener('DOMContentLoaded', () => {
-            addEpisode();
-            addEpisode();
-            addEpisode();
-            checkAuth();
-        });
+        window.addEventListener('DOMContentLoaded', () => { addEpisode(); addEpisode(); addEpisode(); checkAuth(); });
     </script>
 </body>
 </html>
