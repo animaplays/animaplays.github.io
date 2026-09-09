@@ -23,18 +23,14 @@
         <h2 class="section-title">Últimos Episódios</h2>
         <div class="carousel-wrapper">
             <button class="carousel-btn prev" onclick="scrollCarousel(-1)">&#8249;</button>
-            <div class="carousel" id="carousel">
-                <!-- Cards via JS -->
-            </div>
+            <div class="carousel" id="carousel"></div>
             <button class="carousel-btn next" onclick="scrollCarousel(1)">&#8250;</button>
         </div>
     </section>
 
     <section class="grid-section">
         <h2 class="section-title">Catálogo Completo</h2>
-        <div class="anime-grid" id="animeGrid">
-            <!-- Cards via JS -->
-        </div>
+        <div class="anime-grid" id="animeGrid"></div>
     </section>
 
     <footer class="main-footer">
@@ -42,7 +38,8 @@
     </footer>
 
     <script>
-        const animes = [
+        // Lista fixa de animes do catálogo (sem postagem própria)
+        const catalogAnimes = [
             {
                 title: "Bleach",
                 subtitle: "T2 EP.38 • Dublado & Legendado",
@@ -113,47 +110,60 @@
             }
         ];
 
-        function createCard(anime) {
-            const card = document.createElement('a');
-            card.className = 'anime-card';
-            card.href = `posts/${anime.slug || anime.title.toLowerCase().replace(/\s+/g, '-')}.html`;
-            card.innerHTML = `
+        function cardHTML(anime) {
+            const slug = anime.slug || anime.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+            return `<a href="posts/${slug}.html" class="anime-card">
                 <div class="card-poster-wrapper">
                     <img src="${anime.image}" alt="${anime.title}" class="card-poster" loading="lazy">
-                    <div class="card-overlay">
-                        <span class="card-title-overlay">${anime.title}</span>
-                    </div>
+                    <div class="card-overlay"><span class="card-title-overlay">${anime.title}</span></div>
                 </div>
                 <div class="card-info">
                     <h3 class="card-title">${anime.title}</h3>
-                    <p class="card-subtitle">${anime.subtitle}</p>
+                    <p class="card-subtitle">${anime.subtitle || ''}</p>
                 </div>
-            `;
-            return card;
+            </a>`;
         }
 
-        function renderCarousel() {
+        async function loadPosts() {
+            try {
+                const res = await fetch('https://api.github.com/repos/animaplays/animaplays.github.io/contents/posts');
+                if (!res.ok) return [];
+                const files = await res.json();
+                return files
+                    .filter(f => f.name.endsWith('.html'))
+                    .sort((a, b) => b.name.localeCompare(a.name))
+                    .map(f => ({
+                        title: f.name.replace('.html', '').replace(/-/g, ' '),
+                        slug: f.name.replace('.html', ''),
+                        image: 'https://image.tmdb.org/t/p/w342/dx28DE7EgLy0FatOvnaUg0k9j92.jpg',
+                        subtitle: 'Nova Postagem'
+                    }));
+            } catch { return []; }
+        }
+
+        function renderCarousel(items) {
             const carousel = document.getElementById('carousel');
-            animes.forEach(anime => {
-                carousel.appendChild(createCard(anime));
-            });
+            carousel.innerHTML = items.map(cardHTML).join('');
         }
 
-        function renderGrid() {
+        function renderGrid(items) {
             const grid = document.getElementById('animeGrid');
-            animes.forEach(anime => {
-                grid.appendChild(createCard(anime));
-            });
+            grid.innerHTML = items.map(cardHTML).join('');
         }
 
-        function scrollCarousel(direction) {
-            const carousel = document.getElementById('carousel');
-            const scrollAmount = 820;
-            carousel.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+        function scrollCarousel(dir) {
+            document.getElementById('carousel').scrollBy({ left: dir * 820, behavior: 'smooth' });
         }
 
-        renderCarousel();
-        renderGrid();
+        // Carrega tudo
+        async function init() {
+            const posts = await loadPosts();
+            const allItems = [...catalogAnimes, ...posts];
+            renderCarousel(allItems);
+            renderGrid(allItems);
+        }
+
+        init();
     </script>
 
 </body>
