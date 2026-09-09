@@ -46,7 +46,8 @@
             {
                 title: "Bleach",
                 subtitle: "T2 EP.38 • Dublado & Legendado",
-                image: "https://cdn.myanimelist.net/images/anime/1736/136413.jpg"
+                image: "https://cdn.myanimelist.net/images/anime/1736/136413.jpg",
+                slug: "bleach"
             },
             {
                 title: "Skeleton Knight in Another World",
@@ -106,8 +107,9 @@
         ];
 
         function createCard(anime) {
-            const card = document.createElement('div');
+            const card = document.createElement('a');
             card.className = 'anime-card';
+            card.href = `posts/${anime.slug || anime.title.toLowerCase().replace(/\s+/g, '-')}.html`;
             card.innerHTML = `
                 <div class="card-poster-wrapper">
                     <img src="${anime.image}" alt="${anime.title}" class="card-poster" loading="lazy">
