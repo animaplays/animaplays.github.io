@@ -9,62 +9,142 @@
 <body>
 
     <header class="main-header">
-        <h1>AnimaPlay</h1>
-        <p>Seus animes favoritos em um só lugar</p>
+        <div class="logo">AnimaPlay</div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="#">Início</a></li>
+                <li><a href="#">Catálogo</a></li>
+                <li><a href="#">Lançamentos</a></li>
+            </ul>
+        </nav>
     </header>
 
-    <main class="anime-grid-container" id="animeGrid">
-        <!-- Os cards serão carregados via JavaScript -->
-    </main>
+    <section class="carousel-section">
+        <h2 class="section-title">Últimos Episódios</h2>
+        <div class="carousel-wrapper">
+            <button class="carousel-btn prev" onclick="scrollCarousel(-1)">&#8249;</button>
+            <div class="carousel" id="carousel">
+                <!-- Cards via JS -->
+            </div>
+            <button class="carousel-btn next" onclick="scrollCarousel(1)">&#8250;</button>
+        </div>
+    </section>
+
+    <section class="grid-section">
+        <h2 class="section-title">Catálogo Completo</h2>
+        <div class="anime-grid" id="animeGrid">
+            <!-- Cards via JS -->
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <p>&copy; 2026 AnimaPlay. Todos os direitos reservados.</p>
+    </footer>
 
     <script>
-        async function loadAnimes() {
-            try {
-                const res = await fetch('/animes.json');
-                const animes = await res.json();
-                renderAnimes(animes);
-            } catch (e) {
-                console.log('Carregando conteúdo de demonstração...');
-                renderAnimes([]);
+        const animes = [
+            {
+                title: "Bleach",
+                subtitle: "T2 EP.38 • Dublado & Legendado",
+                image: "https://cdn.myanimelist.net/images/anime/1736/136413.jpg"
+            },
+            {
+                title: "Skeleton Knight in Another World",
+                subtitle: "T1 EP.8 • Legendado",
+                image: "https://cdn.myanimelist.net/images/anime/1779/110666.jpg"
+            },
+            {
+                title: "Black Clover",
+                subtitle: "T1 EP.84 • Dublado & Legendado",
+                image: "https://cdn.myanimelist.net/images/anime/2/88372.jpg"
+            },
+            {
+                title: "My Hero Academia",
+                subtitle: "T8 EP.6 • Dublado & Legendado",
+                image: "https://cdn.myanimelist.net/images/anime/1908/135431.jpg"
+            },
+            {
+                title: "Shurato",
+                subtitle: "T1 EP.3 • Dublado & Legendado",
+                image: "https://cdn.myanimelist.net/images/anime/1269/110606.jpg"
+            },
+            {
+                title: "Shangri-La Frontier",
+                subtitle: "T1 EP.27 • Dublado & Legendado",
+                image: "https://cdn.myanimelist.net/images/anime/1288/138300.jpg"
+            },
+            {
+                title: "Demon Slayer",
+                subtitle: "T4 EP.11 • Dublado & Legendado",
+                image: "https://cdn.myanimelist.net/images/anime/1286/99889.jpg"
+            },
+            {
+                title: "Jujutsu Kaisen",
+                subtitle: "T2 EP.23 • Dublado & Legendado",
+                image: "https://cdn.myanimelist.net/images/anime/1792/138022.jpg"
+            },
+            {
+                title: "One Piece",
+                subtitle: "T1 EP.1100 • Dublado & Legendado",
+                image: "https://cdn.myanimelist.net/images/anime/1244/138851.jpg"
+            },
+            {
+                title: "Attack on Titan",
+                subtitle: "T4 Final • Dublado & Legendado",
+                image: "https://cdn.myanimelist.net/images/anime/1000/110531.jpg"
+            },
+            {
+                title: "Chainsaw Man",
+                subtitle: "T1 EP.12 • Dublado & Legendado",
+                image: "https://cdn.myanimelist.net/images/anime/1806/126216.jpg"
+            },
+            {
+                title: "Spy x Family",
+                subtitle: "T2 EP.12 • Dublado & Legendado",
+                image: "https://cdn.myanimelist.net/images/anime/1441/139629.jpg"
             }
+        ];
+
+        function createCard(anime) {
+            const card = document.createElement('div');
+            card.className = 'anime-card';
+            card.innerHTML = `
+                <div class="card-poster-wrapper">
+                    <img src="${anime.image}" alt="${anime.title}" class="card-poster" loading="lazy">
+                    <div class="card-overlay">
+                        <span class="card-title-overlay">${anime.title}</span>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <h3 class="card-title">${anime.title}</h3>
+                    <p class="card-subtitle">${anime.subtitle}</p>
+                </div>
+            `;
+            return card;
         }
 
-        function renderAnimes(animes) {
-            const grid = document.getElementById('animeGrid');
-            grid.innerHTML = '';
-
-            if (animes.length === 0) {
-                grid.innerHTML = `
-                    <div class="anime-card">
-                        <div class="card-poster-wrapper">
-                            <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=300&auto=format&fit=crop" alt="Exemplo" class="card-poster">
-                        </div>
-                        <div class="card-info">
-                            <h3 class="card-title">Exemplo de Anime</h3>
-                            <p class="card-subtitle">T1 EP.1 • Legendado</p>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-
+        function renderCarousel() {
+            const carousel = document.getElementById('carousel');
             animes.forEach(anime => {
-                const card = document.createElement('div');
-                card.className = 'anime-card';
-                card.innerHTML = `
-                    <div class="card-poster-wrapper">
-                        <img src="${anime.image}" alt="${anime.title}" class="card-poster">
-                    </div>
-                    <div class="card-info">
-                        <h3 class="card-title">${anime.title}</h3>
-                        <p class="card-subtitle">${anime.subtitle || ''}</p>
-                    </div>
-                `;
-                grid.appendChild(card);
+                carousel.appendChild(createCard(anime));
             });
         }
 
-        loadAnimes();
+        function renderGrid() {
+            const grid = document.getElementById('animeGrid');
+            animes.forEach(anime => {
+                grid.appendChild(createCard(anime));
+            });
+        }
+
+        function scrollCarousel(direction) {
+            const carousel = document.getElementById('carousel');
+            const scrollAmount = 820;
+            carousel.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+        }
+
+        renderCarousel();
+        renderGrid();
     </script>
 
 </body>

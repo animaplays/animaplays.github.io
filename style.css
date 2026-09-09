@@ -6,52 +6,133 @@
 }
 
 body {
-    background-color: #0e1012;
+    background-color: #0a0a0a;
     color: #ffffff;
-    padding: 30px;
+    min-height: 100vh;
 }
 
+/* Header */
 .main-header {
-    text-align: center;
-    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+    background: linear-gradient(180deg, rgba(10,10,10,1) 0%, rgba(10,10,10,0) 100%);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
 }
 
-.main-header h1 {
-    font-size: 32px;
+.logo {
+    font-size: 28px;
+    font-weight: 800;
     color: #e50914;
-    margin-bottom: 8px;
+    letter-spacing: -1px;
+    text-transform: uppercase;
 }
 
-.main-header p {
-    color: #a0a0a0;
+.nav-links {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+}
+
+.nav-links a {
+    color: #b3b3b3;
+    text-decoration: none;
     font-size: 14px;
+    transition: color 0.2s;
 }
 
-.anime-grid-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
+.nav-links a:hover {
+    color: #ffffff;
 }
 
-.anime-card {
-    background-color: #15191d;
-    border-radius: 12px;
-    overflow: hidden;
-    transition: transform 0.3s ease;
+/* Carousel Section */
+.carousel-section {
+    padding-top: 100px;
+    position: relative;
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    padding: 0 40px;
+    color: #e5e5e5;
+}
+
+.carousel-wrapper {
+    position: relative;
+    padding: 0 40px;
+}
+
+.carousel {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 10px 0 20px;
+}
+
+.carousel::-webkit-scrollbar {
+    display: none;
+}
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.7);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    font-size: 20px;
     cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.carousel-btn:hover {
+    background: rgba(0,0,0,0.9);
+}
+
+.carousel-btn.prev {
+    left: 10px;
+}
+
+.carousel-btn.next {
+    right: 10px;
+}
+
+/* Anime Card */
+.anime-card {
+    flex: 0 0 auto;
+    width: 200px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
 }
 
 .anime-card:hover {
-    transform: translateY(-5px);
+    transform: scale(1.05);
 }
 
 .card-poster-wrapper {
     position: relative;
     width: 100%;
-    padding-top: 140px;
-    height: 0;
+    padding-top: 150%;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #1a1a1a;
 }
 
 .card-poster {
@@ -61,23 +142,76 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 12px 12px 0 0;
+    transition: transform 0.3s ease;
+}
+
+.anime-card:hover .card-poster {
+    transform: scale(1.08);
+}
+
+.card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 40px 10px 10px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.9));
+    border-radius: 0 0 8px 8px;
+}
+
+.card-overlay .card-title-overlay {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
 }
 
 .card-info {
-    padding: 15px;
+    padding: 10px 2px;
 }
 
 .card-title {
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 600;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #ffffff;
+}
+
+.card-subtitle {
+    font-size: 11px;
+    color: #808080;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.card-subtitle {
+/* Grid Section (below carousel) */
+.grid-section {
+    padding: 20px 40px 40px;
+}
+
+.grid-section .section-title {
+    margin-bottom: 20px;
+}
+
+.anime-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+}
+
+.anime-grid .anime-card {
+    width: 100%;
+}
+
+/* Footer */
+.main-footer {
+    text-align: center;
+    padding: 40px;
+    color: #555;
     font-size: 12px;
-    color: #a0a0a0;
+    border-top: 1px solid #1a1a1a;
 }
