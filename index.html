@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnimaPlay - Catálogo de Animes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <h1>AnimaPlay</h1>
+        <p>Seus animes favoritos em um só lugar</p>
+    </header>
+
+    <main class="anime-grid-container" id="animeGrid">
+        <!-- Os cards serão carregados via JavaScript -->
+    </main>
+
+    <script>
+        async function loadAnimes() {
+            try {
+                const res = await fetch('/animes.json');
+                const animes = await res.json();
+                renderAnimes(animes);
+            } catch (e) {
+                console.log('Carregando conteúdo de demonstração...');
+                renderAnimes([]);
+            }
+        }
+
+        function renderAnimes(animes) {
+            const grid = document.getElementById('animeGrid');
+            grid.innerHTML = '';
+
+            if (animes.length === 0) {
+                grid.innerHTML = `
+                    <div class="anime-card">
+                        <div class="card-poster-wrapper">
+                            <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=300&auto=format&fit=crop" alt="Exemplo" class="card-poster">
+                        </div>
+                        <div class="card-info">
+                            <h3 class="card-title">Exemplo de Anime</h3>
+                            <p class="card-subtitle">T1 EP.1 • Legendado</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            animes.forEach(anime => {
+                const card = document.createElement('div');
+                card.className = 'anime-card';
+                card.innerHTML = `
+                    <div class="card-poster-wrapper">
+                        <img src="${anime.image}" alt="${anime.title}" class="card-poster">
+                    </div>
+                    <div class="card-info">
+                        <h3 class="card-title">${anime.title}</h3>
+                        <p class="card-subtitle">${anime.subtitle || ''}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        loadAnimes();
+    </script>
+
+</body>
+</html>
