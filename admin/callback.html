@@ -38,10 +38,22 @@
 
         const clientId = localStorage.getItem('animaplay_client_id') || '';
         const clientSecret = localStorage.getItem('animaplay_client_secret') || '';
+        const CALLBACK_URL = 'https://animaplays.github.io/admin/callback.html';
 
         if (!clientId || !clientSecret) {
-            showErr('Credenciais do OAuth App não configuradas.'); return;
+            showErr('Credenciais do OAuth App não configuradas. Configure em ⚙ Config OAuth no editor.'); return;
         }
+
+        // Show debug info so user can see what's happening
+        body.innerHTML = '<div class="spinner"></div><p>Autenticando com GitHub...</p><p id="debug" style="font-size:11px;color:#666;margin-top:20px;text-align:left;max-width:400px;"></p>';
+        const debug = document.getElementById('debug');
+        function log(msg) { debug.innerHTML += '<br>' + msg; }
+        log('code: ' + (code ? code.substring(0,10)+'...' : 'null'));
+        log('state: ' + (state || 'null'));
+        log('verifier: ' + (verifier ? 'presente' : 'ausente'));
+        log('clientId: ' + (clientId ? clientId.substring(0,8)+'...' : 'null'));
+        log('redirect_uri: ' + CALLBACK_URL);
+        log('clientSecret: ' + (clientSecret ? 'presente ('+clientSecret.length+' chars)' : 'null'));
 
         fetch('https://github.com/login/oauth/access_token', {
             method: 'POST',
@@ -50,20 +62,28 @@
                 client_id: clientId,
                 client_secret: clientSecret,
                 code: code,
-                redirect_uri: decodeURIComponent(new URL(window.location.href).searchParams.get('redirect_uri') || window.location.href.split('?')[0]),
+                redirect_uri: CALLBACK_URL,
                 code_verifier: verifier
             })
         })
-        .then(res => res.json())
+        .then(res => {
+            log('response status: ' + res.status);
+            return res.json();
+        })
         .then(data => {
-            if (data.error) { showErr(data.error_description || data.error); return; }
+            log('response: ' + JSON.stringify(data).substring(0, 200));
+            if (data.error) { showErr((data.error_description || data.error).replace(/<[^>]*>/g,'')); return; }
             if (!data.access_token) { showErr('Token não recebido do GitHub.'); return; }
             localStorage.setItem('animaplay_token', data.access_token);
             sessionStorage.removeItem('animaplay_pkce_verifier');
             sessionStorage.removeItem('animaplay_state');
-            window.location.href = '/admin/editor.html';
+            body.innerHTML = '<p style="color:#4ade80;font-size:20px;margin-bottom:16px">✅ Sucesso!</p><p style="color:#aaa">Redirecionando...</p>';
+            setTimeout(() => window.location.href = '/admin/editor.html', 500);
         })
-        .catch(err => showErr('Erro de rede: ' + err.message));
+        .catch(err => {
+            log('catch: ' + err.message);
+            showErr('Erro de rede: ' + err.message + '. Verifique o console (F12).');
+        });
     </script>
 </body>
 </html>
