@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Callback — Anima Play</title>
+    <style>
+        body { background: #0a0a0a; color: #fff; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; text-align: center; }
+        .spinner { width: 40px; height: 40px; border: 3px solid #333; border-top-color: #e50914; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .error { color: #f87171; }
+    </style>
+</head>
+<body>
+    <div id="body">
+        <div class="spinner"></div>
+        <p>Autenticando com GitHub...</p>
+    </div>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        const state = params.get('state');
+        const error = params.get('error');
+        const body = document.getElementById('body');
+
+        function showErr(msg) {
+            body.innerHTML = '<p class="error">❌ ' + msg + '</p><p style="margin-top:16px"><a href="/admin/editor.html" style="color:#e50914">Voltar ao editor</a></p>';
+        }
+
+        if (error) { showErr('Autorização rejeitada: ' + error); return; }
+        if (!code) { showErr('Código de autorização não encontrado.'); return; }
+
+        const verifier = sessionStorage.getItem('animaplay_pkce_verifier');
+        if (!verifier) { showErr('Sessão expirada. Volte e tente novamente.'); return; }
+        if (state && state !== sessionStorage.getItem('animaplay_state')) {
+            showErr('Estado inválido. Possível ataque CSRF.'); return;
+        }
+
+        const clientId = localStorage.getItem('animaplay_client_id') || '';
+        const clientSecret = localStorage.getItem('animaplay_client_secret') || '';
+
+        if (!clientId || !clientSecret) {
+            showErr('Credenciais do OAuth App não configuradas.'); return;
+        }
+
+        fetch('https://github.com/login/oauth/access_token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({
+                client_id: clientId,
+                client_secret: clientSecret,
+                code: code,
+                redirect_uri: decodeURIComponent(new URL(window.location.href).searchParams.get('redirect_uri') || window.location.href.split('?')[0]),
+                code_verifier: verifier
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) { showErr(data.error_description || data.error); return; }
+            if (!data.access_token) { showErr('Token não recebido do GitHub.'); return; }
+            localStorage.setItem('animaplay_token', data.access_token);
+            sessionStorage.removeItem('animaplay_pkce_verifier');
+            sessionStorage.removeItem('animaplay_state');
+            window.location.href = '/admin/editor.html';
+        })
+        .catch(err => showErr('Erro de rede: ' + err.message));
+    </script>
+</body>
+</html>
