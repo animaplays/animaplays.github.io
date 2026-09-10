@@ -199,10 +199,10 @@
 
         function renderCarousel(items) {
             const carousel = document.getElementById('carousel');
-            carousel.innerHTML = items.slice(0, 12).map(cardHTML).join('');
+            carousel.innerHTML = items.slice(0, 30).map(cardHTML).join('');
         }
 
-        async function loadLatestEpisodes(posts, perPost = 4, total = 12, maxPosts = 6) {
+        async function loadLatestEpisodes(posts, perPost = 12, total = 30, maxPosts = 12) {
             const eps = [];
             for (const post of posts.slice(0, maxPosts)) {
                 try {
