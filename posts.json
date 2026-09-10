@@ -6,12 +6,11 @@
     "subtitle": "Solo Leveling - Episódio 1 - Já Estou Acostumado",
     "genres": [
       "Ação",
-      "Dublado",
-      "Solo Leveling"
+      "Dublado"
     ],
     "author": "kingveio",
     "createdAt": "2026-09-10T06:46:14.285Z",
-    "updatedAt": "2026-09-10T06:48:26.048Z"
+    "updatedAt": "2026-09-10T07:20:00.240Z"
   },
   {
     "slug": "narutoclassico",
@@ -21,12 +20,11 @@
     "genres": [
       "Ação",
       "Dublado",
-      "Clássico",
-      "Naruto Clássico"
+      "Clássico"
     ],
     "author": "kingveio",
     "createdAt": "2026-09-10T04:27:15.754Z",
-    "updatedAt": "2026-09-10T05:25:55.657Z"
+    "updatedAt": "2026-09-10T07:19:47.793Z"
   },
   {
     "slug": "dragonballz",
@@ -36,11 +34,10 @@
     "genres": [
       "Ação",
       "Dublado",
-      "Clássico",
-      "Dragon Ball Z"
+      "Clássico"
     ],
     "author": "kingveio",
     "createdAt": "2026-09-10T03:22:44.208Z",
-    "updatedAt": "2026-09-10T05:09:22.143Z"
+    "updatedAt": "2026-09-10T07:19:31.562Z"
   }
 ]
