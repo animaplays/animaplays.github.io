@@ -75,6 +75,7 @@
 
         // Estado global
         let allAnimes = [];
+        let allEpisodes = [];
         let filteredAnimes = [];
         let displayedCount = 0;
         const ITEMS_PER_LOAD = 12;
@@ -175,8 +176,8 @@
             const searchTerm = searchInput.value.toLowerCase().trim();
             const activeGenre = document.querySelector('.genre-chip.active')?.dataset.genre || 'all';
 
-            filteredAnimes = allAnimes.filter(anime => {
-                const matchesSearch = !searchTerm || anime.title.toLowerCase().includes(searchTerm);
+            filteredAnimes = allEpisodes.filter(anime => {
+                const matchesSearch = !searchTerm || anime.title.toLowerCase().includes(searchTerm) || (anime.subtitle || '').toLowerCase().includes(searchTerm);
                 const matchesGenre = activeGenre === 'all' || (anime.genres || []).some(g => g.toLowerCase() === activeGenre.toLowerCase());
                 return matchesSearch && matchesGenre;
             });
@@ -190,7 +191,7 @@
         function updateResultsCount() {
             const total = filteredAnimes.length;
             const showing = Math.min(displayedCount, total);
-            resultsCount.textContent = `${showing} de ${total} animes`;
+            resultsCount.textContent = `${showing} de ${total} episódios`;
         }
 
         function updateLoadMoreVisibility() {
@@ -202,9 +203,9 @@
             carousel.innerHTML = items.slice(0, 12).map(cardHTML).join('');
         }
 
-        async function loadLatestEpisodes(posts) {
+        async function loadLatestEpisodes(posts, perPost = 4, total = 12, maxPosts = 6) {
             const eps = [];
-            for (const post of posts.slice(0, 6)) {
+            for (const post of posts.slice(0, maxPosts)) {
                 try {
                     const r = await fetch(`https://raw.githubusercontent.com/animaplays/animaplays.github.io/main/posts/${post.slug}.html`);
                     if (!r.ok) continue;
@@ -215,7 +216,7 @@
                     const srcs = JSON.parse(mSrc[1]);
                     let titles = [];
                     try { titles = mTit ? JSON.parse(mTit[1]) : []; } catch { titles = []; }
-                    for (let i = srcs.length - 1, n = 0; i >= 0 && eps.length < 12 && n < 4; i--, n++) {
+                    for (let i = srcs.length - 1, n = 0; i >= 0 && eps.length < total && n < perPost; i--, n++) {
                         if (!srcs[i]) continue;
                         eps.push({
                             title: titles[i] || (`Episódio ${i + 1}`),
@@ -230,6 +231,10 @@
                 } catch { /* ignora post com falha */ }
             }
             return eps;
+        }
+
+        async function loadAllEpisodes(posts) {
+            return loadLatestEpisodes(posts, 1000000, 1000000, 1000000);
         }
 
         function renderGrid(items, append = false) {
@@ -272,10 +277,12 @@
             const genres = getAllGenres(allAnimes);
             renderGenreFilters(genres);
             
-            filteredAnimes = allAnimes;
-            renderGrid(allAnimes);
+            const episodes = await loadAllEpisodes(posts);
+            allEpisodes = episodes.length ? episodes : allAnimes;
+            filteredAnimes = allEpisodes;
+            renderGrid(filteredAnimes);
             const latest = await loadLatestEpisodes(posts);
-            renderCarousel(latest.length ? latest : allAnimes);
+            renderCarousel(latest.length ? latest : filteredAnimes);
         }
 
         init();
