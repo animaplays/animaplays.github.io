@@ -224,7 +224,7 @@
 
         function scrollCarousel(dir) {
             const el = document.getElementById('carousel');
-            el.scrollBy({ left: dir * 820, behavior: 'smooth' });
+            el.scrollBy({ left: dir * el.clientWidth, behavior: 'smooth' });
             restartCarouselAuto();
         }
 
@@ -233,13 +233,12 @@
         function carouselStep() {
             const el = document.getElementById('carousel');
             if (!el || !el.children.length) return;
-            const card = el.querySelector('.anime-card');
-            const step = card ? card.offsetWidth + 12 : 212;
-            const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - step / 2;
+            const page = el.clientWidth;
+            const atEnd = el.scrollLeft + page >= el.scrollWidth - 10;
             if (atEnd) {
                 el.scrollTo({ left: 0, behavior: 'smooth' });
             } else {
-                el.scrollBy({ left: step, behavior: 'smooth' });
+                el.scrollBy({ left: page, behavior: 'smooth' });
             }
         }
 

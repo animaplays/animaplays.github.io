@@ -170,6 +170,19 @@ body {
     display: none;
 }
 
+/* 6 cards por tela no slide (2 fileiras de rolagem = 12 postagens) */
+.top-layout .carousel .anime-card {
+    flex: 0 0 calc((100% - 60px) / 6);
+    width: auto;
+    min-width: 0;
+}
+
+@media (max-width: 1024px) {
+    .top-layout .carousel .anime-card {
+        flex-basis: calc((100% - 36px) / 4);
+    }
+}
+
 .carousel-btn {
     position: absolute;
     top: 50%;
@@ -462,22 +475,27 @@ body {
     .sidebar-overlay.visible {
         display: block;
     }
-    
-    .mobile-filter-toggle {
-        display: none;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 16px;
-        background: rgba(255,255,255,0.1);
-        border: 1px solid rgba(255,255,255,0.2);
-        border-radius: 8px;
-        color: #fff;
-        font-size: 14px;
-        cursor: pointer;
-    }
+}
+
+/* Botão Filtros (só aparece no mobile) */
+.mobile-filter-toggle {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
 }
 
 @media (max-width: 768px) {
+    .top-layout .carousel .anime-card {
+        flex-basis: calc((100% - 24px) / 3);
+    }
+
     .main-header {
         padding: 16px 20px;
         gap: 16px;
@@ -498,6 +516,12 @@ body {
     .anime-grid {
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         gap: 12px;
+    }
+}
+
+@media (max-width: 520px) {
+    .top-layout .carousel .anime-card {
+        flex-basis: calc((100% - 12px) / 2);
     }
 }
 
