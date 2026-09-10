@@ -108,6 +108,9 @@
         <div class="form-panel">
             <h2>Nova Postagem</h2>
             <p class="form-hint">Preencha só o essencial. O slug gera sozinho. Vídeo aceita YouTube, iframe de qualquer site ou MP4.</p>
+            <div class="btn-group" style="margin-top:0;margin-bottom:16px;">
+                <button class="btn-ghost" onclick="clearForm();window.scrollTo({top:0,behavior:'smooth'})">＋ Nova postagem (limpar tudo)</button>
+            </div>
             <div class="status-msg" id="statusMsg"></div>
 
             <div class="field-group">
@@ -527,11 +530,46 @@
                 if (!files.length) { box.innerHTML = '<p style="font-size:12px;color:#555;">Nenhuma postagem ainda.</p>'; return; }
                 box.innerHTML = files.map(f => {
                     const slug = f.name.replace('.html','');
-                    return `<div class="post-row"><a href="https://animaplays.github.io/posts/${slug}.html" target="_blank">${slug}</a><span><button onclick="fillSlug('${slug}')">Editar slug</button> <button onclick="deletePost('${slug}')">Apagar</button></span></div>`;
+                    return `<div class="post-row"><a href="https://animaplays.github.io/posts/${slug}.html" target="_blank">${slug}</a><span><button onclick="loadPostForEdit('${slug}')">Editar</button> <button onclick="deletePost('${slug}')">Apagar</button></span></div>`;
                 }).join('');
             } catch (e) { box.innerHTML = '<p style="font-size:12px;color:#f87171;">' + e.message + '</p>'; }
         }
         function fillSlug(slug) { document.getElementById('slug').value = slug; updateSlugPreview(); updatePreview(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        async function loadPostForEdit(slug) {
+            setStatus('Carregando ' + slug + ' para editar...', 'loading');
+            try {
+                const r = await fetch(`https://raw.githubusercontent.com/${REPO}/main/posts/${slug}.html`);
+                if (!r.ok) throw new Error('HTML não encontrado.');
+                const html = await r.text();
+                const doc = new DOMParser().parseFromString(html, 'text/html');
+                const meta = (n) => doc.querySelector(`meta[name="${n}"]`)?.content || '';
+                document.getElementById('title').value = meta('anima-title') || doc.querySelector('.post-hero-overlay h1')?.textContent?.trim() || doc.querySelector('h1')?.textContent?.trim() || '';
+                document.getElementById('slug').value = slug;
+                const heroImg = doc.querySelector('.post-hero img')?.getAttribute('src') || '';
+                document.getElementById('image').value = heroImg;
+                document.getElementById('image').dataset.dataurl = '';
+                onImageInput();
+                document.getElementById('cardImage').value = meta('anima-card') || '';
+                document.getElementById('cardImage').dataset.dataurl = '';
+                onCardInput();
+                const genres = (meta('anima-genres') || '').split(',').map(s => s.trim()).filter(Boolean);
+                document.querySelectorAll('#catGrid input').forEach(i => { i.checked = genres.includes(i.value); });
+                document.getElementById('genresExtra').value = genres.filter(g => !CATS.includes(g)).join(', ');
+                document.getElementById('synopsis').value = doc.querySelector('.post-synopsis')?.textContent?.trim() || '';
+                const mSrc = html.match(/var EPISODES=(\[.*?\]);/s);
+                const mTit = html.match(/var EP_TITLES=(\[.*?\]);/s);
+                const srcs = mSrc ? JSON.parse(mSrc[1]) : [];
+                let titles = [];
+                try { titles = mTit ? JSON.parse(mTit[1]) : []; } catch { titles = []; }
+                document.getElementById('defaultVideo').value = srcs[0] || '';
+                document.getElementById('episodeList').innerHTML = ''; epCount = 0;
+                if (srcs.length) srcs.forEach((s, i) => addEpisode(titles[i] || '', s));
+                else addEpisode();
+                updateSlugPreview(); updatePreview();
+                setStatus('Pronta para editar. Adicione o EP3 e clique Publicar.', 'success');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (e) { setStatus('❌ ' + e.message, 'error'); }
+        }
         function downloadPost() {
             const data = getFormData();
             const a = document.createElement('a');
