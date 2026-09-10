@@ -127,9 +127,7 @@
                     const slug = f.name.replace('.html', '');
                     const pretty = slug.replace(/-/g, ' ');
                     try {
-                        const r = await fetch(`https://raw.githubusercontent.com/animaplays/animaplays.github.io/main/posts/${slug}.html`);
-                        if (!r.ok) throw new Error('fetch fail');
-                        const html = await r.text();
+                        const html = await fetchPostHTML(slug);
                         const doc = new DOMParser().parseFromString(html, 'text/html');
                         const meta = (n) => doc.querySelector(`meta[name="${n}"]`)?.content?.trim() || '';
                         const title = meta('anima-title') || doc.querySelector('.post-hero-overlay h1')?.textContent?.trim() || doc.querySelector('h1')?.textContent?.trim() || pretty;
@@ -205,13 +203,25 @@
             carousel.innerHTML = items.slice(0, 18).map(cardHTML).join('');
         }
 
+        async function fetchPostHTML(slug) {
+            try {
+                const r = await fetch(`https://api.github.com/repos/animaplays/animaplays.github.io/contents/posts/${slug}.html`);
+                if (r.ok) {
+                    const j = await r.json();
+                    const b64 = (j.content || '').replace(/\n/g, '');
+                    return decodeURIComponent(escape(atob(b64)));
+                }
+            } catch { /* cai para o raw abaixo */ }
+            const r = await fetch(`https://raw.githubusercontent.com/animaplays/animaplays.github.io/main/posts/${slug}.html?t=${Date.now()}`);
+            if (!r.ok) throw new Error('fetch fail');
+            return await r.text();
+        }
+
         async function loadLatestEpisodes(posts, perPost = 6, total = 18, maxPosts = 12) {
             const eps = [];
             for (const post of posts.slice(0, maxPosts)) {
                 try {
-                    const r = await fetch(`https://raw.githubusercontent.com/animaplays/animaplays.github.io/main/posts/${post.slug}.html`);
-                    if (!r.ok) continue;
-                    const html = await r.text();
+                    const html = await fetchPostHTML(post.slug);
                     const mSrc = html.match(/var EPISODES=(\[.*?\]);/s);
                     const mTit = html.match(/var EP_TITLES=(\[.*?\]);/s);
                     if (!mSrc) continue;

@@ -566,9 +566,16 @@
         async function loadPostForEdit(slug) {
             setStatus('Carregando ' + slug + ' para editar...', 'loading');
             try {
-                const r = await fetch(`https://raw.githubusercontent.com/${REPO}/main/posts/${slug}.html`);
-                if (!r.ok) throw new Error('HTML não encontrado.');
-                const html = await r.text();
+                let html = null;
+                const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/posts/' + slug + '.html', { headers: { 'Authorization': 'Bearer ' + getToken() } });
+                if (res.ok) {
+                    const j = await res.json();
+                    html = decodeURIComponent(escape(atob((j.content || '').replace(/\n/g, ''))));
+                } else {
+                    const r = await fetch(`https://raw.githubusercontent.com/${REPO}/main/posts/${slug}.html?t=${Date.now()}`);
+                    if (!r.ok) throw new Error('HTML não encontrado.');
+                    html = await r.text();
+                }
                 const doc = new DOMParser().parseFromString(html, 'text/html');
                 const meta = (n) => doc.querySelector(`meta[name="${n}"]`)?.content || '';
                 document.getElementById('title').value = meta('anima-title') || doc.querySelector('.post-hero-overlay h1')?.textContent?.trim() || doc.querySelector('h1')?.textContent?.trim() || '';
