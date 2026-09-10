@@ -556,8 +556,8 @@
                     body: JSON.stringify({ message: 'Apaga postagem: ' + slug, sha })
                 });
                 if (!res.ok) throw new Error((await res.json()).message || 'Falha ao apagar');
-                try { await syncPostsJson({ slug }, true); } catch (e) { /* índice opcional */ }
-                setStatus('Apagada: ' + path, 'success');
+                try { await syncPostsJson({ slug }, true); setStatus('Apagada: ' + path, 'success'); }
+                catch (e2) { setStatus('Arquivo apagado, mas o índice falhou: ' + e2.message, 'error'); }
                 loadPostList();
             } catch (e) { setStatus('❌ ' + e.message, 'error'); }
         }
