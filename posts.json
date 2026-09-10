@@ -1,0 +1,15 @@
+[
+  {
+    "slug": "dragonballz",
+    "title": "Dragon Ball Z",
+    "image": "../img/dragonballz-1789010293147-dragon-ball-z-card.jpg",
+    "subtitle": "Dragon Ball Z - Surge um Mini-Goku! Seu Nome é Gohan",
+    "genres": [
+      "Ação",
+      "Dublado",
+      "Clássico"
+    ],
+    "createdAt": "2026-09-10T03:22:44.208Z",
+    "updatedAt": "2026-09-10T03:22:44.208Z"
+  }
+]
