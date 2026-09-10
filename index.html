@@ -85,20 +85,33 @@
         const resultsCount = document.getElementById('resultsCount');
 
         async function loadPosts() {
+            const FALLBACK_IMG = 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600&auto=format&fit=crop';
             try {
                 const res = await fetch('https://api.github.com/repos/animaplays/animaplays.github.io/contents/posts');
                 if (!res.ok) return [];
-                const files = await res.json();
-                return files
+                const files = (await res.json())
                     .filter(f => f.name.endsWith('.html'))
-                    .sort((a, b) => b.name.localeCompare(a.name))
-                    .map(f => ({
-                        title: f.name.replace('.html', '').replace(/-/g, ' '),
-                        slug: f.name.replace('.html', ''),
-                        image: 'https://image.tmdb.org/t/p/w342/dx28DE7EgLy0FatOvnaUg0k9j92.jpg',
-                        subtitle: 'Nova Postagem',
-                        genres: ['Nova']
-                    }));
+                    .sort((a, b) => b.name.localeCompare(a.name));
+                const posts = await Promise.all(files.map(async (f) => {
+                    const slug = f.name.replace('.html', '');
+                    const pretty = slug.replace(/-/g, ' ');
+                    try {
+                        const r = await fetch(`https://raw.githubusercontent.com/animaplays/animaplays.github.io/main/posts/${slug}.html`);
+                        if (!r.ok) throw new Error('fetch fail');
+                        const html = await r.text();
+                        const doc = new DOMParser().parseFromString(html, 'text/html');
+                        const meta = (n) => doc.querySelector(`meta[name="${n}"]`)?.content?.trim() || '';
+                        const title = meta('anima-title') || doc.querySelector('.post-hero-overlay h1')?.textContent?.trim() || doc.querySelector('h1')?.textContent?.trim() || pretty;
+                        let card = meta('anima-card') || doc.querySelector('.post-hero img')?.getAttribute('src') || FALLBACK_IMG;
+                        if (card.startsWith('../')) card = card.replace(/^\.\.\//, '');
+                        const subtitle = meta('anima-subtitle') || 'Nova Postagem';
+                        const genres = meta('anima-genres') ? meta('anima-genres').split(',').map(s => s.trim()).filter(Boolean) : ['Nova'];
+                        return { title, slug, image: card, subtitle, genres };
+                    } catch {
+                        return { title: pretty, slug, image: FALLBACK_IMG, subtitle: 'Nova Postagem', genres: ['Nova'] };
+                    }
+                }));
+                return posts;
             } catch { return []; }
         }
 

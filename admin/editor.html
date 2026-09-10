@@ -122,13 +122,23 @@
             </div>
 
             <div class="field-group">
-                <label>Capa — URL ou upload</label>
+                <label>Capa (página da postagem) — URL ou upload</label>
                 <div class="cover-row">
                     <input type="text" id="image" placeholder="https://... ou faça upload abaixo" oninput="onImageInput()">
                     <input type="file" id="imageFile" accept="image/*" onchange="onCoverFile(this)">
                     <img id="coverPreview" class="cover-preview" alt="Prévia da capa">
                 </div>
                 <div class="video-hint">O upload envia a imagem para a pasta <strong>img/</strong> do repositório.</div>
+            </div>
+
+            <div class="field-group">
+                <label>Imagem do card (home) — URL ou upload</label>
+                <div class="cover-row">
+                    <input type="text" id="cardImage" placeholder="https://... ou faça upload (se vazio, usa a capa)" oninput="onCardInput()">
+                    <input type="file" id="cardImageFile" accept="image/*" onchange="onCardFile(this)">
+                    <img id="cardPreview" class="cover-preview" alt="Prévia do card">
+                </div>
+                <div class="video-hint">É esta imagem que aparece no card da página principal.</div>
             </div>
 
             <div class="field-group">
@@ -242,6 +252,49 @@
             if (url) { prev.src = url; prev.style.display = 'block'; } else { prev.style.display = 'none'; }
             updatePreview();
         }
+        function onCardInput() {
+            const url = document.getElementById('cardImage').value.trim();
+            const prev = document.getElementById('cardPreview');
+            if (url) { prev.src = url; prev.style.display = 'block'; } else { prev.style.display = 'none'; }
+            updatePreview();
+        }
+        async function uploadImageToRepo(file, slug) {
+            const token = getToken();
+            if (!token) throw new Error('Faça login para enviar a imagem ao GitHub.');
+            const safe = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, '-');
+            const path = 'img/' + slug + '-' + Date.now() + '-' + safe;
+            const buf = await file.arrayBuffer();
+            let bin = ''; const bytes = new Uint8Array(buf);
+            for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+            const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + path, {
+                method: 'PUT',
+                headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: 'Upload imagem: ' + file.name, content: btoa(bin) })
+            });
+            if (!res.ok) throw new Error('Falha no upload da imagem.');
+            return '../' + path;
+        }
+        async function onCardFile(input) {
+            const file = input.files && input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                const prev = document.getElementById('cardPreview');
+                prev.src = reader.result; prev.style.display = 'block';
+                document.getElementById('cardImage').dataset.dataurl = reader.result;
+                updatePreview();
+            };
+            reader.readAsDataURL(file);
+            try {
+                setStatus('Enviando imagem do card...', 'loading');
+                const slug = document.getElementById('slug').value || 'card';
+                const url = await uploadImageToRepo(file, slug);
+                document.getElementById('cardImage').value = url;
+                document.getElementById('cardImage').dataset.dataurl = '';
+                onCardInput();
+                setStatus('Imagem do card enviada.', 'success');
+            } catch (e) { setStatus('❌ ' + e.message, 'error'); }
+        }
         async function onCoverFile(input) {
             const file = input.files && input.files[0];
             if (!file) return;
@@ -253,27 +306,15 @@
                 updatePreview();
             };
             reader.readAsDataURL(file);
-            const token = getToken();
-            if (!token) { setStatus('Faça login para enviar a imagem ao GitHub. Por enquanto fica só na prévia.', 'error'); return; }
             try {
-                setStatus('Enviando imagem...', 'loading');
+                setStatus('Enviando capa...', 'loading');
                 const slug = document.getElementById('slug').value || 'capa';
-                const safe = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, '-');
-                const path = 'img/' + slug + '-' + Date.now() + '-' + safe;
-                const buf = await file.arrayBuffer();
-                let bin = ''; const bytes = new Uint8Array(buf);
-                for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
-                const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + path, {
-                    method: 'PUT',
-                    headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: 'Upload capa: ' + file.name, content: btoa(bin) })
-                });
-                if (!res.ok) throw new Error('Falha no upload da imagem.');
-                document.getElementById('image').value = '../' + path;
+                const url = await uploadImageToRepo(file, slug);
+                document.getElementById('image').value = url;
                 document.getElementById('image').dataset.dataurl = '';
                 onImageInput();
-                setStatus('Imagem enviada: ' + path, 'success');
-            } catch (e) { setStatus('❌ ' + e.message, 'error'); }
+                setStatus('Capa enviada.', 'success');
+            } catch (e) { setStatus('❌ ' + e.message + ' Por enquanto fica só na prévia.', 'error'); }
         }
         let epCount = 0;
         function addEpisode(title, video) {
@@ -298,6 +339,7 @@
                 title: document.getElementById('title').value || 'Sem Título',
                 slug: document.getElementById('slug').value || 'sem-titulo',
                 image: document.getElementById('image').value.trim() || document.getElementById('image').dataset.dataurl || '',
+                cardImage: document.getElementById('cardImage').value.trim() || document.getElementById('cardImage').dataset.dataurl || '',
                 genres: getGenres(),
                 synopsis: document.getElementById('synopsis').value,
                 defaultVideo: document.getElementById('defaultVideo').value.trim(),
@@ -361,8 +403,13 @@
             }).join('\n');
             const epJson = JSON.stringify(srcs);
             const epTitles = JSON.stringify(d.episodes.map((ep, i) => ep.title || ('Episódio ' + (i + 1))));
+            const cardImg = d.cardImage || d.image || '';
             return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>${esc(d.title)} — Anima Play</title><link rel="stylesheet" href="../style.css">
+<meta name="anima-title" content="${esc(d.title)}">
+<meta name="anima-card" content="${esc(cardImg)}">
+<meta name="anima-subtitle" content="${esc((d.episodes[0] && d.episodes[0].title) || 'Nova Postagem')}">
+<meta name="anima-genres" content="${esc(d.genres.join(','))}">
 <style>.back-link{display:inline-block;color:#e50914;text-decoration:none;font-size:14px;margin-bottom:20px;padding:0 40px}.post-hero{position:relative;width:100%;height:400px;overflow:hidden}.post-hero img{width:100%;height:100%;object-fit:cover}.post-hero-overlay{position:absolute;bottom:0;left:0;right:0;padding:50px 40px 25px;background:linear-gradient(transparent,#0a0a0a)}.post-hero-overlay h1{font-size:32px;font-weight:800}.post-meta{display:flex;gap:10px;flex-wrap:wrap}.post-meta span{background:rgba(255,255,255,0.15);padding:3px 10px;border-radius:12px;font-size:12px;color:#ccc}.post-body{max-width:900px;margin:0 auto;padding:20px 40px 40px}.post-synopsis{color:#aaa;font-size:14px;line-height:1.7;margin-bottom:30px}.section-label{font-size:13px;color:#e50914;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;font-weight:700}.video-player{position:relative;width:100%;padding-top:56.25%;background:#1a1a1a;border-radius:12px;overflow:hidden;margin-bottom:12px}.ep-nav{display:flex;gap:10px;align-items:center;margin-bottom:24px;flex-wrap:wrap}.ep-nav button{background:#15191d;color:#fff;border:1px solid #2a2a2a;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer}.ep-nav button:hover:not(:disabled){border-color:#e50914;color:#e50914}.ep-nav button:disabled{opacity:.35;cursor:not-allowed}.ep-nav button.primary{background:#e50914;border-color:#e50914}.ep-nav button.primary:hover:not(:disabled){background:#f0151f;color:#fff}#epLabel{font-size:13px;color:#aaa}.episode-list{display:flex;flex-direction:column;gap:8px}.episode-item{display:flex;align-items:center;gap:14px;background:#15191d;padding:12px 16px;border-radius:10px;color:#fff;text-decoration:none}.episode-item.active{background:#e50914}.episode-thumb{width:90px;height:52px;border-radius:6px;object-fit:cover;background:#2a2a2a;flex-shrink:0}.episode-info{flex:1}.ep-title{font-size:14px;font-weight:600}.episode-badge{background:#e50914;color:#fff;font-size:10px;padding:2px 8px;border-radius:4px;font-weight:700}.btn-play{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.15);border:none;color:#fff;font-size:16px;cursor:pointer}</style></head>
 <body><header class="main-header"><div class="logo"><a href="/" style="color:inherit;text-decoration:none">Anima Play</a></div></header>
 <a href="/" class="back-link">← Voltar</a>
@@ -448,6 +495,8 @@
             document.getElementById('title').value = ''; document.getElementById('slug').value = '';
             document.getElementById('image').value = ''; document.getElementById('image').dataset.dataurl = '';
             document.getElementById('coverPreview').style.display = 'none';
+            document.getElementById('cardImage').value = ''; document.getElementById('cardImage').dataset.dataurl = '';
+            document.getElementById('cardPreview').style.display = 'none';
             document.getElementById('synopsis').value = ''; document.getElementById('defaultVideo').value = '';
             document.getElementById('genresExtra').value = '';
             document.querySelectorAll('#catGrid input:checked').forEach(i => i.checked = false);
