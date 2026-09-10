@@ -3,34 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anima Play - Cat├ílogo de Animes</title>
+    <title>Anima Play - Catálogo de Animes</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <header class="main-header">
         <div class="logo">Anima Play</div>
+        <div class="header-tools">
+            <input type="search" id="searchInput" class="search-input" placeholder="Buscar anime..." aria-label="Buscar anime">
+            <div class="genre-filters" id="genreFilters" aria-label="Filtrar por gênero"></div>
+        </div>
         <nav>
             <ul class="nav-links">
-                <li><a href="#">In├¡cio</a></li>
-                <li><a href="#">Cat├ílogo</a></li>
-                <li><a href="#">Lan├ºamentos</a></li>
+                <li><a href="#">Início</a></li>
+                <li><a href="#">Catálogo</a></li>
+                <li><a href="#">Lançamentos</a></li>
             </ul>
         </nav>
     </header>
 
     <section class="carousel-section">
-        <h2 class="section-title">├Ültimos Epis├│dios</h2>
+        <h2 class="section-title">Últimos Episódios</h2>
         <div class="carousel-wrapper">
-            <button class="carousel-btn prev" onclick="scrollCarousel(-1)">&#8249;</button>
+            <button class="carousel-btn prev" onclick="scrollCarousel(-1)" aria-label="Anterior">&#8249;</button>
             <div class="carousel" id="carousel"></div>
-            <button class="carousel-btn next" onclick="scrollCarousel(1)">&#8250;</button>
+            <button class="carousel-btn next" onclick="scrollCarousel(1)" aria-label="Próximo">&#8250;</button>
         </div>
     </section>
 
     <section class="grid-section">
-        <h2 class="section-title">Cat├ílogo Completo</h2>
+        <div class="section-header">
+            <h2 class="section-title">Catálogo Completo</h2>
+            <span class="results-count" id="resultsCount"></span>
+        </div>
         <div class="anime-grid" id="animeGrid"></div>
+        <button class="load-more-btn" id="loadMoreBtn" style="display:none;">Carregar mais</button>
     </section>
 
     <footer class="main-footer">
@@ -38,81 +46,27 @@
     </footer>
 
     <script>
-        // Lista fixa de animes do cat├ílogo (sem postagem pr├│pria)
+        // Lista fixa de animes do catálogo
         const catalogAnimes = [
-            {
-                title: "Bleach",
-                subtitle: "T2 EP.38 ÔÇó Dublado & Legendado",
-                image: "https://cdn.myanimelist.net/images/anime/1736/136413.jpg",
-                slug: "bleach"
-            },
-            {
-                title: "Skeleton Knight in Another World",
-                subtitle: "T1 EP.8 ÔÇó Legendado",
-                image: "https://cdn.myanimelist.net/images/anime/1779/110666.jpg"
-            },
-            {
-                title: "Black Clover",
-                subtitle: "T1 EP.84 ÔÇó Dublado & Legendado",
-                image: "https://cdn.myanimelist.net/images/anime/2/88372.jpg"
-            },
-            {
-                title: "My Hero Academia",
-                subtitle: "T8 EP.6 ÔÇó Dublado & Legendado",
-                image: "https://cdn.myanimelist.net/images/anime/1908/135431.jpg"
-            },
-            {
-                title: "Shurato",
-                subtitle: "T1 EP.3 ÔÇó Dublado & Legendado",
-                image: "https://cdn.myanimelist.net/images/anime/1269/110606.jpg"
-            },
-            {
-                title: "Shangri-La Frontier",
-                subtitle: "T1 EP.27 ÔÇó Dublado & Legendado",
-                image: "https://cdn.myanimelist.net/images/anime/1288/138300.jpg"
-            },
-            {
-                title: "Demon Slayer",
-                subtitle: "T4 EP.11 ÔÇó Dublado & Legendado",
-                image: "https://cdn.myanimelist.net/images/anime/1286/99889.jpg",
-                slug: "demon-slayer"
-            },
-            {
-                title: "Cavaleiros do Zod├¡aco",
-                subtitle: "TV ÔÇó Dublado & Legendado",
-                image: "https://image.tmdb.org/t/p/w342/dx28DE7EgLy0FatOvnaUg0k9j92.jpg",
-                slug: "cavaleiros"
-            },
-            {
-                title: "Jujutsu Kaisen",
-                subtitle: "T2 EP.23 ÔÇó Dublado & Legendado",
-                image: "https://cdn.myanimelist.net/images/anime/1792/138022.jpg"
-            },
-            {
-                title: "One Piece",
-                subtitle: "T1 EP.1100 ÔÇó Dublado & Legendado",
-                image: "https://cdn.myanimelist.net/images/anime/1244/138851.jpg"
-            },
-            {
-                title: "Attack on Titan",
-                subtitle: "T4 Final ÔÇó Dublado & Legendado",
-                image: "https://cdn.myanimelist.net/images/anime/1000/110531.jpg"
-            },
-            {
-                title: "Chainsaw Man",
-                subtitle: "T1 EP.12 ÔÇó Dublado & Legendado",
-                image: "https://cdn.myanimelist.net/images/anime/1806/126216.jpg"
-            },
-            {
-                title: "Spy x Family",
-                subtitle: "T2 EP.12 ÔÇó Dublado & Legendado",
-                image: "https://cdn.myanimelist.net/images/anime/1441/139629.jpg"
-            }
+            { title: "Bleach", subtitle: "T2 EP.38 • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/1736/136413.jpg", slug: "bleach", genres: ["Ação", "Sobrenatural", "Shounen"] },
+            { title: "Skeleton Knight in Another World", subtitle: "T1 EP.8 • Legendado", image: "https://cdn.myanimelist.net/images/anime/1779/110666.jpg", slug: "skeleton-knight", genres: ["Fantasia", "Isekai", "Aventura"] },
+            { title: "Black Clover", subtitle: "T1 EP.84 • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/2/88372.jpg", slug: "black-clover", genres: ["Ação", "Fantasia", "Shounen", "Magia"] },
+            { title: "My Hero Academia", subtitle: "T8 EP.6 • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/1908/135431.jpg", slug: "my-hero-academia", genres: ["Ação", "Super-heróis", "Escolar", "Shounen"] },
+            { title: "Shurato", subtitle: "T1 EP.3 • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/1269/110606.jpg", slug: "shurato", genres: ["Ação", "Fantasia", "Mecha", "Clássico"] },
+            { title: "Shangri-La Frontier", subtitle: "T1 EP.27 • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/1288/138300.jpg", slug: "shangri-la-frontier", genres: ["Ação", "Jogos", "Fantasia", "Aventura"] },
+            { title: "Demon Slayer", subtitle: "T4 EP.11 • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/1286/99889.jpg", slug: "demon-slayer", genres: ["Ação", "Sobrenatural", "Histórico", "Shounen"] },
+            { title: "Cavaleiros do Zodíaco", subtitle: "TV • Dublado & Legendado", image: "https://image.tmdb.org/t/p/w342/dx28DE7EgLy0FatOvnaUg0k9j92.jpg", slug: "cavaleiros", genres: ["Ação", "Aventura", "Fantasia", "Clássico"] },
+            { title: "Jujutsu Kaisen", subtitle: "T2 EP.23 • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/1792/138022.jpg", slug: "jujutsu-kaisen", genres: ["Ação", "Sobrenatural", "Escolar", "Shounen"] },
+            { title: "One Piece", subtitle: "T1 EP.1100 • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/1244/138851.jpg", slug: "one-piece", genres: ["Aventura", "Shounen", "Piratas", "Longa"] },
+            { title: "Attack on Titan", subtitle: "T4 Final • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/1000/110531.jpg", slug: "attack-on-titan", genres: ["Ação", "Drama", "Mistério", "Seinen"] },
+            { title: "Chainsaw Man", subtitle: "T1 EP.12 • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/1806/126216.jpg", slug: "chainsaw-man", genres: ["Ação", "Sobrenatural", "Comédia", "Seinen"] },
+            { title: "Spy x Family", subtitle: "T2 EP.12 • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/1441/139629.jpg", slug: "spy-x-family", genres: ["Ação", "Comédia", "Espionagem", "Família"] }
         ];
 
         function cardHTML(anime) {
             const slug = anime.slug || anime.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-            return `<a href="posts/${slug}.html" class="anime-card">
+            const genres = anime.genres ? anime.genres.slice(0, 2).join(', ') : '';
+            return `<a href="posts/${slug}.html" class="anime-card" data-title="${anime.title.toLowerCase()}" data-genres="${(anime.genres || []).join(' ').toLowerCase()}">
                 <div class="card-poster-wrapper">
                     <img src="${anime.image}" alt="${anime.title}" class="card-poster" loading="lazy">
                     <div class="card-overlay"><span class="card-title-overlay">${anime.title}</span></div>
@@ -120,9 +74,22 @@
                 <div class="card-info">
                     <h3 class="card-title">${anime.title}</h3>
                     <p class="card-subtitle">${anime.subtitle || ''}</p>
+                    ${genres ? `<span class="card-genres">${genres}</span>` : ''}
                 </div>
             </a>`;
         }
+
+        // Estado global
+        let allAnimes = [];
+        let filteredAnimes = [];
+        let displayedCount = 0;
+        const ITEMS_PER_LOAD = 12;
+
+        // Elementos DOM
+        const searchInput = document.getElementById('searchInput');
+        const genreFilters = document.getElementById('genreFilters');
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        const resultsCount = document.getElementById('resultsCount');
 
         async function loadPosts() {
             try {
@@ -136,31 +103,112 @@
                         title: f.name.replace('.html', '').replace(/-/g, ' '),
                         slug: f.name.replace('.html', ''),
                         image: 'https://image.tmdb.org/t/p/w342/dx28DE7EgLy0FatOvnaUg0k9j92.jpg',
-                        subtitle: 'Nova Postagem'
+                        subtitle: 'Nova Postagem',
+                        genres: ['Nova']
                     }));
             } catch { return []; }
         }
 
-        function renderCarousel(items) {
-            const carousel = document.getElementById('carousel');
-            carousel.innerHTML = items.map(cardHTML).join('');
+        function getAllGenres(items) {
+            const genres = new Set();
+            items.forEach(item => {
+                (item.genres || []).forEach(g => genres.add(g));
+            });
+            return Array.from(genres).sort();
         }
 
-        function renderGrid(items) {
+        function renderGenreFilters(genres) {
+            genreFilters.innerHTML = `
+                <button class="genre-chip active" data-genre="all" aria-pressed="true">Todos</button>
+                ${genres.map(g => `<button class="genre-chip" data-genre="${g}" aria-pressed="false">${g}</button>`).join('')}
+            `;
+            genreFilters.querySelectorAll('.genre-chip').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    genreFilters.querySelectorAll('.genre-chip').forEach(b => {
+                        b.classList.remove('active');
+                        b.setAttribute('aria-pressed', 'false');
+                    });
+                    btn.classList.add('active');
+                    btn.setAttribute('aria-pressed', 'true');
+                    applyFilters();
+                });
+            });
+        }
+
+        function applyFilters() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const activeGenre = document.querySelector('.genre-chip.active')?.dataset.genre || 'all';
+
+            filteredAnimes = allAnimes.filter(anime => {
+                const matchesSearch = !searchTerm || anime.title.toLowerCase().includes(searchTerm);
+                const matchesGenre = activeGenre === 'all' || (anime.genres || []).some(g => g.toLowerCase() === activeGenre.toLowerCase());
+                return matchesSearch && matchesGenre;
+            });
+
+            displayedCount = 0;
+            renderGrid(filteredAnimes);
+            updateResultsCount();
+            updateLoadMoreVisibility();
+        }
+
+        function updateResultsCount() {
+            const total = filteredAnimes.length;
+            const showing = Math.min(displayedCount, total);
+            resultsCount.textContent = `${showing} de ${total} animes`;
+        }
+
+        function updateLoadMoreVisibility() {
+            loadMoreBtn.style.display = displayedCount < filteredAnimes.length ? 'block' : 'none';
+        }
+
+        function renderCarousel(items) {
+            const carousel = document.getElementById('carousel');
+            carousel.innerHTML = items.slice(0, 10).map(cardHTML).join('');
+        }
+
+        function renderGrid(items, append = false) {
             const grid = document.getElementById('animeGrid');
-            grid.innerHTML = items.map(cardHTML).join('');
+            const toShow = items.slice(displayedCount, displayedCount + ITEMS_PER_LOAD);
+            
+            if (!append) {
+                grid.innerHTML = '';
+            }
+            
+            toShow.forEach(anime => {
+                grid.insertAdjacentHTML('beforeend', cardHTML(anime));
+            });
+            
+            displayedCount += toShow.length;
+            updateResultsCount();
+            updateLoadMoreVisibility();
         }
 
         function scrollCarousel(dir) {
             document.getElementById('carousel').scrollBy({ left: dir * 820, behavior: 'smooth' });
         }
 
-        // Carrega tudo
+        // Event listeners
+        let searchTimeout;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(applyFilters, 150);
+        });
+
+        loadMoreBtn.addEventListener('click', () => {
+            renderGrid(filteredAnimes, true);
+        });
+
+        // Inicialização
         async function init() {
             const posts = await loadPosts();
-            const allItems = [...catalogAnimes, ...posts];
-            renderCarousel(allItems);
-            renderGrid(allItems);
+            allAnimes = [...catalogAnimes, ...posts];
+            
+            const genres = getAllGenres(allAnimes);
+            renderGenreFilters(genres);
+            
+            filteredAnimes = allAnimes;
+            renderCarousel(allAnimes);
+            renderGrid(allAnimes);
         }
 
         init();
