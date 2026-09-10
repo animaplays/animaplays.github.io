@@ -10,7 +10,11 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://animaplays.github.io/">
     <link rel="stylesheet" href="style.css?v=5">
-    <script src="views.js?v=1"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+    <script src="firebase-config.js?v=1"></script>
+    <script>if(typeof firebase!=='undefined'&&firebase.initializeApp)firebase.initializeApp(firebaseConfig);</script>
+    <script src="views.js?v=2"></script>
 </head>
 <body>
 
