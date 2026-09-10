@@ -588,6 +588,36 @@ body {
     width: 160px;
 }
 
+.top10-item {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: flex-end;
+}
+
+.top10-item .anime-card {
+    flex: 0 0 160px;
+    width: 160px;
+}
+
+.rank-big {
+    font-size: 240px;
+    font-weight: 900;
+    line-height: 0.8;
+    color: #0a0a0a;
+    -webkit-text-stroke: 3px #ffffff;
+    margin-right: -18px;
+    margin-bottom: -8px;
+    user-select: none;
+}
+
+@media (max-width: 768px) {
+    .rank-big {
+        font-size: 140px;
+        -webkit-text-stroke-width: 2px;
+        margin-right: -12px;
+    }
+}
+
 .side-post {
     display: flex;
     gap: 10px;
@@ -598,8 +628,8 @@ body {
 }
 
 .side-post img {
-    width: 56px;
-    height: 80px;
+    width: 44px;
+    height: 62px;
     object-fit: cover;
     border-radius: 6px;
     background: #1a1a1a;
@@ -607,7 +637,7 @@ body {
 }
 
 .side-post span {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     line-height: 1.3;
 }

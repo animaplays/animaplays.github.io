@@ -222,7 +222,7 @@
             const box = document.getElementById('genreRows');
             if (!box) return;
             const byDate = [...posts].sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
-            let html = `<div class="genre-row"><h3 class="genre-row-title"><span class="trophy">🏆</span> Top 10</h3><div class="genre-row-scroll">${byDate.slice(0, 10).map((a, i) => cardHTML(a, i + 1)).join('')}</div></div>`;
+            let html = `<div class="genre-row"><h3 class="genre-row-title"><span class="trophy">🏆</span> Top 10</h3><div class="genre-row-scroll">${byDate.slice(0, 10).map((a, i) => `<div class="top10-item"><span class="rank-big">${i + 1}</span>${cardHTML(a)}</div>`).join('')}</div></div>`;
             html += getAllGenres(posts).map(g => {
                 const items = posts.filter(a => (a.genres || []).some(x => x.toLowerCase() === g.toLowerCase()));
                 if (!items.length) return '';
