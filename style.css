@@ -27,7 +27,7 @@ body {
 }
 
 .logo {
-    font-size: 120px;
+    font-size: 96px;
     font-weight: 800;
     color: #e50914;
     letter-spacing: -1px;
@@ -114,7 +114,7 @@ body {
 
 /* Carousel Section */
 .carousel-section {
-    padding-top: 230px;
+    padding-top: 200px;
     position: relative;
 }
 
