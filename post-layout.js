@@ -46,7 +46,7 @@
   }
   var genres = meta('anima-genres').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
   var chips = genres.map(function (g) {
-    return '<a href="/?genre=' + encodeURIComponent(g) + '">' + esc(g) + '</a>';
+    return '<a href="/?genre=' + encodeURIComponent(g) + '#catalogo">' + esc(g) + '</a>';
   }).join('');
 
   box.innerHTML =

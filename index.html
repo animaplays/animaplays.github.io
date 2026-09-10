@@ -49,7 +49,7 @@
 
     <section class="genre-rows" id="genreRows" aria-label="Categorias"></section>
 
-    <section class="grid-section">
+    <section class="grid-section" id="catalogo">
         <div class="section-header">
             <h2 class="section-title">Catálogo Completo</h2>
             <span class="results-count" id="resultsCount"></span>
@@ -179,6 +179,7 @@
                     applyFilters();
                     document.getElementById('sidebar').classList.remove('open');
                     document.getElementById('sidebarOverlay').classList.remove('visible');
+                    document.getElementById('catalogo').scrollIntoView({ behavior: 'smooth' });
                 });
             });
         }
@@ -405,6 +406,13 @@
             applyFilters();
             renderPostLinks();
             buildGenreRows(allAnimes);
+            try {
+                const q2 = new URLSearchParams(window.location.search);
+                if (q2.get('genre')) {
+                    const cat = document.getElementById('catalogo');
+                    if (cat) cat.scrollIntoView();
+                }
+            } catch { /* ignora */ }
             const latest = await loadLatestEpisodes(allAnimes);
             renderCarousel(latest.length ? latest : allAnimes);
             startCarouselAuto();
