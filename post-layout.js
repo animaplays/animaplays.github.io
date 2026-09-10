@@ -6,7 +6,9 @@
   function normImg(u) {
     if (!u) return '';
     var s = String(u).trim();
-    if (s.indexOf('../') === 0) return s.slice(3);
+    if (s.indexOf('http') === 0 || s.indexOf('data:') === 0) return s;
+    if (s.indexOf('../') === 0) return '/' + s.slice(3);
+    if (s.charAt(0) !== '/') return '/' + s;
     return s;
   }
 
@@ -48,8 +50,7 @@
     '<div class="side-section"><div class="side-title">Navegação</div><a class="side-link" href="/">← Início</a></div>'
     + '<div class="side-section"><div class="side-title">Gêneros</div><div class="side-chips">'
     + (chips || '<p style="font-size:12px;color:#666;">—</p>') + '</div></div>'
-    + '<div class="side-section"><div class="side-title">Recomendado para você</div><div id="sideRec"><p style="font-size:12px;color:#666;">Carregando...</p></div></div>'
-    + '<div class="side-section"><div class="side-title">Ver também</div><div id="sidePosts"><p style="font-size:12px;color:#666;">Carregando...</p></div></div>';
+    + '<div class="side-section"><div class="side-title">Recomendado para você</div><div id="sideRec"><p style="font-size:12px;color:#666;">Carregando...</p></div></div>';
 
   var overlay = document.createElement('div');
   overlay.className = 'post-overlay';
@@ -102,14 +103,8 @@
     if (boxR) boxR.innerHTML = rec.length
       ? rec.map(miniCard).join('')
       : '<p style="font-size:12px;color:#666;">Em breve.</p>';
-    var boxP = document.getElementById('sidePosts');
-    if (boxP) boxP.innerHTML = others.slice(0, 6).length
-      ? others.slice(0, 6).map(miniCard).join('')
-      : '<p style="font-size:12px;color:#666;">Nenhuma outra postagem.</p>';
   }).catch(function () {
     var a = document.getElementById('sideRec');
     if (a) a.innerHTML = '<p style="font-size:12px;color:#666;">Em breve.</p>';
-    var b = document.getElementById('sidePosts');
-    if (b) b.innerHTML = '<p style="font-size:12px;color:#666;">Em breve.</p>';
   });
 })();
