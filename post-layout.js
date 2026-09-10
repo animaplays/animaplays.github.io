@@ -27,7 +27,9 @@
     + '.side-post{display:flex;gap:8px;align-items:center;text-decoration:none;color:#fff;margin-bottom:8px}'
     + '.side-post img{width:44px;height:62px;object-fit:cover;border-radius:6px;background:#1a1a1a;flex-shrink:0}'
     + '.side-post span{font-size:11px;font-weight:600;line-height:1.3}'
-    + '@media(max-width:900px){.post-side{position:static}}';
+    + '@media(max-width:900px){.post-layout{grid-template-columns:1fr}.post-side{position:fixed;top:0;right:-320px;width:280px;height:100vh;z-index:200;background:#0a0a0a;border-left:1px solid #1a1a1a;transition:right .3s ease;padding:20px;max-height:none;overflow-y:auto}.post-side.open{right:0}.post-menu-btn{display:flex}.post-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:199}.post-overlay.visible{display:block}}'
+    + '.post-menu-btn{display:none;position:fixed;bottom:20px;right:20px;z-index:150;align-items:center;gap:8px;background:#e50914;border:none;border-radius:24px;color:#fff;font-size:14px;font-weight:700;padding:12px 20px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.5)}'
+    + '.post-overlay{display:none}';
   var st = document.createElement('style');
   st.textContent = css;
   document.head.appendChild(st);
@@ -48,6 +50,31 @@
     + (chips || '<p style="font-size:12px;color:#666;">—</p>') + '</div></div>'
     + '<div class="side-section"><div class="side-title">Recomendado para você</div><div id="sideRec"><p style="font-size:12px;color:#666;">Carregando...</p></div></div>'
     + '<div class="side-section"><div class="side-title">Ver também</div><div id="sidePosts"><p style="font-size:12px;color:#666;">Carregando...</p></div></div>';
+
+  var overlay = document.createElement('div');
+  overlay.className = 'post-overlay';
+  overlay.id = 'postOverlay';
+  overlay.onclick = toggleMenu;
+  document.body.appendChild(overlay);
+
+  var menuBtn = document.createElement('button');
+  menuBtn.className = 'post-menu-btn';
+  menuBtn.id = 'postMenuBtn';
+  menuBtn.textContent = '☰ Menu';
+  menuBtn.onclick = toggleMenu;
+  document.body.appendChild(menuBtn);
+
+  function toggleMenu() {
+    box.classList.toggle('open');
+    overlay.classList.toggle('visible');
+  }
+
+  box.addEventListener('click', function (e) {
+    if (e.target.closest('a')) {
+      box.classList.remove('open');
+      overlay.classList.remove('visible');
+    }
+  });
 
   function miniCard(p) {
     return '<a class="side-post" href="' + p.slug + '.html"><img src="' + esc(normImg(p.image))
