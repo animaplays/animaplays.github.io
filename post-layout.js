@@ -15,7 +15,8 @@
   var box = document.getElementById('postSide');
   if (!box) return;
 
-  var css = '.post-layout{display:grid;grid-template-columns:1fr 260px;gap:24px;max-width:1200px;margin:0 auto;padding:20px 40px 40px}'
+  var css = 'body{overflow-x:hidden}'
+    + '.post-layout{display:grid;grid-template-columns:1fr 260px;gap:24px;max-width:1200px;margin:0 auto;padding:20px 40px 40px}'
     + '.post-main{min-width:0}'
     + '.post-body{max-width:none;margin:0;padding:0}'
     + '.post-side{position:sticky;top:210px;align-self:start;display:flex;flex-direction:column;gap:16px}'
@@ -32,7 +33,7 @@
     + '.post-link{display:flex;align-items:center;gap:8px;padding:8px 12px;margin-bottom:4px;background:rgba(255,255,255,.05);border:1px solid transparent;border-radius:8px;color:#e5e5e5;text-decoration:none;font-size:13px;font-weight:600}'
     + '.post-link span{color:#e50914;font-weight:800}'
     + '.post-link:hover{border-color:#e50914;background:rgba(229,9,20,.15);color:#fff}';
-    + '@media(max-width:900px){.post-layout{grid-template-columns:1fr}.post-side{position:fixed;top:0;right:-320px;width:280px;height:100vh;z-index:200;background:#0a0a0a;border-left:1px solid #1a1a1a;transition:right .3s ease;padding:20px;max-height:none;overflow-y:auto}.post-side.open{right:0}.post-menu-btn{display:flex}.post-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:199}.post-overlay.visible{display:block}}'
+    + '@media(max-width:900px){.post-layout{grid-template-columns:1fr}.post-side{position:fixed;top:0;right:-320px;width:280px;height:100vh;z-index:200;background:#0a0a0a;border-left:1px solid #1a1a1a;transition:right .3s ease,visibility .3s;visibility:hidden;padding:20px;max-height:none;overflow-y:auto}.post-side.open{right:0;visibility:visible}.post-menu-btn{display:flex}.post-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:199}.post-overlay.visible{display:block}}'
     + '@media(max-width:768px){.post-hero{height:240px !important}.post-hero-overlay{padding:30px 20px 16px !important}.post-hero-overlay h1{font-size:24px !important}}';
     + '.post-menu-btn{display:none;position:fixed;bottom:20px;right:20px;z-index:150;align-items:center;gap:8px;background:#e50914;border:none;border-radius:24px;color:#fff;font-size:14px;font-weight:700;padding:12px 20px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.5)}'
     + '.post-overlay{display:none}';

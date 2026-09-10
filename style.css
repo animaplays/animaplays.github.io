@@ -9,6 +9,7 @@ body {
     background-color: #0a0a0a;
     color: #ffffff;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
 /* Header */
@@ -457,13 +458,14 @@ body {
     .sidebar {
         position: fixed;
         top: 0;
-        right: -300px;
+        right: -320px;
         width: 280px;
         height: 100vh;
         z-index: 200;
         background: #0a0a0a;
         border-left: 1px solid #1a1a1a;
-        transition: right 0.3s ease;
+        transition: right 0.3s ease, visibility 0.3s;
+        visibility: hidden;
         padding: 20px;
         max-height: none;
         overflow-y: auto;
@@ -471,6 +473,7 @@ body {
     
     .sidebar.open {
         right: 0;
+        visibility: visible;
     }
     
     .sidebar-overlay {
