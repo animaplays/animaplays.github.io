@@ -46,23 +46,6 @@
     </footer>
 
     <script>
-        // Lista fixa de animes do catálogo
-        const catalogAnimes = [
-            { title: "Bleach", subtitle: "T2 EP.38 • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/1736/136413.jpg", slug: "bleach", genres: ["Ação", "Sobrenatural", "Shounen"] },
-            { title: "Skeleton Knight in Another World", subtitle: "T1 EP.8 • Legendado", image: "https://cdn.myanimelist.net/images/anime/1779/110666.jpg", slug: "skeleton-knight", genres: ["Fantasia", "Isekai", "Aventura"] },
-            { title: "Black Clover", subtitle: "T1 EP.84 • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/2/88372.jpg", slug: "black-clover", genres: ["Ação", "Fantasia", "Shounen", "Magia"] },
-            { title: "My Hero Academia", subtitle: "T8 EP.6 • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/1908/135431.jpg", slug: "my-hero-academia", genres: ["Ação", "Super-heróis", "Escolar", "Shounen"] },
-            { title: "Shurato", subtitle: "T1 EP.3 • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/1269/110606.jpg", slug: "shurato", genres: ["Ação", "Fantasia", "Mecha", "Clássico"] },
-            { title: "Shangri-La Frontier", subtitle: "T1 EP.27 • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/1288/138300.jpg", slug: "shangri-la-frontier", genres: ["Ação", "Jogos", "Fantasia", "Aventura"] },
-            { title: "Demon Slayer", subtitle: "T4 EP.11 • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/1286/99889.jpg", slug: "demon-slayer", genres: ["Ação", "Sobrenatural", "Histórico", "Shounen"] },
-            { title: "Cavaleiros do Zodíaco", subtitle: "TV • Dublado & Legendado", image: "https://image.tmdb.org/t/p/w342/dx28DE7EgLy0FatOvnaUg0k9j92.jpg", slug: "cavaleiros", genres: ["Ação", "Aventura", "Fantasia", "Clássico"] },
-            { title: "Jujutsu Kaisen", subtitle: "T2 EP.23 • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/1792/138022.jpg", slug: "jujutsu-kaisen", genres: ["Ação", "Sobrenatural", "Escolar", "Shounen"] },
-            { title: "One Piece", subtitle: "T1 EP.1100 • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/1244/138851.jpg", slug: "one-piece", genres: ["Aventura", "Shounen", "Piratas", "Longa"] },
-            { title: "Attack on Titan", subtitle: "T4 Final • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/1000/110531.jpg", slug: "attack-on-titan", genres: ["Ação", "Drama", "Mistério", "Seinen"] },
-            { title: "Chainsaw Man", subtitle: "T1 EP.12 • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/1806/126216.jpg", slug: "chainsaw-man", genres: ["Ação", "Sobrenatural", "Comédia", "Seinen"] },
-            { title: "Spy x Family", subtitle: "T2 EP.12 • Dublado & Legendado", image: "https://cdn.myanimelist.net/images/anime/1441/139629.jpg", slug: "spy-x-family", genres: ["Ação", "Comédia", "Espionagem", "Família"] }
-        ];
-
         function cardHTML(anime) {
             const slug = anime.slug || anime.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
             const genres = anime.genres ? anime.genres.slice(0, 2).join(', ') : '';
@@ -201,7 +184,7 @@
         // Inicialização
         async function init() {
             const posts = await loadPosts();
-            allAnimes = [...catalogAnimes, ...posts];
+            allAnimes = posts;
             
             const genres = getAllGenres(allAnimes);
             renderGenreFilters(genres);
