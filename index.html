@@ -10,6 +10,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://animaplays.github.io/">
     <link rel="stylesheet" href="style.css?v=5">
+    <script src="views.js?v=1"></script>
 </head>
 <body>
 
@@ -222,11 +223,18 @@
             }).join('') : '<p style="font-size:12px;color:#666;">Em breve.</p>';
         }
 
-        function buildGenreRows(posts) {
+        async function buildGenreRows(posts) {
             const box = document.getElementById('genreRows');
             if (!box) return;
-            const byDate = [...posts].sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
-            let html = `<div class="genre-row"><h3 class="genre-row-title"><span class="top10-title">Top 10 da semana</span><span class="top10-sub">Em alta no site</span></h3><div class="genre-row-scroll-wrap"><button class="row-btn prev" onclick="scrollRow(this,-1)" aria-label="Anterior">‹</button><div class="genre-row-scroll">${byDate.slice(0, 10).map((a, i) => `<div class="top10-item"><span class="rank-big">${i + 1}</span>${cardHTML(a)}</div>`).join('')}</div><button class="row-btn next" onclick="scrollRow(this,1)" aria-label="Próximo">›</button></div></div>`;
+            const slugs = posts.map(function (p) { return p.slug; });
+            var views = {};
+            if (typeof ViewCounter !== 'undefined') {
+                try { views = await ViewCounter.getMultiple(slugs); } catch (e) {}
+            }
+            const byViews = [...posts].sort(function (a, b) {
+                return (views[b.slug] || 0) - (views[a.slug] || 0);
+            });
+            let html = `<div class="genre-row"><h3 class="genre-row-title"><span class="top10-title">Top 10 mais vistos</span><span class="top10-sub">Em alta no site</span></h3><div class="genre-row-scroll-wrap"><button class="row-btn prev" onclick="scrollRow(this,-1)" aria-label="Anterior">‹</button><div class="genre-row-scroll">${byViews.slice(0, 10).map((a, i) => `<div class="top10-item"><span class="rank-big">${i + 1}</span>${cardHTML(a)}</div>`).join('')}</div><button class="row-btn next" onclick="scrollRow(this,1)" aria-label="Próximo">›</button></div></div>`;
             html += getAllGenres(posts).map(g => {
                 const items = posts.filter(a => (a.genres || []).some(x => x.toLowerCase() === g.toLowerCase()));
                 if (!items.length) return '';
