@@ -57,8 +57,9 @@
     <script>
         function cardHTML(anime) {
             const slug = anime.slug || anime.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+            const href = anime.link || `posts/${slug}.html`;
             const genres = anime.genres ? anime.genres.slice(0, 2).join(', ') : '';
-            return `<a href="posts/${slug}.html" class="anime-card" data-title="${anime.title.toLowerCase()}" data-genres="${(anime.genres || []).join(' ').toLowerCase()}">
+            return `<a href="${href}" class="anime-card" data-title="${anime.title.toLowerCase()}" data-genres="${(anime.genres || []).join(' ').toLowerCase()}">
                 <div class="card-poster-wrapper">
                     <img src="${anime.image}" alt="${anime.title}" class="card-poster" loading="lazy">
                     <div class="card-overlay"><span class="card-title-overlay">${anime.title}</span></div>
@@ -191,7 +192,36 @@
 
         function renderCarousel(items) {
             const carousel = document.getElementById('carousel');
-            carousel.innerHTML = items.slice(0, 10).map(cardHTML).join('');
+            carousel.innerHTML = items.slice(0, 12).map(cardHTML).join('');
+        }
+
+        async function loadLatestEpisodes(posts) {
+            const eps = [];
+            for (const post of posts.slice(0, 6)) {
+                try {
+                    const r = await fetch(`https://raw.githubusercontent.com/animaplays/animaplays.github.io/main/posts/${post.slug}.html`);
+                    if (!r.ok) continue;
+                    const html = await r.text();
+                    const mSrc = html.match(/var EPISODES=(\[.*?\]);/s);
+                    const mTit = html.match(/var EP_TITLES=(\[.*?\]);/s);
+                    if (!mSrc) continue;
+                    const srcs = JSON.parse(mSrc[1]);
+                    let titles = [];
+                    try { titles = mTit ? JSON.parse(mTit[1]) : []; } catch { titles = []; }
+                    for (let i = srcs.length - 1, n = 0; i >= 0 && eps.length < 12 && n < 4; i--, n++) {
+                        if (!srcs[i]) continue;
+                        eps.push({
+                            title: titles[i] || (`Episódio ${i + 1}`),
+                            subtitle: post.title,
+                            image: post.image,
+                            genres: post.genres,
+                            slug: post.slug,
+                            link: `posts/${post.slug}.html?ep=${i + 1}`
+                        });
+                    }
+                } catch { /* ignora post com falha */ }
+            }
+            return eps;
         }
 
         function renderGrid(items, append = false) {
@@ -235,8 +265,9 @@
             renderGenreFilters(genres);
             
             filteredAnimes = allAnimes;
-            renderCarousel(allAnimes);
             renderGrid(allAnimes);
+            const latest = await loadLatestEpisodes(posts);
+            renderCarousel(latest.length ? latest : allAnimes);
         }
 
         init();
