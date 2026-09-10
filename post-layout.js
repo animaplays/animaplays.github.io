@@ -98,39 +98,4 @@
     var a = document.getElementById('sideRec');
     if (a) a.innerHTML = '<p style="font-size:12px;color:#666;">Em breve.</p>';
   });
-
-  /* Atualização automática */
-  (function () {
-    function seen() { try { return localStorage.getItem('animaplay_seen_commit'); } catch (e) { return null; } }
-    function store(v) { try { localStorage.setItem('animaplay_seen_commit', v); } catch (e) {} }
-    function mediaPlaying() {
-      try {
-        var vs = document.querySelectorAll('video');
-        for (var i = 0; i < vs.length; i++) { if (!vs[i].paused && !vs[i].ended) return true; }
-      } catch (e) {}
-      return false;
-    }
-    function hidden() {
-      try { return document.visibilityState === 'hidden'; } catch (e) { return false; }
-    }
-    function check() {
-      fetch('https://api.github.com/repos/animaplays/animaplays.github.io/commits?per_page=1').then(function (r) {
-        if (!r.ok) throw 0;
-        return r.json();
-      }).then(function (list) {
-        var sha = (list && list[0] && list[0].sha) || '';
-        if (!sha) return;
-        var s = seen();
-        if (!s) { store(sha); return; }
-        if (s === sha) return;
-        if (hidden() && !mediaPlaying()) {
-          store(sha);
-          location.reload();
-        }
-      }).catch(function () {});
-    }
-    setTimeout(check, 8000);
-    setInterval(check, 60000);
-    document.addEventListener('visibilitychange', function () { if (hidden()) check(); });
-  })();
 })();

@@ -1,5 +1,5 @@
 /* Anima Play — atualização totalmente automática, sem botão e sem limpar cache.
-   A cada 60s compara o último commit publicado com o último visto neste navegador.
+   A cada 5 minutos compara o último commit publicado com o último visto neste navegador.
    Se mudou, recarrega sozinho SOMENTE com a aba oculta e nenhum vídeo tocando.
    Nunca recarrega o editor (/admin) para não perder postagem em edição. */
 (function () {
@@ -34,6 +34,6 @@
     }).catch(function () {});
   }
   setTimeout(check, 8000);
-  setInterval(check, 60000);
+  setInterval(check, 300000);
   document.addEventListener('visibilitychange', function () { if (hidden()) check(); });
 })();

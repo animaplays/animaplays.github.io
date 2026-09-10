@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anima Play - Catálogo de Animes</title>
-    <link rel="stylesheet" href="style.css?v=4">
+    <meta name="description" content="Anima Play - Assista seus animes favoritos online. Catálogo completo com Dragon Ball Z, Naruto Clássico e mais.">
+    <meta property="og:title" content="Anima Play - Catálogo de Animes">
+    <meta property="og:description" content="Assista seus animes favoritos online. Catálogo completo com Dragon Ball Z, Naruto Clássico e mais.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://animaplays.github.io/">
+    <link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
 
@@ -15,9 +20,9 @@
         </div>
         <nav>
             <ul class="nav-links">
-                <li><a href="#">Início</a></li>
-                <li><a href="#">Catálogo</a></li>
-                <li><a href="#">Lançamentos</a></li>
+                <li><a href="/" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">Início</a></li>
+                <li><a href="#catalogo">Catálogo</a></li>
+                <li><a href="#catalogo" onclick="document.querySelector('.genre-chip.active')?.click();return false;">Lançamentos</a></li>
             </ul>
         </nav>
     </header>
@@ -57,7 +62,11 @@
             <span class="results-count" id="resultsCount"></span>
             <button class="mobile-filter-toggle" id="filterToggle" onclick="toggleSidebar()">☰ Filtros</button>
         </div>
-        <div class="anime-grid" id="animeGrid"></div>
+        <div class="anime-grid" id="animeGrid">
+            <div id="loadingState" style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#888;">
+                <div style="font-size:14px;">Carregando catálogo...</div>
+            </div>
+        </div>
         <button class="load-more-btn" id="loadMoreBtn" style="display:none;">Carregar mais</button>
     </section>
 
@@ -68,21 +77,23 @@
     </footer>
 
     <script>
+        function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
         function cardHTML(anime, rank) {
             const slug = anime.slug || anime.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
             const href = anime.link || `posts/${slug}.html`;
             const genres = anime.genres ? anime.genres.slice(0, 2).join(', ') : '';
-            return `<a href="${href}" class="anime-card" data-title="${anime.title.toLowerCase()}" data-genres="${(anime.genres || []).join(' ').toLowerCase()}">
+            return `<a href="${esc(href)}" class="anime-card" data-title="${esc(anime.title.toLowerCase())}" data-genres="${esc((anime.genres || []).join(' ').toLowerCase())}">
                 <div class="card-poster-wrapper">
-                    <img src="${anime.image}" alt="${anime.title}" class="card-poster" loading="lazy">
+                    <img src="${esc(anime.image)}" alt="${esc(anime.title)}" class="card-poster" loading="lazy">
                     ${anime.isNew ? `<span class="card-badge">NOVO</span>` : ''}
                     ${rank ? `<span class="rank-badge">${rank}</span>` : ''}
-                    <div class="card-overlay"><span class="card-title-overlay">${anime.title}</span></div>
+                    <div class="card-overlay"><span class="card-title-overlay">${esc(anime.title)}</span></div>
                 </div>
                 <div class="card-info">
-                    <h3 class="card-title">${anime.title}</h3>
-                    <p class="card-subtitle">${anime.subtitle || ''}</p>
-                    ${genres ? `<span class="card-genres">${genres}</span>` : ''}
+                    <h3 class="card-title">${esc(anime.title)}</h3>
+                    <p class="card-subtitle">${esc(anime.subtitle || '')}</p>
+                    ${genres ? `<span class="card-genres">${esc(genres)}</span>` : ''}
                 </div>
             </a>`;
         }
@@ -123,38 +134,15 @@
                             image: normImg(p.image),
                             subtitle: p.subtitle || 'Nova Postagem',
                             genres: p.genres && p.genres.length ? p.genres : ['Nova'],
+                            episodes: Array.isArray(p.episodes) ? p.episodes : [],
                             updatedAt,
                             isNew
                             };
                         }).sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
                     }
                 }
-            } catch { /* usa a API abaixo como reserva */ };
-            try {
-                const res = await fetch('https://api.github.com/repos/animaplays/animaplays.github.io/contents/posts');
-                if (!res.ok) return [];
-                const files = (await res.json())
-                    .filter(f => f.name.endsWith('.html'))
-                    .sort((a, b) => b.name.localeCompare(a.name));
-                const posts = await Promise.all(files.map(async (f) => {
-                    const slug = f.name.replace('.html', '');
-                    const pretty = slug.replace(/-/g, ' ');
-                    try {
-                        const html = await fetchPostHTML(slug);
-                        const doc = new DOMParser().parseFromString(html, 'text/html');
-                        const meta = (n) => doc.querySelector(`meta[name="${n}"]`)?.content?.trim() || '';
-                        const title = meta('anima-title') || doc.querySelector('.post-hero-overlay h1')?.textContent?.trim() || doc.querySelector('h1')?.textContent?.trim() || pretty;
-                        let card = meta('anima-card') || doc.querySelector('.post-hero img')?.getAttribute('src') || FALLBACK_IMG;
-                        if (card.startsWith('../')) card = card.replace(/^\.\.\//, '');
-                        const subtitle = meta('anima-subtitle') || 'Nova Postagem';
-                        const genres = meta('anima-genres') ? meta('anima-genres').split(',').map(s => s.trim()).filter(Boolean) : ['Nova'];
-                        return { title, slug, image: card, subtitle, genres };
-                    } catch {
-                        return { title: pretty, slug, image: FALLBACK_IMG, subtitle: 'Nova Postagem', genres: ['Nova'] };
-                    }
-                }));
-                return posts;
-            } catch { return []; }
+            } catch { /* ignora */ }
+            return [];
         }
 
         function getAllGenres(items) {
@@ -218,7 +206,7 @@
             if (!box) return;
             const items = [...allAnimes].sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
             box.innerHTML = items.length ? items.map(a => {
-                return `<a class="post-link" href="posts/${a.slug}.html"><span>›</span> ${a.title}</a>`;
+                return `<a class="post-link" href="posts/${esc(a.slug)}.html"><span>›</span> ${esc(a.title)}</a>`;
             }).join('') : '<p style="font-size:12px;color:#666;">Em breve.</p>';
         }
 
@@ -230,7 +218,7 @@
             if (active !== 'all') items = items.filter(a => (a.genres || []).some(g => g.toLowerCase() === active.toLowerCase()));
             items = items.slice(0, 4);
             box.innerHTML = items.length ? items.map(a => {
-                return `<a class="side-post" href="posts/${a.slug}.html"><img src="${a.image}" alt="" loading="lazy"><span>${a.title}</span></a>`;
+                return `<a class="side-post" href="posts/${esc(a.slug)}.html"><img src="${esc(a.image)}" alt="" loading="lazy"><span>${esc(a.title)}</span></a>`;
             }).join('') : '<p style="font-size:12px;color:#666;">Em breve.</p>';
         }
 
@@ -252,48 +240,26 @@
             carousel.innerHTML = items.slice(0, 18).map(a => cardHTML(a)).join('');
         }
 
-        async function fetchPostHTML(slug) {
-            try {
-                const r = await fetch(`https://api.github.com/repos/animaplays/animaplays.github.io/contents/posts/${slug}.html`);
-                if (r.ok) {
-                    const j = await r.json();
-                    const b64 = (j.content || '').replace(/\n/g, '');
-                    return decodeURIComponent(escape(atob(b64)));
-                }
-            } catch { /* cai para o raw abaixo */ }
-            const r = await fetch(`https://raw.githubusercontent.com/animaplays/animaplays.github.io/main/posts/${slug}.html?t=${Date.now()}`);
-            if (!r.ok) throw new Error('fetch fail');
-            return await r.text();
-        }
-
-        async function loadLatestEpisodes(posts, perPost = 6, total = 18, maxPosts = 12) {
+        function loadLatestEpisodes(posts, perPost = 6, total = 18) {
             const perPostLists = [];
-            for (const post of posts.slice(0, maxPosts)) {
-                try {
-                    const html = await fetchPostHTML(post.slug);
-                    const mSrc = html.match(/var EPISODES=(\[.*?\]);/s);
-                    const mTit = html.match(/var EP_TITLES=(\[.*?\]);/s);
-                    if (!mSrc) continue;
-                    const srcs = JSON.parse(mSrc[1]);
-                    let titles = [];
-                    try { titles = mTit ? JSON.parse(mTit[1]) : []; } catch { titles = []; }
-                    const list = [];
-                    for (let i = srcs.length - 1, n = 0; i >= 0 && n < perPost; i--, n++) {
-                        if (!srcs[i]) continue;
-                        list.push({
-                            title: titles[i] || (`Episódio ${i + 1}`),
-                            subtitle: post.title,
-                            image: post.image,
-                            genres: post.genres,
-                            isNew: post.isNew,
-                            slug: post.slug,
-                            link: `posts/${post.slug}.html?ep=${i + 1}`
-                        });
-                    }
-                    if (list.length) perPostLists.push(list);
-                } catch { /* ignora post com falha */ }
+            for (const post of posts) {
+                const srcs = post.episodes || [];
+                if (!srcs.length) continue;
+                const list = [];
+                for (let i = srcs.length - 1, n = 0; i >= 0 && n < perPost; i--, n++) {
+                    if (!srcs[i]) continue;
+                    list.push({
+                        title: `Episódio ${i + 1}`,
+                        subtitle: post.title,
+                        image: post.image,
+                        genres: post.genres,
+                        isNew: post.isNew,
+                        slug: post.slug,
+                        link: `posts/${post.slug}.html?ep=${i + 1}`
+                    });
+                }
+                if (list.length) perPostLists.push(list);
             }
-            // Intercala: o mais novo de cada anime primeiro, depois os seguintes
             const eps = [];
             for (let round = 0; eps.length < total; round++) {
                 let added = false;
@@ -307,10 +273,16 @@
 
         function renderGrid(items, append = false) {
             const grid = document.getElementById('animeGrid');
+            const loading = document.getElementById('loadingState');
+            if (loading) loading.remove();
             const toShow = items.slice(displayedCount, displayedCount + ITEMS_PER_LOAD);
             
             if (!append) {
                 grid.innerHTML = '';
+            }
+            
+            if (!toShow.length && !append && !items.length) {
+                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#888;"><div style="font-size:14px;">Nenhum anime encontrado.</div></div>';
             }
             
             toShow.forEach(anime => {
@@ -415,14 +387,14 @@
                     if (cat) cat.scrollIntoView();
                 }
             } catch { /* ignora */ }
-            const latest = await loadLatestEpisodes(allAnimes);
+            const latest = loadLatestEpisodes(allAnimes);
             renderCarousel(latest.length ? latest : allAnimes);
             startCarouselAuto();
         }
 
         init();
     </script>
-    <script src="update-check.js?v=4"></script>
+    <script src="update-check.js?v=5"></script>
 
 </body>
 </html>

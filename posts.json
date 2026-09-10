@@ -10,6 +10,9 @@
       "Clássico"
     ],
     "author": "kingveio",
+    "episodes": [
+      "https://archive.org/download/naruto-classico-dublado/Naruto%20Cl%C3%A1ssico%20-%20Epis%C3%B3dio%2001.mp4"
+    ],
     "createdAt": "2026-09-10T04:27:15.754Z",
     "updatedAt": "2026-09-10T07:19:47.793Z"
   },
@@ -24,6 +27,15 @@
       "Clássico"
     ],
     "author": "kingveio",
+    "episodes": [
+      "https://archive.org/download/1989-dragon-ball-z-s-01/%5B1989%5D%20Dragon%20Ball%20Z%20S01%20E01.mp4",
+      "https://archive.org/download/1989-dragon-ball-z-s-01/%5B1989%5D%20Dragon%20Ball%20Z%20S01%20E02.mp4",
+      "https://archive.org/download/1989-dragon-ball-z-s-01/%5B1989%5D%20Dragon%20Ball%20Z%20S01%20E03.mp4",
+      "https://archive.org/download/1989-dragon-ball-z-s-01/%5B1989%5D%20Dragon%20Ball%20Z%20S01%20E04.mp4",
+      "https://archive.org/download/1989-dragon-ball-z-s-01/%5B1989%5D%20Dragon%20Ball%20Z%20S01%20E05.mp4",
+      "https://archive.org/download/1989-dragon-ball-z-s-01/%5B1989%5D%20Dragon%20Ball%20Z%20S01%20E06.mp4",
+      "https://archive.org/download/1989-dragon-ball-z-s-01/%5B1989%5D%20Dragon%20Ball%20Z%20S01%20E07.mp4"
+    ],
     "createdAt": "2026-09-10T03:22:44.208Z",
     "updatedAt": "2026-09-10T07:19:31.562Z"
   }
