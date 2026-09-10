@@ -1,5 +1,18 @@
 [
   {
+    "slug": "solo-leveling",
+    "title": "Solo Leveling",
+    "image": "../img/solo-leveling-1789022561845-solo-leveling-card.jpg",
+    "subtitle": "Solo Leveling - Episódio 1 - Já Estou Acostumado",
+    "genres": [
+      "Ação",
+      "Dublado"
+    ],
+    "author": "kingveio",
+    "createdAt": "2026-09-10T06:46:14.285Z",
+    "updatedAt": "2026-09-10T07:20:00.240Z"
+  },
+  {
     "slug": "narutoclassico",
     "title": "Naruto Clássico",
     "image": "../img/narutoclassico-1789014263512-naruto-classico-card.jpg",
@@ -26,19 +39,5 @@
     "author": "kingveio",
     "createdAt": "2026-09-10T03:22:44.208Z",
     "updatedAt": "2026-09-10T07:19:31.562Z"
-  },
-  {
-    "slug": "solo-leveling",
-    "title": "Solo Leveling",
-    "image": "../img/solo-leveling-1789022561845-solo-leveling-card.jpg",
-    "subtitle": "Solo Leveling - Episódio 1 - Já Estou Acostumado",
-    "genres": [
-      "Ação",
-      "Dublado",
-      "Solo Leveling"
-    ],
-    "author": "kingveio",
-    "createdAt": "2026-09-10T06:46:14.285Z",
-    "updatedAt": "2026-09-10T06:48:26.048Z"
   }
 ]
