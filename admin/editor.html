@@ -218,7 +218,7 @@
 
         <div class="preview-panel">
             <div class="preview-header"><span><span class="preview-label-dot"></span>Prévia ao vivo</span></div>
-            <iframe class="preview-frame" id="previewFrame" srcdoc="about:blank"></iframe>
+            <iframe class="preview-frame" id="previewFrame"></iframe>
         </div>
     </div>
 
@@ -403,7 +403,11 @@
             const d = getFormData();
             const hint = document.getElementById('videoTypeHint');
             if (hint) hint.textContent = 'Detectado: ' + detectVideoType(d.defaultVideo);
-            document.getElementById('previewFrame').src = URL.createObjectURL(new Blob([buildHTML(d)], { type: 'text/html' }));
+            try {
+                document.getElementById('previewFrame').srcdoc = buildHTML(d);
+            } catch(e) {
+                document.getElementById('previewFrame').srcdoc = '<pre style="color:red;padding:20px;">Erro na prévia: ' + e.message + '</pre>';
+            }
         }
         function extractSrc(input) {
             if (!input) return '';
