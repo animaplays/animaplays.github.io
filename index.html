@@ -75,7 +75,6 @@
 
         // Estado global
         let allAnimes = [];
-        let allEpisodes = [];
         let filteredAnimes = [];
         let displayedCount = 0;
         const ITEMS_PER_LOAD = 12;
@@ -176,7 +175,7 @@
             const searchTerm = searchInput.value.toLowerCase().trim();
             const activeGenre = document.querySelector('.genre-chip.active')?.dataset.genre || 'all';
 
-            filteredAnimes = allEpisodes.filter(anime => {
+            filteredAnimes = allAnimes.filter(anime => {
                 const matchesSearch = !searchTerm || anime.title.toLowerCase().includes(searchTerm) || (anime.subtitle || '').toLowerCase().includes(searchTerm);
                 const matchesGenre = activeGenre === 'all' || (anime.genres || []).some(g => g.toLowerCase() === activeGenre.toLowerCase());
                 return matchesSearch && matchesGenre;
@@ -191,7 +190,7 @@
         function updateResultsCount() {
             const total = filteredAnimes.length;
             const showing = Math.min(displayedCount, total);
-            resultsCount.textContent = `${showing} de ${total} episódios`;
+            resultsCount.textContent = `${showing} de ${total} animes`;
         }
 
         function updateLoadMoreVisibility() {
@@ -231,10 +230,6 @@
                 } catch { /* ignora post com falha */ }
             }
             return eps;
-        }
-
-        async function loadAllEpisodes(posts) {
-            return loadLatestEpisodes(posts, 1000000, 1000000, 1000000);
         }
 
         function renderGrid(items, append = false) {
@@ -277,12 +272,10 @@
             const genres = getAllGenres(allAnimes);
             renderGenreFilters(genres);
             
-            const episodes = await loadAllEpisodes(posts);
-            allEpisodes = episodes.length ? episodes : allAnimes;
-            filteredAnimes = allEpisodes;
+            filteredAnimes = allAnimes;
             renderGrid(filteredAnimes);
             const latest = await loadLatestEpisodes(posts);
-            renderCarousel(latest.length ? latest : filteredAnimes);
+            renderCarousel(latest.length ? latest : allAnimes);
         }
 
         init();
