@@ -33,6 +33,10 @@
         </section>
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-section">
+                <h3 class="sidebar-title">Animes</h3>
+                <div id="postLinks"></div>
+            </div>
+            <div class="sidebar-section">
                 <h3 class="sidebar-title">Gêneros</h3>
                 <div class="genre-filters" id="genreFilters" aria-label="Filtrar por gênero"></div>
             </div>
@@ -204,6 +208,15 @@
 
         function updateLoadMoreVisibility() {
             loadMoreBtn.style.display = displayedCount < filteredAnimes.length ? 'block' : 'none';
+        }
+
+        function renderPostLinks() {
+            const box = document.getElementById('postLinks');
+            if (!box) return;
+            const items = [...allAnimes].sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+            box.innerHTML = items.length ? items.map(a => {
+                return `<a class="post-link" href="posts/${a.slug}.html"><span>›</span> ${a.title}</a>`;
+            }).join('') : '<p style="font-size:12px;color:#666;">Em breve.</p>';
         }
 
         function renderRec() {
@@ -390,6 +403,7 @@
             
             filteredAnimes = allAnimes;
             applyFilters();
+            renderPostLinks();
             buildGenreRows(allAnimes);
             const latest = await loadLatestEpisodes(allAnimes);
             renderCarousel(latest.length ? latest : allAnimes);

@@ -29,6 +29,9 @@
     + '.side-post{display:flex;gap:8px;align-items:center;text-decoration:none;color:#fff;margin-bottom:8px}'
     + '.side-post img{width:44px;height:62px;object-fit:cover;border-radius:6px;background:#1a1a1a;flex-shrink:0}'
     + '.side-post span{font-size:11px;font-weight:600;line-height:1.3}'
+    + '.post-link{display:flex;align-items:center;gap:8px;padding:8px 12px;margin-bottom:4px;background:rgba(255,255,255,.05);border:1px solid transparent;border-radius:8px;color:#e5e5e5;text-decoration:none;font-size:13px;font-weight:600}'
+    + '.post-link span{color:#e50914;font-weight:800}'
+    + '.post-link:hover{border-color:#e50914;background:rgba(229,9,20,.15);color:#fff}';
     + '@media(max-width:900px){.post-layout{grid-template-columns:1fr}.post-side{position:fixed;top:0;right:-320px;width:280px;height:100vh;z-index:200;background:#0a0a0a;border-left:1px solid #1a1a1a;transition:right .3s ease;padding:20px;max-height:none;overflow-y:auto}.post-side.open{right:0}.post-menu-btn{display:flex}.post-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:199}.post-overlay.visible{display:block}}'
     + '.post-menu-btn{display:none;position:fixed;bottom:20px;right:20px;z-index:150;align-items:center;gap:8px;background:#e50914;border:none;border-radius:24px;color:#fff;font-size:14px;font-weight:700;padding:12px 20px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.5)}'
     + '.post-overlay{display:none}';
@@ -48,6 +51,7 @@
 
   box.innerHTML =
     '<div class="side-section"><div class="side-title">Navegação</div><a class="side-link" href="/">← Início</a></div>'
+    + '<div class="side-section"><div class="side-title">Animes</div><div id="sideAnimes"><p style="font-size:12px;color:#666;">Carregando...</p></div></div>'
     + '<div class="side-section"><div class="side-title">Gêneros</div><div class="side-chips">'
     + (chips || '<p style="font-size:12px;color:#666;">—</p>') + '</div></div>'
     + '<div class="side-section"><div class="side-title">Recomendado para você</div><div id="sideRec"><p style="font-size:12px;color:#666;">Carregando...</p></div></div>';
@@ -99,6 +103,16 @@
         .localeCompare(String(a.p.updatedAt || a.p.createdAt || ''));
     });
     var rec = scored.slice(0, 4).map(function (x) { return x.p; });
+    var boxA = document.getElementById('sideAnimes');
+    if (boxA) {
+      var ordered = list.slice().sort(function (a, b) {
+        return String(b.updatedAt || b.createdAt || '').localeCompare(String(a.updatedAt || a.createdAt || ''));
+      });
+      boxA.innerHTML = ordered.length ? ordered.map(function (p) {
+        var cur = p.slug === slug ? ' style="border-color:#e50914;"' : '';
+        return '<a class="post-link" href="' + p.slug + '.html"' + cur + '><span>›</span> ' + esc(p.title || p.slug) + '</a>';
+      }).join('') : '<p style="font-size:12px;color:#666;">Em breve.</p>';
+    }
     var boxR = document.getElementById('sideRec');
     if (boxR) boxR.innerHTML = rec.length
       ? rec.map(miniCard).join('')
