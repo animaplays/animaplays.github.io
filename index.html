@@ -36,8 +36,14 @@
                 <h3 class="sidebar-title">Gêneros</h3>
                 <div class="genre-filters" id="genreFilters" aria-label="Filtrar por gênero"></div>
             </div>
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Recomendado para você</h3>
+                <div id="sideRec"></div>
+            </div>
         </aside>
     </div>
+
+    <section class="genre-rows" id="genreRows" aria-label="Categorias"></section>
 
     <section class="grid-section">
         <div class="section-header">
@@ -56,7 +62,7 @@
     </footer>
 
     <script>
-        function cardHTML(anime) {
+        function cardHTML(anime, rank) {
             const slug = anime.slug || anime.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
             const href = anime.link || `posts/${slug}.html`;
             const genres = anime.genres ? anime.genres.slice(0, 2).join(', ') : '';
@@ -64,6 +70,7 @@
                 <div class="card-poster-wrapper">
                     <img src="${anime.image}" alt="${anime.title}" class="card-poster" loading="lazy">
                     ${anime.isNew ? `<span class="card-badge">NOVO</span>` : ''}
+                    ${rank ? `<span class="rank-badge">${rank}</span>` : ''}
                     <div class="card-overlay"><span class="card-title-overlay">${anime.title}</span></div>
                 </div>
                 <div class="card-info">
@@ -186,6 +193,7 @@
             renderGrid(filteredAnimes);
             updateResultsCount();
             updateLoadMoreVisibility();
+            renderRec();
         }
 
         function updateResultsCount() {
@@ -196,6 +204,31 @@
 
         function updateLoadMoreVisibility() {
             loadMoreBtn.style.display = displayedCount < filteredAnimes.length ? 'block' : 'none';
+        }
+
+        function renderRec() {
+            const box = document.getElementById('sideRec');
+            if (!box) return;
+            const active = document.querySelector('.genre-chip.active')?.dataset.genre || 'all';
+            let items = [...allAnimes].sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+            if (active !== 'all') items = items.filter(a => (a.genres || []).some(g => g.toLowerCase() === active.toLowerCase()));
+            items = items.slice(0, 4);
+            box.innerHTML = items.length ? items.map(a => {
+                return `<a class="side-post" href="posts/${a.slug}.html"><img src="${a.image}" alt="" loading="lazy"><span>${a.title}</span></a>`;
+            }).join('') : '<p style="font-size:12px;color:#666;">Em breve.</p>';
+        }
+
+        function buildGenreRows(posts) {
+            const box = document.getElementById('genreRows');
+            if (!box) return;
+            const byDate = [...posts].sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+            let html = `<div class="genre-row"><h3 class="genre-row-title"><span class="trophy">🏆</span> Top 10</h3><div class="genre-row-scroll">${byDate.slice(0, 10).map((a, i) => cardHTML(a, i + 1)).join('')}</div></div>`;
+            html += getAllGenres(posts).map(g => {
+                const items = posts.filter(a => (a.genres || []).some(x => x.toLowerCase() === g.toLowerCase()));
+                if (!items.length) return '';
+                return `<div class="genre-row"><h3 class="genre-row-title">${g}</h3><div class="genre-row-scroll">${items.slice(0, 12).map(a => cardHTML(a)).join('')}</div></div>`;
+            }).join('');
+            box.innerHTML = html;
         }
 
         function renderCarousel(items) {
@@ -352,6 +385,7 @@
             
             filteredAnimes = allAnimes;
             applyFilters();
+            buildGenreRows(allAnimes);
             const latest = await loadLatestEpisodes(allAnimes);
             renderCarousel(latest.length ? latest : allAnimes);
             startCarouselAuto();

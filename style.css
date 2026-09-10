@@ -314,6 +314,9 @@ body {
     top: 180px;
     max-height: calc(100vh - 200px);
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .sidebar-section {
@@ -524,6 +527,89 @@ body {
     .top-layout .carousel .anime-card {
         flex-basis: calc((100% - 12px) / 2);
     }
+}
+
+.rank-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    min-width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.75);
+    border: 1px solid #e50914;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 800;
+    padding: 0 6px;
+    border-radius: 6px;
+    z-index: 2;
+}
+
+/* Fileiras por categoria + Top 10 */
+.genre-rows {
+    padding: 10px 40px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.genre-row-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #e5e5e5;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.genre-row-title .trophy {
+    font-size: 18px;
+}
+
+.genre-row-scroll {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 4px 0 12px;
+}
+
+.genre-row-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.genre-row-scroll .anime-card {
+    flex: 0 0 160px;
+    width: 160px;
+}
+
+.side-post {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    text-decoration: none;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.side-post img {
+    width: 56px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    background: #1a1a1a;
+    flex-shrink: 0;
+}
+
+.side-post span {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.3;
 }
 
 /* Footer */
