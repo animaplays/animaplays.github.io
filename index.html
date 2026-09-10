@@ -218,7 +218,7 @@
         }
 
         async function loadLatestEpisodes(posts, perPost = 6, total = 18, maxPosts = 12) {
-            const eps = [];
+            const perPostLists = [];
             for (const post of posts.slice(0, maxPosts)) {
                 try {
                     const html = await fetchPostHTML(post.slug);
@@ -228,9 +228,10 @@
                     const srcs = JSON.parse(mSrc[1]);
                     let titles = [];
                     try { titles = mTit ? JSON.parse(mTit[1]) : []; } catch { titles = []; }
-                    for (let i = srcs.length - 1, n = 0; i >= 0 && eps.length < total && n < perPost; i--, n++) {
+                    const list = [];
+                    for (let i = srcs.length - 1, n = 0; i >= 0 && n < perPost; i--, n++) {
                         if (!srcs[i]) continue;
-                        eps.push({
+                        list.push({
                             title: titles[i] || (`Episódio ${i + 1}`),
                             subtitle: post.title,
                             image: post.image,
@@ -240,7 +241,17 @@
                             link: `posts/${post.slug}.html?ep=${i + 1}`
                         });
                     }
+                    if (list.length) perPostLists.push(list);
                 } catch { /* ignora post com falha */ }
+            }
+            // Intercala: o mais novo de cada anime primeiro, depois os seguintes
+            const eps = [];
+            for (let round = 0; eps.length < total; round++) {
+                let added = false;
+                for (const list of perPostLists) {
+                    if (round < list.length && eps.length < total) { eps.push(list[round]); added = true; }
+                }
+                if (!added) break;
             }
             return eps;
         }
