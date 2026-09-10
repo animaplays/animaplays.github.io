@@ -257,7 +257,7 @@ body {
 
 .grid-layout {
     display: grid;
-    grid-template-columns: 240px 1fr;
+    grid-template-columns: 1fr 240px;
     gap: 24px;
     align-items: start;
 }
@@ -267,7 +267,8 @@ body {
     top: 100px;
     max-height: calc(100vh - 120px);
     overflow-y: auto;
-    padding-right: 16px;
+    padding-left: 16px;
+    border-left: 1px solid rgba(255,255,255,0.08);
 }
 
 .sidebar-section {
@@ -395,20 +396,20 @@ body {
     .sidebar {
         position: fixed;
         top: 0;
-        left: -300px;
+        right: -300px;
         width: 280px;
         height: 100vh;
         z-index: 200;
         background: #0a0a0a;
-        border-right: 1px solid #1a1a1a;
-        transition: left 0.3s ease;
+        border-left: 1px solid #1a1a1a;
+        transition: right 0.3s ease;
         padding: 20px;
         max-height: none;
         overflow-y: auto;
     }
     
     .sidebar.open {
-        left: 0;
+        right: 0;
     }
     
     .sidebar-overlay {
