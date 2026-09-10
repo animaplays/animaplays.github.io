@@ -24,7 +24,7 @@
 
     <div class="top-layout">
         <section class="carousel-section">
-            <h2 class="section-title">Últimas Postagens</h2>
+            <h2 class="section-title">Últimos Episódios</h2>
             <div class="carousel-wrapper">
                 <button class="carousel-btn prev" onclick="scrollCarousel(-1)" aria-label="Anterior">&#8249;</button>
                 <div class="carousel" id="carousel"></div>
@@ -202,7 +202,37 @@
 
         function renderCarousel(items) {
             const carousel = document.getElementById('carousel');
-            carousel.innerHTML = items.slice(0, 12).map(cardHTML).join('');
+            carousel.innerHTML = items.slice(0, 18).map(cardHTML).join('');
+        }
+
+        async function loadLatestEpisodes(posts, perPost = 6, total = 18, maxPosts = 12) {
+            const eps = [];
+            for (const post of posts.slice(0, maxPosts)) {
+                try {
+                    const r = await fetch(`https://raw.githubusercontent.com/animaplays/animaplays.github.io/main/posts/${post.slug}.html`);
+                    if (!r.ok) continue;
+                    const html = await r.text();
+                    const mSrc = html.match(/var EPISODES=(\[.*?\]);/s);
+                    const mTit = html.match(/var EP_TITLES=(\[.*?\]);/s);
+                    if (!mSrc) continue;
+                    const srcs = JSON.parse(mSrc[1]);
+                    let titles = [];
+                    try { titles = mTit ? JSON.parse(mTit[1]) : []; } catch { titles = []; }
+                    for (let i = srcs.length - 1, n = 0; i >= 0 && eps.length < total && n < perPost; i--, n++) {
+                        if (!srcs[i]) continue;
+                        eps.push({
+                            title: titles[i] || (`Episódio ${i + 1}`),
+                            subtitle: post.title,
+                            image: post.image,
+                            genres: post.genres,
+                            isNew: post.isNew,
+                            slug: post.slug,
+                            link: `posts/${post.slug}.html?ep=${i + 1}`
+                        });
+                    }
+                } catch { /* ignora post com falha */ }
+            }
+            return eps;
         }
 
         function renderGrid(items, append = false) {
@@ -301,7 +331,8 @@
             
             filteredAnimes = allAnimes;
             applyFilters();
-            renderCarousel(allAnimes);
+            const latest = await loadLatestEpisodes(allAnimes);
+            renderCarousel(latest.length ? latest : allAnimes);
             startCarouselAuto();
         }
 
