@@ -241,14 +241,15 @@
         }
 
         function loadLatestEpisodes(posts, perPost = 6, total = 18) {
-            const perPostLists = [];
-            for (const post of posts) {
+            const sorted = [...posts].sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+            const eps = [];
+            for (const post of sorted) {
+                if (eps.length >= total) break;
                 const srcs = post.episodes || [];
                 if (!srcs.length) continue;
-                const list = [];
-                for (let i = srcs.length - 1, n = 0; i >= 0 && n < perPost; i--, n++) {
+                for (let i = srcs.length - 1; i >= 0 && eps.length < total; i--) {
                     if (!srcs[i]) continue;
-                    list.push({
+                    eps.push({
                         title: `Episódio ${i + 1}`,
                         subtitle: post.title,
                         image: post.image,
@@ -258,15 +259,6 @@
                         link: `posts/${post.slug}.html?ep=${i + 1}`
                     });
                 }
-                if (list.length) perPostLists.push(list);
-            }
-            const eps = [];
-            for (let round = 0; eps.length < total; round++) {
-                let added = false;
-                for (const list of perPostLists) {
-                    if (round < list.length && eps.length < total) { eps.push(list[round]); added = true; }
-                }
-                if (!added) break;
             }
             return eps;
         }
