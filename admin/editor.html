@@ -104,6 +104,21 @@
         </div>
     </div>
 
+    <noscript><p style="text-align:center;color:#f87171;padding:20px;">Ative o JavaScript para usar o editor.</p></noscript>
+    <script>
+    window.addEventListener('error', function (e) {
+        try {
+            var login = document.getElementById('loginPage');
+            var el = document.getElementById('loginError');
+            if (el && login && login.className.indexOf('hidden') === -1) {
+                el.style.display = 'block';
+                el.style.color = '#f87171';
+                el.textContent = 'Erro na página: ' + (e.message || 'falha de script') + ' — atualize o navegador ou tente no Chrome.';
+            }
+        } catch (err) {}
+    });
+    </script>
+
     <div id="editorPage" class="editor-layout hidden">
         <div class="form-panel">
             <h2>Nova Postagem</h2>
@@ -578,11 +593,13 @@
                     html = await r.text();
                 }
                 const doc = new DOMParser().parseFromString(html, 'text/html');
-                const meta = (n) => doc.querySelector(`meta[name="${n}"]`)?.content || '';
-                document.getElementById('title').value = meta('anima-title') || doc.querySelector('.post-hero-overlay h1')?.textContent?.trim() || doc.querySelector('h1')?.textContent?.trim() || '';
+                const meta = (n) => { var m = doc.querySelector('meta[name="' + n + '"]'); return m ? (m.getAttribute('content') || '') : ''; };
+                function textOf(sel) { var el = doc.querySelector(sel); return el ? ((el.textContent || '').trim()) : ''; }
+                document.getElementById('title').value = meta('anima-title') || textOf('.post-hero-overlay h1') || textOf('h1') || '';
                 document.getElementById('slug').value = slug;
                 document.getElementById('slug').dataset.author = meta('anima-author') || '';
-                const heroImg = doc.querySelector('.post-hero img')?.getAttribute('src') || '';
+                var heroEl = doc.querySelector('.post-hero img');
+                const heroImg = heroEl ? (heroEl.getAttribute('src') || '') : '';
                 document.getElementById('image').value = heroImg;
                 document.getElementById('image').dataset.dataurl = '';
                 onImageInput();
@@ -592,7 +609,7 @@
                 const genres = (meta('anima-genres') || '').split(',').map(s => s.trim()).filter(Boolean);
                 document.querySelectorAll('#catGrid input').forEach(i => { i.checked = genres.includes(i.value); });
                 document.getElementById('genresExtra').value = genres.filter(g => !CATS.includes(g)).join(', ');
-                document.getElementById('synopsis').value = doc.querySelector('.post-synopsis')?.textContent?.trim() || '';
+                document.getElementById('synopsis').value = textOf('.post-synopsis');
                 const mSrc = html.match(/var EPISODES=(\[.*?\]);/s);
                 const mTit = html.match(/var EP_TITLES=(\[.*?\]);/s);
                 const srcs = mSrc ? JSON.parse(mSrc[1]) : [];
