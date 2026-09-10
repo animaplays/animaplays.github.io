@@ -62,6 +62,7 @@
             return `<a href="${href}" class="anime-card" data-title="${anime.title.toLowerCase()}" data-genres="${(anime.genres || []).join(' ').toLowerCase()}">
                 <div class="card-poster-wrapper">
                     <img src="${anime.image}" alt="${anime.title}" class="card-poster" loading="lazy">
+                    ${anime.isNew ? `<span class="card-badge">NOVO</span>` : ''}
                     <div class="card-overlay"><span class="card-title-overlay">${anime.title}</span></div>
                 </div>
                 <div class="card-info">
@@ -98,14 +99,20 @@
                 if (rj.ok) {
                     const list = await rj.json();
                     if (Array.isArray(list) && list.length) {
-                        return list.map(p => ({
+                        const now = Date.now();
+                        return list.map(p => {
+                            const updatedAt = p.updatedAt || p.createdAt || '';
+                            const isNew = updatedAt ? (now - new Date(updatedAt).getTime()) < 14 * 24 * 3600 * 1000 : false;
+                            return {
                             title: p.title || p.slug,
                             slug: p.slug,
                             image: normImg(p.image),
                             subtitle: p.subtitle || 'Nova Postagem',
                             genres: p.genres && p.genres.length ? p.genres : ['Nova'],
-                            updatedAt: p.updatedAt || p.createdAt || ''
-                        })).sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+                            updatedAt,
+                            isNew
+                            };
+                        }).sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
                     }
                 }
             } catch { /* usa a API abaixo como reserva */ };
@@ -215,6 +222,7 @@
                             subtitle: post.title,
                             image: post.image,
                             genres: post.genres,
+                            isNew: post.isNew,
                             slug: post.slug,
                             link: `posts/${post.slug}.html?ep=${i + 1}`
                         });
