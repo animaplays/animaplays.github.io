@@ -233,7 +233,7 @@
 
         function renderCarousel(items) {
             const carousel = document.getElementById('carousel');
-            carousel.innerHTML = items.slice(0, 18).map(cardHTML).join('');
+            carousel.innerHTML = items.slice(0, 18).map(a => cardHTML(a)).join('');
         }
 
         async function fetchPostHTML(slug) {
