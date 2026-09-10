@@ -1,5 +1,19 @@
 [
   {
+    "slug": "narutoclassico",
+    "title": "Naruto Clássico",
+    "image": "../img/narutoclassico-1789014263512-naruto-classico-card.jpg",
+    "subtitle": "Naruto Clássico 1 - Surge Naruto Uzumaki!",
+    "genres": [
+      "Ação",
+      "Dublado",
+      "Clássico",
+      "Naruto Clássico"
+    ],
+    "createdAt": "2026-09-10T04:27:15.754Z",
+    "updatedAt": "2026-09-10T04:27:15.754Z"
+  },
+  {
     "slug": "dragonballz",
     "title": "Dragon Ball Z",
     "image": "../img/dragonballz-1789010293147-dragon-ball-z-card.jpg",
