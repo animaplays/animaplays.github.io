@@ -271,9 +271,22 @@
             
             const genres = getAllGenres(allAnimes);
             renderGenreFilters(genres);
+
+            try {
+                const q = new URLSearchParams(window.location.search);
+                const g = q.get('genre');
+                if (g) {
+                    const btn = Array.from(document.querySelectorAll('.genre-chip')).find(b => b.dataset.genre.toLowerCase() === g.toLowerCase());
+                    if (btn) {
+                        document.querySelectorAll('.genre-chip').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+                        btn.classList.add('active');
+                        btn.setAttribute('aria-pressed', 'true');
+                    }
+                }
+            } catch { /* ignora */ }
             
             filteredAnimes = allAnimes;
-            renderGrid(filteredAnimes);
+            applyFilters();
             const latest = await loadLatestEpisodes(posts);
             renderCarousel(latest.length ? latest : allAnimes);
         }
