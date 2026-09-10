@@ -1,5 +1,19 @@
 [
   {
+    "slug": "dragonballz",
+    "title": "Dragon Ball Z",
+    "image": "../img/dragonballz-1789010293147-dragon-ball-z-card.jpg",
+    "subtitle": "Dragon Ball Z - Episodio 1 - Surge um Mini-Goku! Seu Nome é Gohan",
+    "genres": [
+      "Ação",
+      "Dublado",
+      "Clássico"
+    ],
+    "author": "kingveio",
+    "createdAt": "2026-09-10T03:22:44.208Z",
+    "updatedAt": "2026-09-10T07:19:31.562Z"
+  },
+  {
     "slug": "solo-leveling",
     "title": "Solo Leveling",
     "image": "../img/solo-leveling-1789022561845-solo-leveling-card.jpg",
@@ -27,20 +41,5 @@
     "author": "kingveio",
     "createdAt": "2026-09-10T04:27:15.754Z",
     "updatedAt": "2026-09-10T05:25:55.657Z"
-  },
-  {
-    "slug": "dragonballz",
-    "title": "Dragon Ball Z",
-    "image": "../img/dragonballz-1789010293147-dragon-ball-z-card.jpg",
-    "subtitle": "Dragon Ball Z - Episodio 1 - Surge um Mini-Goku! Seu Nome é Gohan",
-    "genres": [
-      "Ação",
-      "Dublado",
-      "Clássico",
-      "Dragon Ball Z"
-    ],
-    "author": "kingveio",
-    "createdAt": "2026-09-10T03:22:44.208Z",
-    "updatedAt": "2026-09-10T05:09:22.143Z"
   }
 ]
