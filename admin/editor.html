@@ -378,9 +378,18 @@
             if (!input) return '';
             const id = ytId(input);
             if (id) return 'https://www.youtube.com/embed/' + id;
-            const raw = extractSrc(input);
-            const m = raw.match(/archive\.org\/details\/([^/?#]+)/i);
+            let raw = extractSrc(input);
+            const enc = (s) => s.split('/').map(p => { try { return encodeURIComponent(decodeURIComponent(p)); } catch (e) { return encodeURIComponent(p); } }).join('/');
+            // archive.org/details/<id>/<arquivo> -> download direto (o + copiado vira %20)
+            let m = raw.match(/archive\.org\/details\/([^/?#]+)\/(.+)/i);
+            if (m) return 'https://archive.org/download/' + m[1] + '/' + enc(m[2].replace(/\+/g, ' '));
+            m = raw.match(/archive\.org\/details\/([^/?#]+)/i);
             if (m) return 'https://archive.org/embed/' + m[1];
+            if (/archive\.org\/download\//i.test(raw)) {
+                const dm = raw.match(/(archive\.org\/download\/[^?#]+\/)(.+?)(\?|#|$)(.*)/i);
+                if (dm) return raw.slice(0, raw.indexOf(dm[1]) + dm[1].length) + enc(dm[2].replace(/\+/g, ' ')) + (dm[3] || '') + (dm[4] || '');
+                return raw.replace(/\+/g, '%20');
+            }
             return raw;
         }
         function videoPlayerHTML(url) {
