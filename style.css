@@ -313,17 +313,10 @@ body {
 .sidebar {
     position: sticky;
     top: 180px;
-    max-height: calc(100vh - 200px);
-    overflow-y: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    align-self: start;
     display: flex;
     flex-direction: column;
     gap: 16px;
-}
-
-.sidebar::-webkit-scrollbar {
-    display: none;
 }
 
 .sidebar-section {
