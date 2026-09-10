@@ -18,7 +18,7 @@
     try { return document.visibilityState === 'hidden'; } catch (e) { return false; }
   }
   function check() {
-    fetch('https://api.github.com/repos/animaplays/animaplays.github.io/commits?per_page=1').then(function (r) {
+    fetch('https://api.github.com/repos/animaplays/animaplay.github.io/commits?per_page=1').then(function (r) {
       if (!r.ok) throw 0;
       return r.json();
     }).then(function (list) {
