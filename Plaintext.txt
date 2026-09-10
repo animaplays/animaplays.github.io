@@ -1,7 +1,0 @@
-animaplay/
-├── index.html
-├── style.css
-├── README.md
-└── admin/
-    ├── index.html
-    └── config.yml
