@@ -103,7 +103,7 @@
                 return s;
             };
             try {
-                const rj = await fetch('posts.json');
+                const rj = await fetch('posts.json', { cache: 'no-store' });
                 if (rj.ok) {
                     const list = await rj.json();
                     if (Array.isArray(list) && list.length) {

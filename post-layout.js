@@ -82,7 +82,7 @@
       + '" alt="" loading="lazy"><span>' + esc(p.title || p.slug) + '</span></a>';
   }
 
-  fetch('../posts.json').then(function (r) {
+  fetch('../posts.json', { cache: 'no-store' }).then(function (r) {
     if (!r.ok) throw 0;
     return r.json();
   }).then(function (list) {
