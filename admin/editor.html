@@ -427,6 +427,36 @@
             if (!res.ok) return null;
             return (await res.json()).sha;
         }
+        async function getJson(path) {
+            const token = getToken();
+            const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + path, { headers: { 'Authorization': 'Bearer ' + token } });
+            if (res.status === 404) return { data: null, sha: null };
+            if (!res.ok) throw new Error('Falha ao ler ' + path);
+            const j = await res.json();
+            const text = decodeURIComponent(escape(atob(j.content.replace(/\n/g, ''))));
+            try { return { data: JSON.parse(text), sha: j.sha }; }
+            catch { return { data: null, sha: j.sha }; }
+        }
+        async function syncPostsJson(entry, isDelete) {
+            const token = getToken();
+            const { data, sha } = await getJson('posts.json');
+            let list = Array.isArray(data) ? data : [];
+            if (isDelete) {
+                list = list.filter(p => p.slug !== entry.slug);
+            } else {
+                const i = list.findIndex(p => p.slug === entry.slug);
+                if (i >= 0) { entry.createdAt = list[i].createdAt || entry.createdAt; list[i] = entry; }
+                else list.push(entry);
+                list.sort((a, b) => (b.updatedAt || b.createdAt || '').localeCompare(a.updatedAt || a.createdAt || ''));
+            }
+            const content = btoa(unescape(encodeURIComponent(JSON.stringify(list, null, 2))));
+            const body = { message: (isDelete ? 'Remove do índice: ' : 'Atualiza índice: ') + entry.slug, content };
+            if (sha) body.sha = sha;
+            const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/posts.json', {
+                method: 'PUT', headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+            });
+            if (!res.ok) throw new Error((await res.json()).message || 'Falha ao atualizar posts.json');
+        }
         async function publishPost() {
             const btn = document.getElementById('btnPublish');
             const data = getFormData();
@@ -443,6 +473,9 @@
                     method: 'PUT', headers: { 'Authorization': 'Bearer ' + getToken(), 'Content-Type': 'application/json' }, body: JSON.stringify(body)
                 });
                 if (!res.ok) throw new Error((await res.json()).message || 'Falha ao publicar');
+                const now = new Date().toISOString();
+                const cardImg = data.cardImage || data.image || '';
+                await syncPostsJson({ slug: data.slug, title: data.title, image: cardImg, subtitle: (data.episodes[0] && data.episodes[0].title) || 'Nova Postagem', genres: data.genres, createdAt: now, updatedAt: now }, false);
                 setStatus('Publicada! Abrindo...', 'success');
                 loadPostList();
                 window.open('https://animaplays.github.io/' + path, '_blank');
@@ -463,6 +496,7 @@
                     body: JSON.stringify({ message: 'Apaga postagem: ' + slug, sha })
                 });
                 if (!res.ok) throw new Error((await res.json()).message || 'Falha ao apagar');
+                try { await syncPostsJson({ slug }, true); } catch (e) { /* índice opcional */ }
                 setStatus('Apagada: ' + path, 'success');
                 loadPostList();
             } catch (e) { setStatus('❌ ' + e.message, 'error'); }

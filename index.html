@@ -85,6 +85,29 @@
 
         async function loadPosts() {
             const FALLBACK_IMG = 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600&auto=format&fit=crop';
+            const normImg = (u) => {
+                if (!u) return FALLBACK_IMG;
+                const s = String(u).trim();
+                if (s.startsWith('data:') || s.startsWith('http')) return s;
+                if (s.startsWith('../')) return s.replace(/^\.\.\//, '');
+                return s;
+            };
+            try {
+                const rj = await fetch('posts.json');
+                if (rj.ok) {
+                    const list = await rj.json();
+                    if (Array.isArray(list) && list.length) {
+                        return list.map(p => ({
+                            title: p.title || p.slug,
+                            slug: p.slug,
+                            image: normImg(p.image),
+                            subtitle: p.subtitle || 'Nova Postagem',
+                            genres: p.genres && p.genres.length ? p.genres : ['Nova'],
+                            updatedAt: p.updatedAt || p.createdAt || ''
+                        })).sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+                    }
+                }
+            } catch { /* usa a API abaixo como reserva */ };
             try {
                 const res = await fetch('https://api.github.com/repos/animaplays/animaplays.github.io/contents/posts');
                 if (!res.ok) return [];
