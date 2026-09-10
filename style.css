@@ -172,9 +172,10 @@ body {
 
 /* 6 cards por tela no slide (2 fileiras de rolagem = 12 postagens) */
 .top-layout .carousel .anime-card {
-    flex: 0 0 calc((100% - 60px) / 6);
+    flex: 1 0 calc((100% - 60px) / 6);
     width: auto;
     min-width: 0;
+    max-width: 320px;
 }
 
 @media (max-width: 1024px) {
