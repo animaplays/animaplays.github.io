@@ -102,7 +102,7 @@
                         const now = Date.now();
                         return list.map(p => {
                             const updatedAt = p.updatedAt || p.createdAt || '';
-                            const isNew = updatedAt ? (now - new Date(updatedAt).getTime()) < 14 * 24 * 3600 * 1000 : false;
+                            const isNew = updatedAt ? (now - new Date(updatedAt).getTime()) < 24 * 3600 * 1000 : false;
                             return {
                             title: p.title || p.slug,
                             slug: p.slug,
