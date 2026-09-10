@@ -22,33 +22,34 @@
         </nav>
     </header>
 
-    <section class="carousel-section">
-        <h2 class="section-title">Últimos Episódios</h2>
-        <div class="carousel-wrapper">
-            <button class="carousel-btn prev" onclick="scrollCarousel(-1)" aria-label="Anterior">&#8249;</button>
-            <div class="carousel" id="carousel"></div>
-            <button class="carousel-btn next" onclick="scrollCarousel(1)" aria-label="Próximo">&#8250;</button>
-        </div>
-    </section>
+    <div class="top-layout">
+        <section class="carousel-section">
+            <h2 class="section-title">Últimas Postagens</h2>
+            <div class="carousel-wrapper">
+                <button class="carousel-btn prev" onclick="scrollCarousel(-1)" aria-label="Anterior">&#8249;</button>
+                <div class="carousel" id="carousel"></div>
+                <button class="carousel-btn next" onclick="scrollCarousel(1)" aria-label="Próximo">&#8250;</button>
+            </div>
+        </section>
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Gêneros</h3>
+                <div class="genre-filters" id="genreFilters" aria-label="Filtrar por gênero"></div>
+            </div>
+        </aside>
+    </div>
 
     <section class="grid-section">
         <div class="section-header">
             <h2 class="section-title">Catálogo Completo</h2>
             <span class="results-count" id="resultsCount"></span>
+            <button class="mobile-filter-toggle" id="filterToggle" onclick="toggleSidebar()">☰ Filtros</button>
         </div>
-        <div class="grid-layout">
-            <main class="main-content">
-                <div class="anime-grid" id="animeGrid"></div>
-                <button class="load-more-btn" id="loadMoreBtn" style="display:none;">Carregar mais</button>
-            </main>
-            <aside class="sidebar" id="sidebar">
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">Gêneros</h3>
-                    <div class="genre-filters" id="genreFilters" aria-label="Filtrar por gênero"></div>
-                </div>
-            </aside>
-        </div>
+        <div class="anime-grid" id="animeGrid"></div>
+        <button class="load-more-btn" id="loadMoreBtn" style="display:none;">Carregar mais</button>
     </section>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
     <footer class="main-footer">
         <p>&copy; 2026 Anima Play. Todos os direitos reservados.</p>
@@ -167,6 +168,8 @@
                     btn.classList.add('active');
                     btn.setAttribute('aria-pressed', 'true');
                     applyFilters();
+                    document.getElementById('sidebar').classList.remove('open');
+                    document.getElementById('sidebarOverlay').classList.remove('visible');
                 });
             });
         }
@@ -199,37 +202,7 @@
 
         function renderCarousel(items) {
             const carousel = document.getElementById('carousel');
-            carousel.innerHTML = items.slice(0, 30).map(cardHTML).join('');
-        }
-
-        async function loadLatestEpisodes(posts, perPost = 12, total = 30, maxPosts = 12) {
-            const eps = [];
-            for (const post of posts.slice(0, maxPosts)) {
-                try {
-                    const r = await fetch(`https://raw.githubusercontent.com/animaplays/animaplays.github.io/main/posts/${post.slug}.html`);
-                    if (!r.ok) continue;
-                    const html = await r.text();
-                    const mSrc = html.match(/var EPISODES=(\[.*?\]);/s);
-                    const mTit = html.match(/var EP_TITLES=(\[.*?\]);/s);
-                    if (!mSrc) continue;
-                    const srcs = JSON.parse(mSrc[1]);
-                    let titles = [];
-                    try { titles = mTit ? JSON.parse(mTit[1]) : []; } catch { titles = []; }
-                    for (let i = srcs.length - 1, n = 0; i >= 0 && eps.length < total && n < perPost; i--, n++) {
-                        if (!srcs[i]) continue;
-                        eps.push({
-                            title: titles[i] || (`Episódio ${i + 1}`),
-                            subtitle: post.title,
-                            image: post.image,
-                            genres: post.genres,
-                            isNew: post.isNew,
-                            slug: post.slug,
-                            link: `posts/${post.slug}.html?ep=${i + 1}`
-                        });
-                    }
-                } catch { /* ignora post com falha */ }
-            }
-            return eps;
+            carousel.innerHTML = items.slice(0, 12).map(cardHTML).join('');
         }
 
         function renderGrid(items, append = false) {
@@ -251,6 +224,11 @@
 
         function scrollCarousel(dir) {
             document.getElementById('carousel').scrollBy({ left: dir * 820, behavior: 'smooth' });
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('visible');
         }
 
         // Event listeners
@@ -287,8 +265,7 @@
             
             filteredAnimes = allAnimes;
             applyFilters();
-            const latest = await loadLatestEpisodes(posts);
-            renderCarousel(latest.length ? latest : allAnimes);
+            renderCarousel(allAnimes);
         }
 
         init();
