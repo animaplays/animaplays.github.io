@@ -143,6 +143,14 @@ body {
     right: 0;
 }
 
+.top-main {
+    min-width: 0;
+}
+
+.top-main .genre-rows {
+    padding: 10px 0 0;
+}
+
 .section-title {
     font-size: 20px;
     font-weight: 600;
