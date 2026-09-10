@@ -6,7 +6,7 @@ Este é um site de catálogo de animes com um visual moderno em estilo "streamin
 ## Stack Tecnológica
 - **Front-end:** HTML5 e CSS3 puro (com foco em Grid Responsivo).
 - **Gerenciamento de Conteúdo (CMS):** Decap CMS (configurado na rota `/admin`). Permite gerenciar postagens de novos animes e episódios através de um painel autenticado pelo GitHub, sem precisar alterar códigos manualmente no dia a dia.
-- **Hospedagem:** GitHub Pages (`https://animaplay.github.io/animaplay/`).
+- **Hospedagem:** GitHub Pages (`https://animaplays.github.io/animaplay/`).
 
 ## Estrutura de Arquivos
 - `index.html`: Página principal que exibe o catálogo visual.

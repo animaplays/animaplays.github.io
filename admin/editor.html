@@ -208,7 +208,7 @@
             <div class="post-list">
                 <h3>Como adicionar outro editor</h3>
                 <ol style="font-size:12px;color:#888;line-height:1.8;padding-left:18px;">
-                    <li>Dono: abra <strong>github.com/animaplay/animaplay.github.io/settings/collaborators</strong> → <strong>Add people</strong> → digite o usuário GitHub da pessoa.</li>
+                    <li>Dono: abra <strong>github.com/animaplays/animaplays.github.io/settings/collaborators</strong> → <strong>Add people</strong> → digite o usuário GitHub da pessoa.</li>
                     <li>A pessoa aceita o convite por e-mail.</li>
                     <li>Ela cria um token em <strong>Settings → Developer settings → Personal access tokens</strong> com escopo <strong>repo</strong>.</li>
                     <li>Ela entra em <strong>/admin/editor.html</strong>, cola o token e publica — o nome dela fica registrado como autora.</li>
@@ -223,7 +223,7 @@
     </div>
 
     <script>
-        const REPO = 'animaplay/animaplay.github.io';
+        const REPO = 'animaplays/animaplays.github.io';
         const CATS = ['Ação','Aventura','Comédia','Drama','Fantasia','Terror','Romance','Suspense','Ficção','Esporte','Dublado','Legendado','Clássico','Filme'];
         function getToken() { return sessionStorage.getItem('animaplay_token') || ''; }
         function saveToken(t) { sessionStorage.setItem('animaplay_token', t); }
@@ -478,8 +478,8 @@
 <meta property="og:title" content="${esc(d.title)} — Anima Play">
 <meta property="og:description" content="${esc((d.synopsis || '').slice(0, 160) || d.title + ' - Assista online no Anima Play.')}">
 <meta property="og:type" content="video.other">
-<meta property="og:url" content="https://animaplay.github.io/posts/${esc(d.slug)}.html">
-${cardImg ? '<meta property="og:image" content="https://animaplay.github.io/' + esc(cardImg.replace(/^\.\.\//, '')) + '">' : ''}
+<meta property="og:url" content="https://animaplays.github.io/posts/${esc(d.slug)}.html">
+${cardImg ? '<meta property="og:image" content="https://animaplays.github.io/' + esc(cardImg.replace(/^\.\.\//, '')) + '">' : ''}
 <meta name="anima-title" content="${esc(d.title)}">
 <meta name="anima-card" content="${esc(cardImg)}">
 <meta name="anima-subtitle" content="${esc((d.episodes[0] && d.episodes[0].title) || 'Nova Postagem')}">
@@ -489,7 +489,7 @@ ${cardImg ? '<meta property="og:image" content="https://animaplay.github.io/' + 
 <body><header class="main-header"><div class="logo"><a href="/" style="color:inherit;text-decoration:none">Anima Play</a></div></header>
 <div class="post-layout"><div class="post-main"><a href="/" class="back-link">← Voltar</a>
 <div class="post-hero"><img src="${esc(d.image||'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200&auto=format&fit=crop')}" alt="${esc(d.title)}"><div class="post-hero-overlay"><h1>${esc(d.title)}</h1><div class="post-meta">${d.genres.map(g=>'<span>'+esc(g)+'</span>').join('')}${d.author?'<span>Por @'+esc(d.author)+'</span>':''}</div></div></div>
-<main class="post-body">${d.synopsis?'<p class="post-synopsis">'+esc(d.synopsis)+'</p>':''}<div class="section-label">Assistir</div><div class="video-player" id="vp">${videoPlayerHTML(d.defaultVideo)}</div><div class="ep-nav"><button onclick="location.href='/'">← Início</button><button id="btnPrev" onclick="prevEp()">← Anterior</button><span id="epLabel"></span><button id="btnNext" class="primary" onclick="nextEp()">Próximo →</button></div><div class="section-label">Episódios</div><div class="episode-list">\n${eps}\n</div><div class="section-label">Comentários</div><div id="disqus_thread"></div><script>var disqus_config=function(){this.page.url='https://animaplay.github.io/posts/${esc(d.slug)}.html';this.page.identifier='${esc(d.slug)}';};(function(){var b=document,s=b.createElement('script');s.src='https://anima-play.disqus.com/embed.js';s.setAttribute('data-timestamp',+new Date());(b.head||b.body).appendChild(s);})();<\/script><noscript>Ative o JavaScript para ver os comentários.</noscript></main></div><aside class="post-side" id="postSide"></aside></div>
+<main class="post-body">${d.synopsis?'<p class="post-synopsis">'+esc(d.synopsis)+'</p>':''}<div class="section-label">Assistir</div><div class="video-player" id="vp">${videoPlayerHTML(d.defaultVideo)}</div><div class="ep-nav"><button onclick="location.href='/'">← Início</button><button id="btnPrev" onclick="prevEp()">← Anterior</button><span id="epLabel"></span><button id="btnNext" class="primary" onclick="nextEp()">Próximo →</button></div><div class="section-label">Episódios</div><div class="episode-list">\n${eps}\n</div><div class="section-label">Comentários</div><div id="disqus_thread"></div><script>var disqus_config=function(){this.page.url='https://animaplays.github.io/posts/${esc(d.slug)}.html';this.page.identifier='${esc(d.slug)}';};(function(){var b=document,s=b.createElement('script');s.src='https://anima-play.disqus.com/embed.js';s.setAttribute('data-timestamp',+new Date());(b.head||b.body).appendChild(s);})();<\/script><noscript>Ative o JavaScript para ver os comentários.</noscript></main></div><aside class="post-side" id="postSide"></aside></div>
 <footer class="main-footer"><p>&copy; 2026 Anima Play</p></footer>
 <script>function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}var EPISODES=${epJson};var EP_TITLES=${epTitles};var cur=0;function isDirect(s){return /\\.(mp4|webm)(\\?|#|$)/i.test(s||'');}function paint(src){var box=document.getElementById('vp');if(!src){box.innerHTML='<div style="padding:40px;text-align:center;color:#666;">Nenhum vídeo</div>';return;}if(isDirect(src)){box.innerHTML='<video controls autoplay style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;" src="'+esc(src)+'"></video>';}else{box.innerHTML='<iframe src="'+esc(src)+'" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"></iframe>';}}function syncUI(){var items=document.querySelectorAll('.episode-item');items.forEach(function(el,i){el.classList.toggle('active',i===cur);});var label=document.getElementById('epLabel');if(label){label.textContent=(EP_TITLES[cur]||('Episódio '+(cur+1)))+' • '+(cur+1)+' / '+EPISODES.length;}var pv=document.getElementById('btnPrev');var nx=document.getElementById('btnNext');if(pv){pv.disabled=cur<=0;}if(nx){nx.disabled=cur>=EPISODES.length-1;}try{var u=new URL(window.location.href);u.searchParams.set('ep',String(cur+1));window.history.replaceState(null,'',u);}catch(e){}}function renderEp(i){if(i<0||i>=EPISODES.length||!EPISODES[i])return;cur=i;paint(EPISODES[i]);syncUI();var vp=document.getElementById('vp');if(vp&&vp.scrollIntoView){vp.scrollIntoView({behavior:'smooth',block:'center'});}}function goEp(i){renderEp(i);}function changeEpisode(el,src){var items=Array.prototype.slice.call(document.querySelectorAll('.episode-item'));var idx=el&&el.getAttribute?parseInt(el.getAttribute('data-idx')||'0',10):0;if(el&&el.getAttribute&&el.getAttribute('data-idx')!==null){renderEp(idx);}else{paint(src);}}function nextEp(){if(cur<EPISODES.length-1){renderEp(cur+1);}}function prevEp(){if(cur>0){renderEp(cur-1);}}try{var q=new URLSearchParams(window.location.search);var n=parseInt(q.get('ep')||'1',10);if(n>=1&&n<=EPISODES.length){cur=n-1;paint(EPISODES[cur]);}}catch(e){}syncUI();<\/script>
 <script src="../post-layout.js?v=5"><\/script>
@@ -557,7 +557,7 @@ ${cardImg ? '<meta property="og:image" content="https://animaplay.github.io/' + 
                 await syncPostsJson({ slug: data.slug, title: data.title, image: cardImg, subtitle: (data.episodes[0] && data.episodes[0].title) || 'Nova Postagem', genres: data.genres, author: data.author || getCurrentUser() || '', episodes: episodeUrls, createdAt: now, updatedAt: now }, false);
                 setStatus('Publicada! Abrindo...', 'success');
                 loadPostList();
-                window.open('https://animaplay.github.io/' + path, '_blank');
+                window.open('https://animaplays.github.io/' + path, '_blank');
             } catch (e) { setStatus('❌ ' + e.message, 'error'); }
             finally { btn.disabled = false; btn.textContent = 'Publicar'; }
         }
@@ -606,7 +606,7 @@ ${cardImg ? '<meta property="og:image" content="https://animaplay.github.io/' + 
                 if (!files.length) { box.innerHTML = '<p style="font-size:12px;color:#555;">Nenhuma postagem ainda.</p>'; return; }
                 box.innerHTML = files.map(f => {
                     const slug = f.name.replace('.html','');
-                    return `<div class="post-row"><a href="https://animaplay.github.io/posts/${slug}.html" target="_blank">${slug}</a><span><button onclick="loadPostForEdit('${slug}')">Editar</button> <button onclick="deletePost('${slug}')">Apagar</button></span></div>`;
+                    return `<div class="post-row"><a href="https://animaplays.github.io/posts/${slug}.html" target="_blank">${slug}</a><span><button onclick="loadPostForEdit('${slug}')">Editar</button> <button onclick="deletePost('${slug}')">Apagar</button></span></div>`;
                 }).join('');
             } catch (e) { box.innerHTML = '<p style="font-size:12px;color:#f87171;">' + e.message + '</p>'; }
         }
