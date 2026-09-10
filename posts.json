@@ -1,5 +1,18 @@
 [
   {
+    "slug": "solo-leveling",
+    "title": "Solo Leveling",
+    "image": "../img/solo-leveling-1789022561845-solo-leveling-card.jpg",
+    "subtitle": "Solo Leveling - Episódio 1 - Já Estou Acostumado",
+    "genres": [
+      "Ação",
+      "Dublado"
+    ],
+    "author": "kingveio",
+    "createdAt": "2026-09-10T06:46:14.285Z",
+    "updatedAt": "2026-09-10T06:46:14.285Z"
+  },
+  {
     "slug": "narutoclassico",
     "title": "Naruto Clássico",
     "image": "../img/narutoclassico-1789014263512-naruto-classico-card.jpg",
