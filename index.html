@@ -222,7 +222,7 @@
             const box = document.getElementById('genreRows');
             if (!box) return;
             const byDate = [...posts].sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
-            let html = `<div class="genre-row"><h3 class="genre-row-title"><span class="trophy">🏆</span> Top 10</h3><div class="genre-row-scroll">${byDate.slice(0, 10).map((a, i) => `<div class="top10-item"><span class="rank-big">${i + 1}</span>${cardHTML(a)}</div>`).join('')}</div></div>`;
+            let html = `<div class="genre-row"><h3 class="genre-row-title"><span class="top10-title">Top 10 da semana</span><span class="top10-sub">Em alta no site</span></h3><div class="genre-row-scroll-wrap"><button class="row-btn prev" onclick="scrollRow(this,-1)" aria-label="Anterior">‹</button><div class="genre-row-scroll">${byDate.slice(0, 10).map((a, i) => `<div class="top10-item"><span class="rank-big">${i + 1}</span>${cardHTML(a)}</div>`).join('')}</div><button class="row-btn next" onclick="scrollRow(this,1)" aria-label="Próximo">›</button></div></div>`;
             html += getAllGenres(posts).map(g => {
                 const items = posts.filter(a => (a.genres || []).some(x => x.toLowerCase() === g.toLowerCase()));
                 if (!items.length) return '';
@@ -310,6 +310,11 @@
             const el = document.getElementById('carousel');
             el.scrollBy({ left: dir * el.clientWidth, behavior: 'smooth' });
             restartCarouselAuto();
+        }
+
+        function scrollRow(btn, dir) {
+            const el = btn.parentElement.querySelector('.genre-row-scroll');
+            if (el) el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: 'smooth' });
         }
 
         let carouselTimer = null;

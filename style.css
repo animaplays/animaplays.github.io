@@ -589,31 +589,81 @@ body {
 }
 
 .top10-item {
+    position: relative;
     flex: 0 0 auto;
     display: flex;
     align-items: flex-end;
 }
 
 .top10-item .anime-card {
+    position: relative;
+    z-index: 1;
     flex: 0 0 160px;
     width: 160px;
 }
 
 .rank-big {
-    font-size: 240px;
+    font-size: 260px;
     font-weight: 900;
-    line-height: 0.8;
-    color: #0a0a0a;
-    -webkit-text-stroke: 3px #ffffff;
-    margin-right: -18px;
-    margin-bottom: -8px;
+    line-height: 0.78;
+    color: #1c6dd0;
+    margin-right: -46px;
+    margin-bottom: -10px;
     user-select: none;
+    text-shadow: 0 4px 24px rgba(0,0,0,0.6);
+}
+
+.top10-title {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.top10-sub {
+    font-size: 13px;
+    color: #888;
+    font-weight: 400;
+    margin-left: 10px;
+}
+
+.genre-row-scroll-wrap {
+    position: relative;
+}
+
+.row-btn {
+    position: absolute;
+    top: 38%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.7);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.row-btn:hover {
+    background: #e50914;
+    border-color: #e50914;
+}
+
+.row-btn.prev {
+    left: -8px;
+}
+
+.row-btn.next {
+    right: -8px;
 }
 
 @media (max-width: 768px) {
     .rank-big {
         font-size: 140px;
-        -webkit-text-stroke-width: 2px;
         margin-right: -12px;
     }
 }
