@@ -18,7 +18,7 @@
   var css = '.post-layout{display:grid;grid-template-columns:1fr 260px;gap:24px;max-width:1200px;margin:0 auto;padding:20px 40px 40px}'
     + '.post-main{min-width:0}'
     + '.post-body{max-width:none;margin:0;padding:0}'
-    + '.post-side{position:sticky;top:180px;align-self:start;display:flex;flex-direction:column;gap:16px}'
+    + '.post-side{position:sticky;top:210px;align-self:start;display:flex;flex-direction:column;gap:16px}'
     + '.side-section{background:rgba(20,20,20,.8);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px}'
     + '.side-title{font-size:12px;font-weight:800;color:#e5e5e5;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}'
     + '.side-link{display:block;color:#fff;text-decoration:none;background:#e50914;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:700;text-align:center}'

@@ -312,7 +312,7 @@ body {
 
 .sidebar {
     position: sticky;
-    top: 180px;
+    top: 210px;
     align-self: start;
     display: flex;
     flex-direction: column;
