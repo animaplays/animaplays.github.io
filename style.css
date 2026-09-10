@@ -160,6 +160,7 @@ body {
     display: flex;
     gap: 12px;
     overflow-x: auto;
+    overflow-y: hidden;
     scroll-behavior: smooth;
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -574,9 +575,10 @@ body {
     display: flex;
     gap: 12px;
     overflow-x: auto;
+    overflow-y: hidden;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    padding: 4px 0 12px;
+    padding: 10px 0 14px;
 }
 
 .genre-row-scroll::-webkit-scrollbar {
