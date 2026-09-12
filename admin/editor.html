@@ -20,16 +20,11 @@
         .login-card { background: #111; border: 1px solid #222; border-radius: 16px; padding: 40px; max-width: 440px; width: 100%; text-align: center; }
         .login-card h1 { font-size: 28px; color: #e50914; margin-bottom: 12px; }
         .login-card p { color: #888; font-size: 14px; margin-bottom: 24px; line-height: 1.6; }
-        .field-group { margin-bottom: 16px; text-align: left; }
-        .field-group label { display: block; font-size: 12px; color: #888; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .field-group input, .field-group textarea { width: 100%; background: #15191d; border: 1px solid #2a2a2a; border-radius: 8px; color: #fff; padding: 10px 14px; font-size: 14px; outline: none; }
-        .field-group input:focus, .field-group textarea:focus { border-color: #e50914; }
-        .field-group textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
-        .btn-login { background: #e50914; color: #fff; border: none; padding: 12px 28px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px; }
-        .btn-login:hover { background: #f0151f; }
-        .login-hint { margin-top: 16px; font-size: 11px; color: #555; line-height: 1.6; }
-        .login-hint a { color: #e50914; }
+        .btn-google { background: #fff; color: #333; border: none; padding: 12px 28px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-google:hover { background: #f0f0f0; }
+        .btn-google svg { width: 20px; height: 20px; }
         .login-error { color: #f87171; font-size: 13px; margin-top: 12px; display: none; }
+        .login-hint { margin-top: 16px; font-size: 11px; color: #555; line-height: 1.6; }
         .editor-layout { display: grid; grid-template-columns: 1fr 1fr; min-height: calc(100vh - 60px); }
         @media (max-width: 900px) { .editor-layout { grid-template-columns: 1fr; } }
         .form-panel { padding: 24px 30px; overflow-y: auto; max-height: calc(100vh - 60px); border-right: 1px solid #1a1a1a; }
@@ -73,12 +68,16 @@
         .post-row button:hover { background: rgba(248,113,113,0.1); }
         .video-hint { font-size: 11px; color: #555; margin-top: 4px; line-height: 1.5; }
         .hidden { display: none !important; }
+        .field-group { margin-bottom: 16px; text-align: left; }
+        .field-group label { display: block; font-size: 12px; color: #888; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .field-group input, .field-group textarea { width: 100%; background: #15191d; border: 1px solid #2a2a2a; border-radius: 8px; color: #fff; padding: 10px 14px; font-size: 14px; outline: none; }
+        .field-group input:focus, .field-group textarea:focus { border-color: #e50914; }
+        .field-group textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
         @media (max-width: 768px) {
             .top-bar { flex-wrap: wrap; gap: 10px; padding: 12px 16px; }
             .logo { font-size: 18px; }
             .form-panel { padding: 20px 16px; }
             .btn-group .btn-publish, .btn-group .btn-ghost, .btn-group .btn-danger { flex: 1 1 100%; }
-            .field-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -91,7 +90,7 @@
                 <div class="user-badge">
                     <img id="userAvatar" class="user-avatar" src="" alt="">
                     <span id="userName"></span>
-                    <button class="btn-logout" onclick="logout()">Sair</button>
+                    <button class="btn-logout" onclick="doLogout()">Sair</button>
                 </div>
             </div>
         </div>
@@ -100,31 +99,17 @@
     <div id="loginPage" class="login-page">
         <div class="login-card">
             <h1>Anima Play</h1>
-            <p>Cole seu token do GitHub para criar, publicar e apagar postagens.</p>
-            <div class="field-group">
-                <label>Token de Acesso Pessoal</label>
-                <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
-            </div>
-            <button class="btn-login" onclick="doLogin()">Entrar</button>
+            <p>Entre com sua conta Google para criar e publicar postagens.</p>
+            <button class="btn-google" onclick="doGoogleLogin()">
+                <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                Entrar com Google
+            </button>
             <div id="loginError" class="login-error"></div>
-            <p class="login-hint">Crie em <a href="https://github.com/settings/tokens/new" target="_blank">GitHub → Settings → Developer settings → Personal access tokens</a><br>Permissão: <strong>repo</strong> · Validade: <strong>No expiration</strong> (ou prazo longo)<br>Se voltar para esta tela, o token expirou ou está sem escopo — gere um novo.</p>
+            <p class="login-hint">Apenas e-mails autorizados podem acessar o editor.<br>Se seu acesso foi negado, fale com o administrador.</p>
         </div>
     </div>
 
     <noscript><p style="text-align:center;color:#f87171;padding:20px;">Ative o JavaScript para usar o editor.</p></noscript>
-    <script>
-    window.addEventListener('error', function (e) {
-        try {
-            var login = document.getElementById('loginPage');
-            var el = document.getElementById('loginError');
-            if (el && login && login.className.indexOf('hidden') === -1) {
-                el.style.display = 'block';
-                el.style.color = '#f87171';
-                el.textContent = 'Erro na página: ' + (e.message || 'falha de script') + ' — atualize o navegador ou tente no Chrome.';
-            }
-        } catch (err) {}
-    });
-    </script>
 
     <div id="editorPage" class="editor-layout hidden">
         <div class="form-panel">
@@ -147,20 +132,18 @@
             </div>
 
             <div class="field-group">
-                <label>Capa (página da postagem) — URL ou upload</label>
+                <label>Capa (página da postagem) — URL da imagem</label>
                 <div class="cover-row">
-                    <input type="text" id="image" placeholder="https://... ou faça upload abaixo" oninput="onImageInput()">
-                    <input type="file" id="imageFile" accept="image/*" onchange="onCoverFile(this)">
+                    <input type="text" id="image" placeholder="https://exemplo.com/capa.jpg" oninput="onImageInput()">
                     <img id="coverPreview" class="cover-preview" alt="Prévia da capa">
                 </div>
-                <div class="video-hint">O upload envia a imagem para a pasta <strong>img/</strong> do repositório.</div>
+                <div class="video-hint">Use URLs de imagens externas (Unsplash, imgur, etc).</div>
             </div>
 
             <div class="field-group">
-                <label>Imagem do card (home) — URL ou upload</label>
+                <label>Imagem do card (home) — URL da imagem</label>
                 <div class="cover-row">
-                    <input type="text" id="cardImage" placeholder="https://... ou faça upload (se vazio, usa a capa)" oninput="onCardInput()">
-                    <input type="file" id="cardImageFile" accept="image/*" onchange="onCardFile(this)">
+                    <input type="text" id="cardImage" placeholder="https://... (se vazio, usa a capa)" oninput="onCardInput()">
                     <img id="cardPreview" class="cover-preview" alt="Prévia do card">
                 </div>
                 <div class="video-hint">É esta imagem que aparece no card da página principal.</div>
@@ -191,28 +174,17 @@
 
             <div class="btn-group">
                 <button class="btn-publish" id="btnPublish" onclick="publishPost()">Publicar</button>
-                <button class="btn-ghost" onclick="downloadPost()">Baixar HTML</button>
                 <button class="btn-ghost" onclick="clearForm()">Limpar</button>
             </div>
 
             <div class="btn-group">
-                <button class="btn-danger" id="btnDelete" onclick="deletePost()">Apagar esta postagem (pelo slug)</button>
+                <button class="btn-danger" id="btnDelete" onclick="deletePost()">Apagar esta postagem</button>
                 <button class="btn-ghost" onclick="loadPostList()">Atualizar lista</button>
             </div>
 
             <div class="post-list">
                 <h3>Postagens existentes</h3>
-                <div id="postList"><p style="font-size:12px;color:#555;">Faça login para listar.</p></div>
-            </div>
-
-            <div class="post-list">
-                <h3>Como adicionar outro editor</h3>
-                <ol style="font-size:12px;color:#888;line-height:1.8;padding-left:18px;">
-                    <li>Dono: abra <strong>github.com/animaplays/animaplays.github.io/settings/collaborators</strong> → <strong>Add people</strong> → digite o usuário GitHub da pessoa.</li>
-                    <li>A pessoa aceita o convite por e-mail.</li>
-                    <li>Ela cria um token em <strong>Settings → Developer settings → Personal access tokens</strong> com escopo <strong>repo</strong>.</li>
-                    <li>Ela entra em <strong>/admin/editor.html</strong>, cola o token e publica — o nome dela fica registrado como autora.</li>
-                </ol>
+                <div id="postList"><p style="font-size:12px;color:#555;">Carregando...</p></div>
             </div>
         </div>
 
@@ -222,207 +194,286 @@
         </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+    <script src="../firebase-config.js?v=1"></script>
     <script>
-        const REPO = 'animaplays/animaplays.github.io';
-        const CATS = ['Ação','Aventura','Comédia','Drama','Fantasia','Terror','Romance','Suspense','Ficção','Esporte','Dublado','Legendado','Clássico','Filme'];
-        function getToken() { return sessionStorage.getItem('animaplay_token') || ''; }
-        function saveToken(t) { sessionStorage.setItem('animaplay_token', t); }
-        function getCurrentUser() { return sessionStorage.getItem('animaplay_user') || ''; }
-        async function checkRepoAccess(token) {
-            const res = await fetch('https://api.github.com/repos/' + REPO, { headers: { 'Authorization': 'Bearer ' + token } });
-            if (res.status === 404) throw new Error('Repositório não encontrado ou sem acesso. Peça ao dono para adicionar você como colaborador.');
-            if (!res.ok) throw new Error('Token inválido ou sem permissão repo.');
-            const repo = await res.json();
-            if (!repo.permissions || !repo.permissions.push) throw new Error('Sua conta não tem permissão de publicação. Peça ao dono (@animaplays) para adicionar você em Settings → Collaborators do repositório.');
+        firebase.initializeApp(firebaseConfig);
+        var auth = firebase.auth();
+        var db = firebase.database();
+        var provider = new firebase.auth.GoogleAuthProvider();
+
+        var ALLOWED_EMAILS = [
+            "kingveio.contato@gmail.com"
+        ];
+
+        function setStatus(msg, kind) {
+            var el = document.getElementById('statusMsg');
+            el.className = 'status-msg ' + kind;
+            el.textContent = msg;
         }
-        async function doLogin() {
-            const input = document.getElementById('tokenInput');
-            const err = document.getElementById('loginError');
-            const token = input.value.trim();
-            if (!token) { err.textContent = 'Cole seu token.'; err.style.display = 'block'; return; }
+
+        function doGoogleLogin() {
+            var err = document.getElementById('loginError');
             err.style.display = 'none';
-            err.textContent = 'Verificando...'; err.style.color = '#60a5fa'; err.style.display = 'block';
-            try {
-                const res = await fetch('https://api.github.com/user', { headers: { 'Authorization': 'Bearer ' + token } });
-                if (!res.ok) throw new Error('Token inválido. Confira se começa com ghp_ e tem escopo repo.');
-                const user = await res.json();
-                await checkRepoAccess(token);
-                saveToken(token);
-                sessionStorage.setItem('animaplay_user', user.login);
-                input.value = '';
+            auth.signInWithPopup(provider).then(function (result) {
+                var user = result.user;
+                if (ALLOWED_EMAILS.length > 0 && ALLOWED_EMAILS.indexOf(user.email) === -1) {
+                    auth.signOut();
+                    err.textContent = 'E-mail não autorizado: ' + user.email;
+                    err.style.display = 'block';
+                    return;
+                }
+                sessionStorage.setItem('animaplay_uid', user.uid);
+                sessionStorage.setItem('animaplay_email', user.email);
                 showEditor(user);
-            } catch (e) { err.style.color = '#f87171'; err.textContent = '❌ ' + e.message; err.style.display = 'block'; }
+            }).catch(function (e) {
+                err.textContent = 'Erro ao entrar: ' + e.message;
+                err.style.display = 'block';
+            });
         }
-        document.getElementById('tokenInput').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-        function logout() { sessionStorage.removeItem('animaplay_token'); sessionStorage.removeItem('animaplay_user'); location.reload(); }
-        async function checkAuth() {
-            const token = getToken();
-            if (!token) { showLogin(); return; }
-            try {
-                const res = await fetch('https://api.github.com/user', { headers: { 'Authorization': 'Bearer ' + token } });
-                if (!res.ok) throw new Error('auth');
-                const user = await res.json();
-                await checkRepoAccess(token);
-                sessionStorage.setItem('animaplay_user', user.login);
-                showEditor(user);
-            } catch { sessionStorage.removeItem('animaplay_token'); sessionStorage.removeItem('animaplay_user'); showLogin(); }
+
+        function doLogout() {
+            auth.signOut().then(function () {
+                sessionStorage.removeItem('animaplay_uid');
+                sessionStorage.removeItem('animaplay_email');
+                location.reload();
+            });
         }
-        function showLogin() {
+
+        function checkAuth() {
+            auth.onAuthStateChanged(function (user) {
+                if (user) {
+                    if (ALLOWED_EMAILS.length > 0 && ALLOWED_EMAILS.indexOf(user.email) === -1) {
+                        auth.signOut();
+                        showLogin('E-mail não autorizado: ' + user.email);
+                        return;
+                    }
+                    sessionStorage.setItem('animaplay_uid', user.uid);
+                    sessionStorage.setItem('animaplay_email', user.email);
+                    showEditor(user);
+                } else {
+                    showLogin();
+                }
+            });
+        }
+
+        function showLogin(msg) {
             document.getElementById('loginPage').classList.remove('hidden');
             document.getElementById('editorPage').classList.add('hidden');
             document.getElementById('userArea').classList.add('hidden');
+            if (msg) {
+                var err = document.getElementById('loginError');
+                err.textContent = msg;
+                err.style.display = 'block';
+            }
         }
+
         function showEditor(user) {
             document.getElementById('loginPage').classList.add('hidden');
             document.getElementById('editorPage').classList.remove('hidden');
             document.getElementById('userArea').classList.remove('hidden');
-            document.getElementById('userAvatar').src = user.avatar_url;
-            document.getElementById('userName').textContent = user.login;
-            buildCatGrid(); updatePreview(); loadPostList();
+            document.getElementById('userAvatar').src = user.photoURL || '';
+            document.getElementById('userName').textContent = user.displayName || user.email;
+            buildCatGrid();
+            updatePreview();
+            loadPostList();
         }
+
+        function getFormData() {
+            return {
+                title: document.getElementById('title').value || 'Sem Título',
+                slug: document.getElementById('slug').value || 'sem-titulo',
+                image: document.getElementById('image').value.trim(),
+                cardImage: document.getElementById('cardImage').value.trim(),
+                genres: getGenres(),
+                synopsis: document.getElementById('synopsis').value,
+                defaultVideo: document.getElementById('defaultVideo').value.trim(),
+                author: document.getElementById('slug').dataset.author || sessionStorage.getItem('animaplay_email') || '',
+                episodes: Array.from(document.querySelectorAll('.episode-item-editor')).map(function (it) {
+                    return { title: it.querySelector('.ep-title').value, video: it.querySelector('.ep-video').value };
+                })
+            };
+        }
+
+        async function publishPost() {
+            var btn = document.getElementById('btnPublish');
+            var data = getFormData();
+            if (!data.title || !data.slug) { setStatus('Preencha título e slug.', 'error'); return; }
+            btn.disabled = true;
+            btn.textContent = 'Salvando...';
+            setStatus('Salvando no servidor...', 'loading');
+            try {
+                var now = new Date().toISOString();
+                var cardImg = data.cardImage || data.image || '';
+                var episodeUrls = (data.episodes || []).map(function (e) { return e.video; }).filter(Boolean);
+                var entry = {
+                    slug: data.slug,
+                    title: data.title,
+                    image: data.image,
+                    cardImage: cardImg,
+                    genres: data.genres,
+                    synopsis: data.synopsis,
+                    defaultVideo: data.defaultVideo,
+                    author: data.author,
+                    episodes: data.episodes,
+                    episodeUrls: episodeUrls,
+                    status: 'pending',
+                    updatedAt: now,
+                    createdAt: now
+                };
+                var snap = await db.ref('animaplays/posts/' + data.slug).once('value');
+                if (snap.exists()) {
+                    entry.createdAt = snap.val().createdAt || now;
+                }
+                await db.ref('animaplays/posts/' + data.slug).set(entry);
+                setStatus('Salvo! Será publicado automaticamente.', 'success');
+                loadPostList();
+            } catch (e) {
+                setStatus('❌ ' + e.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Publicar';
+            }
+        }
+
+        async function deletePost(slugParam) {
+            var slug = slugParam || document.getElementById('slug').value.trim();
+            if (!slug) { setStatus('Informe o slug para apagar.', 'error'); return; }
+            if (!confirm('Apagar a postagem ' + slug + '?')) return;
+            setStatus('Apagando...', 'loading');
+            try {
+                await db.ref('animaplays/posts/' + slug).remove();
+                setStatus('Apagada: ' + slug, 'success');
+                loadPostList();
+            } catch (e) {
+                setStatus('❌ ' + e.message, 'error');
+            }
+        }
+
+        async function loadPostList() {
+            var box = document.getElementById('postList');
+            box.innerHTML = '<p style="font-size:12px;color:#555;">Carregando...</p>';
+            try {
+                var snap = await db.ref('animaplays/posts').orderByChild('updatedAt').once('value');
+                var posts = [];
+                snap.forEach(function (child) {
+                    posts.push(child.val());
+                });
+                posts.reverse();
+                if (!posts.length) {
+                    box.innerHTML = '<p style="font-size:12px;color:#555;">Nenhuma postagem ainda.</p>';
+                    return;
+                }
+                box.innerHTML = posts.map(function (p) {
+                    var status = p.status === 'published' ? '✅' : '⏳';
+                    return '<div class="post-row"><a href="https://animaplays.github.io/posts/' + p.slug + '.html" target="_blank">' + status + ' ' + (p.title || p.slug) + '</a><span><button onclick="loadPostForEdit(\'' + p.slug + '\')">Editar</button> <button onclick="deletePost(\'' + p.slug + '\')">Apagar</button></span></div>';
+                }).join('');
+            } catch (e) {
+                box.innerHTML = '<p style="font-size:12px;color:#f87171;">' + e.message + '</p>';
+            }
+        }
+
+        async function loadPostForEdit(slug) {
+            setStatus('Carregando ' + slug + '...', 'loading');
+            try {
+                var snap = await db.ref('animaplays/posts/' + slug).once('value');
+                if (!snap.exists()) { setStatus('Postagem não encontrada.', 'error'); return; }
+                var d = snap.val();
+                document.getElementById('title').value = d.title || '';
+                document.getElementById('slug').value = d.slug || slug;
+                document.getElementById('slug').dataset.author = d.author || '';
+                document.getElementById('image').value = d.image || '';
+                onImageInput();
+                document.getElementById('cardImage').value = d.cardImage || '';
+                onCardInput();
+                var genres = d.genres || [];
+                document.querySelectorAll('#catGrid input').forEach(function (i) { i.checked = genres.indexOf(i.value) >= 0; });
+                document.getElementById('genresExtra').value = genres.filter(function (g) { return CATS.indexOf(g) < 0; }).join(', ');
+                document.getElementById('synopsis').value = d.synopsis || '';
+                document.getElementById('defaultVideo').value = d.defaultVideo || '';
+                document.getElementById('episodeList').innerHTML = '';
+                epCount = 0;
+                var eps = d.episodes || [];
+                if (eps.length) {
+                    eps.forEach(function (ep) { addEpisode(ep.title, ep.video); });
+                } else {
+                    addEpisode();
+                }
+                updateSlugPreview();
+                updatePreview();
+                setStatus('Pronta para editar. Modifique e clique Publicar.', 'success');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (e) {
+                setStatus('❌ ' + e.message, 'error');
+            }
+        }
+
+        // --- Form helpers (mantidos do editor original) ---
+        var REPO = 'animaplays/animaplays.github.io';
+        var CATS = ['Ação','Aventura','Comédia','Drama','Fantasia','Terror','Romance','Suspense','Ficção','Esporte','Dublado','Legendado','Clássico','Filme'];
+
         function buildCatGrid() {
-            const g = document.getElementById('catGrid');
-            g.innerHTML = CATS.map(c => `<label><input type="checkbox" value="${c}" onchange="updatePreview()"> ${c}</label>`).join('');
+            var g = document.getElementById('catGrid');
+            g.innerHTML = CATS.map(function (c) { return '<label><input type="checkbox" value="' + c + '" onchange="updatePreview()"> ' + c + '</label>'; }).join('');
         }
         function getGenres() {
-            const checked = Array.from(document.querySelectorAll('#catGrid input:checked')).map(i => i.value);
-            const extra = document.getElementById('genresExtra').value.split(',').map(s => s.trim()).filter(Boolean);
-            return [...checked, ...extra];
+            var checked = Array.from(document.querySelectorAll('#catGrid input:checked')).map(function (i) { return i.value; });
+            var extra = document.getElementById('genresExtra').value.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+            return checked.concat(extra);
         }
         function onTitleInput() {
-            const t = document.getElementById('title').value;
-            const slug = t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+            var t = document.getElementById('title').value;
+            var slug = t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
             if (!document.getElementById('slug').value) { document.getElementById('slug').value = slug; updateSlugPreview(); updatePreview(); }
         }
         function updateSlugPreview() { document.getElementById('slugPreview').textContent = document.getElementById('slug').value || '---'; }
         document.getElementById('slug').addEventListener('input', updateSlugPreview);
         function onImageInput() {
-            const url = document.getElementById('image').value.trim();
-            const prev = document.getElementById('coverPreview');
+            var url = document.getElementById('image').value.trim();
+            var prev = document.getElementById('coverPreview');
             if (url) { prev.src = url; prev.style.display = 'block'; } else { prev.style.display = 'none'; }
             updatePreview();
         }
         function onCardInput() {
-            const url = document.getElementById('cardImage').value.trim();
-            const prev = document.getElementById('cardPreview');
+            var url = document.getElementById('cardImage').value.trim();
+            var prev = document.getElementById('cardPreview');
             if (url) { prev.src = url; prev.style.display = 'block'; } else { prev.style.display = 'none'; }
             updatePreview();
         }
-        async function uploadImageToRepo(file, slug) {
-            const token = getToken();
-            if (!token) throw new Error('Faça login para enviar a imagem ao GitHub.');
-            const safe = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, '-');
-            const path = 'img/' + slug + '-' + Date.now() + '-' + safe;
-            const buf = await file.arrayBuffer();
-            let bin = ''; const bytes = new Uint8Array(buf);
-            for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
-            const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + path, {
-                method: 'PUT',
-                headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: 'Upload imagem: ' + file.name, content: btoa(bin) })
-            });
-            if (!res.ok) throw new Error('Falha no upload da imagem.');
-            return '../' + path;
-        }
-        async function onCardFile(input) {
-            const file = input.files && input.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = () => {
-                const prev = document.getElementById('cardPreview');
-                prev.src = reader.result; prev.style.display = 'block';
-                document.getElementById('cardImage').dataset.dataurl = reader.result;
-                updatePreview();
-            };
-            reader.readAsDataURL(file);
-            try {
-                setStatus('Enviando imagem do card...', 'loading');
-                const slug = document.getElementById('slug').value || 'card';
-                const url = await uploadImageToRepo(file, slug);
-                document.getElementById('cardImage').value = url;
-                document.getElementById('cardImage').dataset.dataurl = '';
-                onCardInput();
-                setStatus('Imagem do card enviada.', 'success');
-            } catch (e) { setStatus('❌ ' + e.message, 'error'); }
-        }
-        async function onCoverFile(input) {
-            const file = input.files && input.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = () => {
-                const prev = document.getElementById('coverPreview');
-                prev.src = reader.result; prev.style.display = 'block';
-                document.getElementById('image').dataset.dataurl = reader.result;
-                updatePreview();
-            };
-            reader.readAsDataURL(file);
-            try {
-                setStatus('Enviando capa...', 'loading');
-                const slug = document.getElementById('slug').value || 'capa';
-                const url = await uploadImageToRepo(file, slug);
-                document.getElementById('image').value = url;
-                document.getElementById('image').dataset.dataurl = '';
-                onImageInput();
-                setStatus('Capa enviada.', 'success');
-            } catch (e) { setStatus('❌ ' + e.message + ' Por enquanto fica só na prévia.', 'error'); }
-        }
-        let epCount = 0;
+        var epCount = 0;
         function addEpisode(title, video) {
             epCount++;
-            const div = document.createElement('div');
+            var div = document.createElement('div');
             div.className = 'episode-item-editor';
-            div.innerHTML = `<span class="ep-num">EP ${String(epCount).padStart(2,'0')}</span>
-                <div class="field-group"><label>Título</label><input type="text" class="ep-title" placeholder="Episódio ${epCount}" value="${(title||'').replace(/"/g,'&quot;')}" oninput="updatePreview()"></div>
-                <div class="field-group"><label>Vídeo (YouTube, Archive.org, iframe, MP4...)</label><input type="text" class="ep-video" placeholder="Cole iframe ou link" value="${(video||'').replace(/"/g,'&quot;')}" oninput="updatePreview()"></div>
-                <button class="btn-remove-ep" onclick="removeEpisode(this)">✕ Remover</button>`;
+            div.innerHTML = '<span class="ep-num">EP ' + String(epCount).padStart(2, '0') + '</span>' +
+                '<div class="field-group"><label>Título</label><input type="text" class="ep-title" placeholder="Episódio ' + epCount + '" value="' + (title || '').replace(/"/g, '&quot;') + '" oninput="updatePreview()"></div>' +
+                '<div class="field-group"><label>Vídeo (YouTube, Archive.org, iframe, MP4...)</label><input type="text" class="ep-video" placeholder="Cole iframe ou link" value="' + (video || '').replace(/"/g, '&quot;') + '" oninput="updatePreview()"></div>' +
+                '<button class="btn-remove-ep" onclick="removeEpisode(this)">✕ Remover</button>';
             document.getElementById('episodeList').appendChild(div);
             updatePreview();
         }
         function removeEpisode(btn) {
             btn.closest('.episode-item-editor').remove();
-            document.querySelectorAll('.episode-item-editor').forEach((it, i) => { it.querySelector('.ep-num').textContent = 'EP ' + String(i+1).padStart(2,'0'); });
+            document.querySelectorAll('.episode-item-editor').forEach(function (it, i) { it.querySelector('.ep-num').textContent = 'EP ' + String(i + 1).padStart(2, '0'); });
             epCount = document.querySelectorAll('.episode-item-editor').length;
             updatePreview();
         }
-        function getFormData() {
-            return {
-                title: document.getElementById('title').value || 'Sem Título',
-                slug: document.getElementById('slug').value || 'sem-titulo',
-                image: document.getElementById('image').value.trim() || document.getElementById('image').dataset.dataurl || '',
-                cardImage: document.getElementById('cardImage').value.trim() || document.getElementById('cardImage').dataset.dataurl || '',
-                genres: getGenres(),
-                synopsis: document.getElementById('synopsis').value,
-                defaultVideo: document.getElementById('defaultVideo').value.trim(),
-                author: document.getElementById('slug').dataset.author || getCurrentUser() || '',
-                episodes: Array.from(document.querySelectorAll('.episode-item-editor')).map(it => ({
-                    title: it.querySelector('.ep-title').value, video: it.querySelector('.ep-video').value
-                }))
-            };
-        }
-        function updatePreview() {
-            const d = getFormData();
-            const hint = document.getElementById('videoTypeHint');
-            if (hint) hint.textContent = 'Detectado: ' + detectVideoType(d.defaultVideo);
-            try {
-                document.getElementById('previewFrame').srcdoc = buildHTML(d);
-            } catch(e) {
-                document.getElementById('previewFrame').srcdoc = '<pre style="color:red;padding:20px;">Erro na prévia: ' + e.message + '</pre>';
-            }
-        }
         function extractSrc(input) {
             if (!input) return '';
-            const m = String(input).match(/src=["']([^"']+)["']/i);
+            var m = String(input).match(/src=["']([^"']+)["']/i);
             return m ? m[1] : String(input).trim();
         }
         function ytId(url) {
             if (!url) return '';
-            const s = extractSrc(url);
-            let m = s.match(/youtube\.com\/embed\/([^?&#]+)/) || s.match(/[?&]v=([^&#]+)/) || s.match(/youtu\.be\/([^?&#]+)/);
+            var s = extractSrc(url);
+            var m = s.match(/youtube\.com\/embed\/([^?&#]+)/) || s.match(/[?&]v=([^&#]+)/) || s.match(/youtu\.be\/([^?&#]+)/);
             return m ? m[1] : '';
         }
         function detectVideoType(input) {
             if (!input) return '—';
-            const s = extractSrc(input).toLowerCase();
+            var s = extractSrc(input).toLowerCase();
             if (s.includes('youtube.com') || s.includes('youtu.be')) return 'YouTube';
             if (s.includes('archive.org')) return 'Archive.org';
             if (/\.(mp4|webm|m3u8)(\?|#|$)/.test(s)) return 'Vídeo direto (MP4/WebM)';
@@ -431,257 +482,106 @@
         }
         function normalizeVideo(input) {
             if (!input) return '';
-            const id = ytId(input);
+            var id = ytId(input);
             if (id) return 'https://www.youtube.com/embed/' + id;
-            let raw = extractSrc(input);
-            const enc = (s) => s.split('/').map(p => { try { return encodeURIComponent(decodeURIComponent(p)); } catch (e) { return encodeURIComponent(p); } }).join('/');
-            // archive.org/details/<id>/<arquivo> -> download direto (o + copiado vira %20)
-            let m = raw.match(/archive\.org\/details\/([^/?#]+)\/(.+)/i);
+            var raw = extractSrc(input);
+            var enc = function (s) { return s.split('/').map(function (p) { try { return encodeURIComponent(decodeURIComponent(p)); } catch (e) { return encodeURIComponent(p); } }).join('/'); };
+            var m = raw.match(/archive\.org\/details\/([^/?#]+)\/(.+)/i);
             if (m) return 'https://archive.org/download/' + m[1] + '/' + enc(m[2].replace(/\+/g, ' '));
             m = raw.match(/archive\.org\/details\/([^/?#]+)/i);
             if (m) return 'https://archive.org/embed/' + m[1];
             if (/archive\.org\/download\//i.test(raw)) {
-                const dm = raw.match(/(archive\.org\/download\/[^?#]+\/)(.+?)(\?|#|$)(.*)/i);
+                var dm = raw.match(/(archive\.org\/download\/[^?#]+\/)(.+?)(\?|#|$)(.*)/i);
                 if (dm) return raw.slice(0, raw.indexOf(dm[1]) + dm[1].length) + enc(dm[2].replace(/\+/g, ' ')) + (dm[3] || '') + (dm[4] || '');
                 return raw.replace(/\+/g, '%20');
             }
             return raw;
         }
         function videoPlayerHTML(url) {
-            const src = normalizeVideo(url);
+            var src = normalizeVideo(url);
             if (!src) return '<div style="padding:40px;text-align:center;color:#666;">Nenhum vídeo informado</div>';
-            if (/\.(mp4|webm)(\?|#|$)/i.test(src)) return `<video controls preload="metadata" style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;" src="${esc(src)}"></video>`;
-            return `<iframe src="${esc(src)}" title="Vídeo" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"></iframe>`;
+            if (/\.(mp4|webm)(\?|#|$)/i.test(src)) return '<video controls preload="metadata" style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;" src="' + esc(src) + '"></video>';
+            return '<iframe src="' + esc(src) + '" title="Vídeo" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"></iframe>';
         }
         function thumbHTML(video, idx) {
-            const id = ytId(video);
-            if (id) return `<img src="https://img.youtube.com/vi/${id}/mqdefault.jpg" class="episode-thumb" alt="EP${idx}">`;
-            return `<div class="episode-thumb" style="background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:10px;color:#888;">EP${String(idx).padStart(2,'0')}</div>`;
+            var id = ytId(video);
+            if (id) return '<img src="https://img.youtube.com/vi/' + id + '/mqdefault.jpg" class="episode-thumb" alt="EP' + idx + '">';
+            return '<div class="episode-thumb" style="background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:10px;color:#888;">EP' + String(idx).padStart(2, '0') + '</div>';
+        }
+        function updatePreview() {
+            var d = getFormData();
+            var hint = document.getElementById('videoTypeHint');
+            if (hint) hint.textContent = 'Detectado: ' + detectVideoType(d.defaultVideo);
+            try {
+                document.getElementById('previewFrame').srcdoc = buildHTML(d);
+            } catch (e) {
+                document.getElementById('previewFrame').srcdoc = '<pre style="color:red;padding:20px;">Erro na prévia: ' + e.message + '</pre>';
+            }
         }
         function buildHTML(d) {
-            const srcs = d.episodes.map((ep) => normalizeVideo(ep.video || d.defaultVideo));
-            const eps = d.episodes.map((ep, i) => {
-                const isNew = i === 0;
-                const src = srcs[i] || '';
-                return `<a href="?ep=${i + 1}" data-idx="${i}" class="episode-item${isNew?' active':''}" onclick="goEp(${i});return false;">
-                    ${thumbHTML(ep.video || d.defaultVideo, i+1)}
-                    <div class="episode-info"><div class="ep-title">${esc(ep.title||'Episódio '+(i+1))}</div><div class="ep-meta">Toque para assistir</div></div>
-                    ${isNew?'<span class="episode-badge">NOVO</span>':''}
-                    <button class="btn-play">▶</button></a>`;
+            var srcs = d.episodes.map(function (ep) { return normalizeVideo(ep.video || d.defaultVideo); });
+            var eps = d.episodes.map(function (ep, i) {
+                var isNew = i === 0;
+                var src = srcs[i] || '';
+                return '<a href="?ep=' + (i + 1) + '" data-idx="' + i + '" class="episode-item' + (isNew ? ' active' : '') + '" onclick="goEp(' + i + ');return false;">' +
+                    thumbHTML(ep.video || d.defaultVideo, i + 1) +
+                    '<div class="episode-info"><div class="ep-title">' + esc(ep.title || 'Episódio ' + (i + 1)) + '</div><div class="ep-meta">Toque para assistir</div></div>' +
+                    (isNew ? '<span class="episode-badge">NOVO</span>' : '') +
+                    '<button class="btn-play">▶</button></a>';
             }).join('\n');
-            const epJson = JSON.stringify(srcs);
-            const epTitles = JSON.stringify(d.episodes.map((ep, i) => ep.title || ('Episódio ' + (i + 1))));
-            const cardImg = d.cardImage || d.image || '';
-            return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>${esc(d.title)} — Anima Play</title>
-<meta name="description" content="${esc((d.synopsis || '').slice(0, 160) || d.title + ' - Assista online no Anima Play.')}">
-<meta property="og:title" content="${esc(d.title)} — Anima Play">
-<meta property="og:description" content="${esc((d.synopsis || '').slice(0, 160) || d.title + ' - Assista online no Anima Play.')}">
-<meta property="og:type" content="video.other">
-<meta property="og:url" content="https://animaplays.github.io/posts/${esc(d.slug)}.html">
-${cardImg ? '<meta property="og:image" content="https://animaplays.github.io/' + esc(cardImg.replace(/^\.\.\//, '')) + '">' : ''}
-<meta name="anima-title" content="${esc(d.title)}">
-<meta name="anima-card" content="${esc(cardImg)}">
-<meta name="anima-subtitle" content="${esc((d.episodes[0] && d.episodes[0].title) || 'Nova Postagem')}">
-<meta name="anima-genres" content="${esc(d.genres.join(','))}">
-<meta name="anima-author" content="${esc(d.author || '')}">
-<style>*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}body{background:#0a0a0a;color:#fff;min-height:100vh;overflow-x:hidden}.main-header{display:flex;align-items:center;padding:20px 40px;background:linear-gradient(180deg,rgba(10,10,10,1) 0%,rgba(10,10,10,0) 100%)}.logo{font-size:42px;font-weight:800;color:#e50914;text-transform:uppercase}.main-footer{text-align:center;padding:40px;color:#555;font-size:12px;border-top:1px solid #1a1a1a}.back-link{display:inline-block;color:#e50914;text-decoration:none;font-size:14px;margin-bottom:20px;padding:0 40px}.post-hero{position:relative;width:100%;height:400px;overflow:hidden}.post-hero img{width:100%;height:100%;object-fit:cover}.post-hero-overlay{position:absolute;bottom:0;left:0;right:0;padding:50px 40px 25px;background:linear-gradient(transparent,#0a0a0a)}.post-hero-overlay h1{font-size:32px;font-weight:800}.post-meta{display:flex;gap:10px;flex-wrap:wrap}.post-meta span{background:rgba(255,255,255,0.15);padding:3px 10px;border-radius:12px;font-size:12px;color:#ccc}.post-body{max-width:900px;margin:0 auto;padding:20px 40px 40px}.post-synopsis{color:#aaa;font-size:14px;line-height:1.7;margin-bottom:30px}.section-label{font-size:13px;color:#e50914;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;font-weight:700}.video-player{position:relative;width:100%;padding-top:56.25%;background:#1a1a1a;border-radius:12px;overflow:hidden;margin-bottom:12px}.ep-nav{display:flex;gap:10px;align-items:center;margin-bottom:24px;flex-wrap:wrap}.ep-nav button{background:#15191d;color:#fff;border:1px solid #2a2a2a;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer}.ep-nav button:hover:not(:disabled){border-color:#e50914;color:#e50914}.ep-nav button:disabled{opacity:.35;cursor:not-allowed}.ep-nav button.primary{background:#e50914;border-color:#e50914}.ep-nav button.primary:hover:not(:disabled){background:#f0151f;color:#fff}#epLabel{font-size:13px;color:#aaa}.episode-list{display:flex;flex-direction:column;gap:8px}.episode-item{display:flex;align-items:center;gap:14px;background:#15191d;padding:12px 16px;border-radius:10px;color:#fff;text-decoration:none}.episode-item.active{background:#e50914}.episode-thumb{width:90px;height:52px;border-radius:6px;object-fit:cover;background:#2a2a2a;flex-shrink:0}.episode-info{flex:1}.ep-title{font-size:14px;font-weight:600}.episode-badge{background:#e50914;color:#fff;font-size:10px;padding:2px 8px;border-radius:4px;font-weight:700}.btn-play{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.15);border:none;color:#fff;font-size:16px;cursor:pointer}.post-layout{display:grid;grid-template-columns:1fr 260px;gap:24px;max-width:1200px;margin:0 auto;padding:20px 40px 40px}.post-main{min-width:0}.post-body{max-width:none;margin:0;padding:0}.post-side{position:sticky;top:210px;align-self:start;display:flex;flex-direction:column;gap:16px}.side-section{background:rgba(20,20,20,.8);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px}.side-title{font-size:12px;font-weight:800;color:#e5e5e5;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}.side-link{display:block;color:#fff;text-decoration:none;background:#e50914;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:700;text-align:center}.side-link:hover{background:#f0151f}.side-chips{display:flex;flex-wrap:wrap;gap:6px}.side-chips a{background:rgba(255,255,255,.07);color:#ccc;text-decoration:none;font-size:12px;padding:6px 12px;border-radius:20px}.side-chips a:hover{background:#e50914;color:#fff}.side-post{display:flex;gap:10px;align-items:center;text-decoration:none;color:#fff;margin-bottom:10px}.side-post img{width:64px;height:90px;object-fit:cover;border-radius:6px;background:#1a1a1a;flex-shrink:0}.side-post span{font-size:12px;font-weight:600;line-height:1.3}@media(max-width:900px){.post-layout{grid-template-columns:1fr}.post-side{position:static}}@media(max-width:768px){.post-hero{height:240px !important}.post-hero-overlay{padding:30px 20px 16px !important}.post-hero-overlay h1{font-size:24px !important}}</style></head>
-<body><header class="main-header"><div class="logo"><a href="/" style="color:inherit;text-decoration:none">Anima Play</a></div></header>
-<div class="post-layout"><div class="post-main"><a href="/" class="back-link">← Voltar</a>
-<div class="post-hero"><img src="${esc(d.image||'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200&auto=format&fit=crop')}" alt="${esc(d.title)}"><div class="post-hero-overlay"><h1>${esc(d.title)}</h1><div class="post-meta">${d.genres.map(g=>'<span>'+esc(g)+'</span>').join('')}${d.author?'<span>Por @'+esc(d.author)+'</span>':''}<span id="viewCount"></span></div></div></div>
-<main class="post-body">${d.synopsis?'<p class="post-synopsis">'+esc(d.synopsis)+'</p>':''}<div class="section-label">Assistir</div><div class="video-player" id="vp">${videoPlayerHTML(d.defaultVideo)}</div><div class="ep-nav"><button onclick="location.href='/'">← Início</button><button id="btnPrev" onclick="prevEp()">← Anterior</button><span id="epLabel"></span><button id="btnNext" class="primary" onclick="nextEp()">Próximo →</button></div><div class="section-label">Episódios</div><div class="episode-list">\n${eps}\n</div><div class="section-label">Comentários</div><div id="disqus_thread"></div><script>var disqus_config=function(){this.page.url='https://animaplays.github.io/posts/${esc(d.slug)}.html';this.page.identifier='${esc(d.slug)}';};(function(){var b=document,s=b.createElement('script');s.src='https://anima-play.disqus.com/embed.js';s.setAttribute('data-timestamp',+new Date());(b.head||b.body).appendChild(s);})();<\/script><noscript>Ative o JavaScript para ver os comentários.</noscript></main></div><aside class="post-side" id="postSide"></aside></div>
-<footer class="main-footer"><p>&copy; 2026 Anima Play</p></footer>
-<script>function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}var EPISODES=${epJson};var EP_TITLES=${epTitles};var cur=0;function isDirect(s){return /\\.(mp4|webm)(\\?|#|$)/i.test(s||'');}function paint(src){var box=document.getElementById('vp');if(!src){box.innerHTML='<div style="padding:40px;text-align:center;color:#666;">Nenhum vídeo</div>';return;}if(isDirect(src)){box.innerHTML='<video controls autoplay style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;" src="'+esc(src)+'"></video>';}else{box.innerHTML='<iframe src="'+esc(src)+'" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"></iframe>';}}function syncUI(){var items=document.querySelectorAll('.episode-item');items.forEach(function(el,i){el.classList.toggle('active',i===cur);});var label=document.getElementById('epLabel');if(label){label.textContent=(EP_TITLES[cur]||('Episódio '+(cur+1)))+' • '+(cur+1)+' / '+EPISODES.length;}var pv=document.getElementById('btnPrev');var nx=document.getElementById('btnNext');if(pv){pv.disabled=cur<=0;}if(nx){nx.disabled=cur>=EPISODES.length-1;}try{var u=new URL(window.location.href);u.searchParams.set('ep',String(cur+1));window.history.replaceState(null,'',u);}catch(e){}}function renderEp(i){if(i<0||i>=EPISODES.length||!EPISODES[i])return;cur=i;paint(EPISODES[i]);syncUI();var vp=document.getElementById('vp');if(vp&&vp.scrollIntoView){vp.scrollIntoView({behavior:'smooth',block:'center'});}}function goEp(i){renderEp(i);}function changeEpisode(el,src){var items=Array.prototype.slice.call(document.querySelectorAll('.episode-item'));var idx=el&&el.getAttribute?parseInt(el.getAttribute('data-idx')||'0',10):0;if(el&&el.getAttribute&&el.getAttribute('data-idx')!==null){renderEp(idx);}else{paint(src);}}function nextEp(){if(cur<EPISODES.length-1){renderEp(cur+1);}}function prevEp(){if(cur>0){renderEp(cur-1);}}try{var q=new URLSearchParams(window.location.search);var n=parseInt(q.get('ep')||'1',10);if(n>=1&&n<=EPISODES.length){cur=n-1;paint(EPISODES[cur]);}}catch(e){}syncUI();<\/script>
-<script src="../post-layout.js?v=5"><\/script>
-<script src="../update-check.js?v=5"><\/script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"><\/script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"><\/script>
-<script src="../firebase-config.js?v=1"><\/script>
-<script>if(typeof firebase!=='undefined'&&firebase.initializeApp)firebase.initializeApp(firebaseConfig);<\/script>
-<script src="../views.js?v=2"><\/script>
-<script>if(typeof ViewCounter!=='undefined'){ViewCounter.increment('${esc(d.slug)}').then(function(v){var el=document.getElementById('viewCount');if(el)el.textContent=v+' visualizações';});}<\/script>
-</body></html>`;
+            var epJson = JSON.stringify(srcs);
+            var epTitles = JSON.stringify(d.episodes.map(function (ep, i) { return ep.title || ('Episódio ' + (i + 1)); }));
+            var cardImg = d.cardImage || d.image || '';
+            return '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">' +
+'<title>' + esc(d.title) + ' — Anima Play</title>' +
+'<meta name="description" content="' + esc((d.synopsis || '').slice(0, 160) || d.title + ' - Assista online no Anima Play.') + '">' +
+'<meta property="og:title" content="' + esc(d.title) + ' — Anima Play">' +
+'<meta property="og:description" content="' + esc((d.synopsis || '').slice(0, 160) || d.title + ' - Assista online no Anima Play.') + '">' +
+'<meta property="og:type" content="video.other">' +
+'<meta property="og:url" content="https://animaplays.github.io/posts/' + esc(d.slug) + '.html">' +
+(cardImg ? '<meta property="og:image" content="https://animaplays.github.io/' + esc(cardImg.replace(/^\.\.\//, '')) + '">' : '') +
+'<meta name="anima-title" content="' + esc(d.title) + '">' +
+'<meta name="anima-card" content="' + esc(cardImg) + '">' +
+'<meta name="anima-subtitle" content="' + esc((d.episodes[0] && d.episodes[0].title) || 'Nova Postagem') + '">' +
+'<meta name="anima-genres" content="' + esc(d.genres.join(',')) + '">' +
+'<meta name="anima-author" content="' + esc(d.author || '') + '">' +
+'<style>*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}body{background:#0a0a0a;color:#fff;min-height:100vh;overflow-x:hidden}.main-header{display:flex;align-items:center;padding:20px 40px;background:linear-gradient(180deg,rgba(10,10,10,1) 0%,rgba(10,10,10,0) 100%)}.logo{font-size:42px;font-weight:800;color:#e50914;text-transform:uppercase}.main-footer{text-align:center;padding:40px;color:#555;font-size:12px;border-top:1px solid #1a1a1a}.back-link{display:inline-block;color:#e50914;text-decoration:none;font-size:14px;margin-bottom:20px;padding:0 40px}.post-hero{position:relative;width:100%;height:400px;overflow:hidden}.post-hero img{width:100%;height:100%;object-fit:cover}.post-hero-overlay{position:absolute;bottom:0;left:0;right:0;padding:50px 40px 25px;background:linear-gradient(transparent,#0a0a0a)}.post-hero-overlay h1{font-size:32px;font-weight:800}.post-meta{display:flex;gap:10px;flex-wrap:wrap}.post-meta span{background:rgba(255,255,255,0.15);padding:3px 10px;border-radius:12px;font-size:12px;color:#ccc}.post-body{max-width:900px;margin:0 auto;padding:20px 40px 40px}.post-synopsis{color:#aaa;font-size:14px;line-height:1.7;margin-bottom:30px}.section-label{font-size:13px;color:#e50914;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;font-weight:700}.video-player{position:relative;width:100%;padding-top:56.25%;background:#1a1a1a;border-radius:12px;overflow:hidden;margin-bottom:12px}.ep-nav{display:flex;gap:10px;align-items:center;margin-bottom:24px;flex-wrap:wrap}.ep-nav button{background:#15191d;color:#fff;border:1px solid #2a2a2a;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer}.ep-nav button:hover:not(:disabled){border-color:#e50914;color:#e50914}.ep-nav button:disabled{opacity:.35;cursor:not-allowed}.ep-nav button.primary{background:#e50914;border-color:#e50914}.ep-nav button.primary:hover:not(:disabled){background:#f0151f;color:#fff}#epLabel{color:#aaa;font-size:13px}.episode-list{display:flex;flex-direction:column;gap:8px;margin-bottom:30px}.episode-item{display:flex;align-items:center;gap:14px;padding:10px 14px;background:#111;border:1px solid #1a1a1a;border-radius:10px;cursor:pointer;text-decoration:none;color:#fff;transition:border-color .2s}.episode-item:hover{border-color:#e50914}.episode-item.active{border-color:#e50914;background:#1a0a0a}.episode-thumb{width:72px;height:48px;border-radius:6px;object-fit:cover;flex-shrink:0}.episode-info{flex:1;min-width:0}.ep-title{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ep-meta{font-size:11px;color:#666;margin-top:2px}.episode-badge{background:#e50914;color:#fff;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:700;margin-left:8px;flex-shrink:0}.btn-play{background:none;border:1px solid #333;color:#aaa;border-radius:50%;width:32px;height:32px;font-size:12px;cursor:pointer;flex-shrink:0}.episode-item:hover .btn-play{border-color:#e50914;color:#e50914}.post-layout{display:flex;gap:0;max-width:1400px;margin:0 auto}.post-main{flex:1;min-width:0}.post-side{width:300px;flex-shrink:0;border-left:1px solid #1a1a1a;padding:20px;display:none}@media(min-width:1024px){.post-side{display:block}}</style>' +
+'<body><header class="main-header"><div class="logo"><a href="/" style="color:inherit;text-decoration:none">Anima Play</a></div></header>' +
+'<div class="post-layout"><div class="post-main"><a href="/" class="back-link">← Voltar</a>' +
+'<div class="post-hero"><img src="' + esc(d.image || 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200&auto=format&fit=crop') + '" alt="' + esc(d.title) + '"><div class="post-hero-overlay"><h1>' + esc(d.title) + '</h1><div class="post-meta">' + d.genres.map(function (g) { return '<span>' + esc(g) + '</span>'; }).join('') + (d.author ? '<span>Por @' + esc(d.author) + '</span>' : '') + '<span id="viewCount"></span></div></div></div>' +
+'<main class="post-body">' + (d.synopsis ? '<p class="post-synopsis">' + esc(d.synopsis) + '</p>' : '') + '<div class="section-label">Assistir</div><div class="video-player" id="vp">' + videoPlayerHTML(d.defaultVideo) + '</div><div class="ep-nav"><button onclick="location.href=\'/\'">← Início</button><button id="btnPrev" onclick="prevEp()">← Anterior</button><span id="epLabel"></span><button id="btnNext" class="primary" onclick="nextEp()">Próximo →</button></div><div class="section-label">Episódios</div><div class="episode-list">\n' + eps + '\n</div><div class="section-label">Comentários</div><div id="disqus_thread"></div><script>var disqus_config=function(){this.page.url=\'https://animaplays.github.io/posts/' + esc(d.slug) + '.html\';this.page.identifier=\'' + esc(d.slug) + '\';};(function(){var b=document,s=b.createElement(\'script\');s.src=\'https://anima-play.disqus.com/embed.js\';s.setAttribute(\'data-timestamp\',+new Date());(b.head||b.body).appendChild(s);})();<\/script><noscript>Ative o JavaScript para ver os comentários.</noscript></main></div><aside class="post-side" id="postSide"></aside></div>' +
+'<footer class="main-footer"><p>&copy; 2026 Anima Play</p></footer>' +
+'<script>function esc(s){return String(s||\'\').replace(/&/g,\'&amp;\').replace(/</g,\'&lt;\').replace(/>/g,\'&gt;\').replace(/"/g,\'&quot;\');}var EPISODES=' + epJson + ';var EP_TITLES=' + epTitles + ';var cur=0;function isDirect(s){return /\\\\.(mp4|webm)(\\\\?|#|$)/i.test(s||\'\');}function paint(src){var box=document.getElementById(\'vp\');if(!src){box.innerHTML=\'<div style="padding:40px;text-align:center;color:#666;">Nenhum vídeo</div>\';return;}if(isDirect(src)){box.innerHTML=\'<video controls autoplay style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;" src="\'+esc(src)+\'"></video>\';}else{box.innerHTML=\'<iframe src="\'+esc(src)+\'" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"></iframe>\';}}function syncUI(){var items=document.querySelectorAll(\'.episode-item\');items.forEach(function(el,i){el.classList.toggle(\'active\',i===cur);});var label=document.getElementById(\'epLabel\');if(label){label.textContent=(EP_TITLES[cur]||(\'Episódio \'+(cur+1)))+\' • \'+(cur+1)+\' / \'+EPISODES.length;}var pv=document.getElementById(\'btnPrev\');var nx=document.getElementById(\'btnNext\');if(pv){pv.disabled=cur<=0;}if(nx){nx.disabled=cur>=EPISODES.length-1;}try{var u=new URL(window.location.href);u.searchParams.set(\'ep\',String(cur+1));window.history.replaceState(null,\'\',u);}catch(e){}}function renderEp(i){if(i<0||i>=EPISODES.length||!EPISODES[i])return;cur=i;paint(EPISODES[i]);syncUI();var vp=document.getElementById(\'vp\');if(vp&&vp.scrollIntoView){vp.scrollIntoView({behavior:\'smooth\',block:\'center\'});}}function goEp(i){renderEp(i);}function nextEp(){if(cur<EPISODES.length-1){renderEp(cur+1);}}function prevEp(){if(cur>0){renderEp(cur-1);}}try{var u=new URL(window.location.href);var epParam=parseInt(u.searchParams.get(\'ep\')||\'1\',10);if(epParam>=1&&epParam<=EPISODES.length)renderEp(epParam-1);else renderEp(0);}catch(e){renderEp(0);}<\/script>' +
+'<script src="../post-layout.js?v=5"><\/script>' +
+'<script src="../update-check.js?v=5"><\/script>' +
+'<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"><\/script>' +
+'<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"><\/script>' +
+'<script src="../firebase-config.js?v=1"><\/script>' +
+'<script>if(typeof firebase!=="undefined"&&firebase.initializeApp)firebase.initializeApp(firebaseConfig);<\/script>' +
+'<script src="../views.js?v=2"><\/script>' +
+'<script>if(typeof ViewCounter!=="undefined"){ViewCounter.increment(\'' + esc(d.slug) + '\').then(function(v){var el=document.getElementById("viewCount");if(el)el.textContent=v+" visualizações";});}<\/script>' +
+'</body></html>';
         }
-        function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-        function setStatus(msg, kind) { const el = document.getElementById('statusMsg'); el.className = 'status-msg ' + kind; el.textContent = msg; }
-        async function getSha(path) {
-            const token = getToken();
-            const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + path, { headers: { 'Authorization': 'Bearer ' + token } });
-            if (!res.ok) return null;
-            return (await res.json()).sha;
-        }
-        async function getJson(path) {
-            const token = getToken();
-            const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + path, { headers: { 'Authorization': 'Bearer ' + token } });
-            if (res.status === 404) return { data: null, sha: null };
-            if (!res.ok) throw new Error('Falha ao ler ' + path);
-            const j = await res.json();
-            const text = decodeURIComponent(escape(atob(j.content.replace(/\n/g, ''))));
-            try { return { data: JSON.parse(text), sha: j.sha }; }
-            catch { return { data: null, sha: j.sha }; }
-        }
-        async function syncPostsJson(entry, isDelete) {
-            const token = getToken();
-            const { data, sha } = await getJson('posts.json');
-            let list = Array.isArray(data) ? data : [];
-            if (isDelete) {
-                list = list.filter(p => p.slug !== entry.slug);
-            } else {
-                const i = list.findIndex(p => p.slug === entry.slug);
-                if (i >= 0) { entry.createdAt = list[i].createdAt || entry.createdAt; list[i] = entry; }
-                else list.push(entry);
-                list.sort((a, b) => (b.updatedAt || b.createdAt || '').localeCompare(a.updatedAt || a.createdAt || ''));
-            }
-            const content = btoa(unescape(encodeURIComponent(JSON.stringify(list, null, 2))));
-            const body = { message: (isDelete ? 'Remove do índice: ' : 'Atualiza índice: ') + entry.slug, content };
-            if (sha) body.sha = sha;
-            const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/posts.json', {
-                method: 'PUT', headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }, body: JSON.stringify(body)
-            });
-            if (!res.ok) throw new Error((await res.json()).message || 'Falha ao atualizar posts.json');
-        }
-        async function publishPost() {
-            const btn = document.getElementById('btnPublish');
-            const data = getFormData();
-            if (!data.title || !data.slug) { setStatus('Preencha título e slug.', 'error'); return; }
-            btn.disabled = true; btn.textContent = 'Publicando...'; setStatus('Enviando ao GitHub...', 'loading');
-            try {
-                const html = buildHTML(data);
-                const content = btoa(unescape(encodeURIComponent(html)));
-                const path = 'posts/' + data.slug + '.html';
-                const sha = await getSha(path);
-                const author = data.author || getCurrentUser();
-                const body = { message: (sha ? 'Atualiza' : 'Nova') + ' postagem: ' + data.title + (author ? ' (por @' + author + ')' : ''), content };
-                if (sha) body.sha = sha;
-                const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + path, {
-                    method: 'PUT', headers: { 'Authorization': 'Bearer ' + getToken(), 'Content-Type': 'application/json' }, body: JSON.stringify(body)
-                });
-                if (!res.ok) throw new Error((await res.json()).message || 'Falha ao publicar');
-                const now = new Date().toISOString();
-                const cardImg = data.cardImage || data.image || '';
-                const episodeUrls = (data.episodes || []).map(e => e.video).filter(Boolean);
-                await syncPostsJson({ slug: data.slug, title: data.title, image: cardImg, subtitle: (data.episodes[0] && data.episodes[0].title) || 'Nova Postagem', genres: data.genres, author: data.author || getCurrentUser() || '', episodes: episodeUrls, createdAt: now, updatedAt: now }, false);
-                setStatus('Publicada! Abrindo...', 'success');
-                loadPostList();
-                window.open('https://animaplays.github.io/' + path, '_blank');
-            } catch (e) { setStatus('❌ ' + e.message, 'error'); }
-            finally { btn.disabled = false; btn.textContent = 'Publicar'; }
-        }
-        async function deletePost(slugParam) {
-            const slug = slugParam || document.getElementById('slug').value.trim();
-            if (!slug) { setStatus('Informe o slug para apagar.', 'error'); return; }
-            if (!confirm('Apagar posts/' + slug + '.html e suas imagens do GitHub?')) return;
-            setStatus('Apagando...', 'loading');
-            try {
-                const path = 'posts/' + slug + '.html';
-                const sha = await getSha(path);
-                if (!sha) throw new Error('Postagem não encontrada.');
-                const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + path, {
-                    method: 'DELETE', headers: { 'Authorization': 'Bearer ' + getToken(), 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: 'Apaga postagem: ' + slug, sha })
-                });
-                if (!res.ok) throw new Error((await res.json()).message || 'Falha ao apagar');
-                // Limpar imagens órfãs do img/
-                try {
-                    const imgRes = await fetch('https://api.github.com/repos/' + REPO + '/contents/img', { headers: { 'Authorization': 'Bearer ' + getToken() } });
-                    if (imgRes.ok) {
-                        const imgFiles = (await imgRes.json()).filter(f => f.name.startsWith(slug + '-'));
-                        for (const img of imgFiles) {
-                            await fetch('https://api.github.com/repos/' + REPO + '/contents/' + img.path, {
-                                method: 'DELETE', headers: { 'Authorization': 'Bearer ' + getToken(), 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ message: 'Limpa imagem órfã: ' + img.name, sha: img.sha })
-                            });
-                        }
-                    }
-                } catch { /* ignora falha na limpeza de imagens */ }
-                try { await syncPostsJson({ slug }, true); setStatus('Apagada: ' + path, 'success'); }
-                catch (e2) { setStatus('Arquivo apagado, mas o índice falhou: ' + e2.message, 'error'); }
-                loadPostList();
-            } catch (e) { setStatus('❌ ' + e.message, 'error'); }
-        }
-        async function loadPostList() {
-            const box = document.getElementById('postList');
-            const token = getToken();
-            if (!token) { box.innerHTML = '<p style="font-size:12px;color:#555;">Faça login para listar.</p>'; return; }
-            box.innerHTML = '<p style="font-size:12px;color:#555;">Carregando...</p>';
-            try {
-                const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/posts', { headers: { 'Authorization': 'Bearer ' + token } });
-                if (res.status === 404) { box.innerHTML = '<p style="font-size:12px;color:#555;">Nenhuma postagem ainda.</p>'; return; }
-                if (!res.ok) throw new Error('Falha ao listar.');
-                const files = (await res.json()).filter(f => f.name.endsWith('.html'));
-                if (!files.length) { box.innerHTML = '<p style="font-size:12px;color:#555;">Nenhuma postagem ainda.</p>'; return; }
-                box.innerHTML = files.map(f => {
-                    const slug = f.name.replace('.html','');
-                    return `<div class="post-row"><a href="https://animaplays.github.io/posts/${slug}.html" target="_blank">${slug}</a><span><button onclick="loadPostForEdit('${slug}')">Editar</button> <button onclick="deletePost('${slug}')">Apagar</button></span></div>`;
-                }).join('');
-            } catch (e) { box.innerHTML = '<p style="font-size:12px;color:#f87171;">' + e.message + '</p>'; }
-        }
-        function fillSlug(slug) { document.getElementById('slug').value = slug; updateSlugPreview(); updatePreview(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-        async function loadPostForEdit(slug) {
-            setStatus('Carregando ' + slug + ' para editar...', 'loading');
-            try {
-                let html = null;
-                const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/posts/' + slug + '.html', { headers: { 'Authorization': 'Bearer ' + getToken() } });
-                if (res.ok) {
-                    const j = await res.json();
-                    html = decodeURIComponent(escape(atob((j.content || '').replace(/\n/g, ''))));
-                } else {
-                    const r = await fetch(`https://raw.githubusercontent.com/${REPO}/main/posts/${slug}.html?t=${Date.now()}`);
-                    if (!r.ok) throw new Error('HTML não encontrado.');
-                    html = await r.text();
-                }
-                const doc = new DOMParser().parseFromString(html, 'text/html');
-                const meta = (n) => { var m = doc.querySelector('meta[name="' + n + '"]'); return m ? (m.getAttribute('content') || '') : ''; };
-                function textOf(sel) { var el = doc.querySelector(sel); return el ? ((el.textContent || '').trim()) : ''; }
-                document.getElementById('title').value = meta('anima-title') || textOf('.post-hero-overlay h1') || textOf('h1') || '';
-                document.getElementById('slug').value = slug;
-                document.getElementById('slug').dataset.author = meta('anima-author') || '';
-                var heroEl = doc.querySelector('.post-hero img');
-                const heroImg = heroEl ? (heroEl.getAttribute('src') || '') : '';
-                document.getElementById('image').value = heroImg;
-                document.getElementById('image').dataset.dataurl = '';
-                onImageInput();
-                document.getElementById('cardImage').value = meta('anima-card') || '';
-                document.getElementById('cardImage').dataset.dataurl = '';
-                onCardInput();
-                const genres = (meta('anima-genres') || '').split(',').map(s => s.trim()).filter(Boolean);
-                document.querySelectorAll('#catGrid input').forEach(i => { i.checked = genres.includes(i.value); });
-                document.getElementById('genresExtra').value = genres.filter(g => !CATS.includes(g)).join(', ');
-                document.getElementById('synopsis').value = textOf('.post-synopsis');
-                const mSrc = html.match(/var EPISODES=(\[.*?\]);/s);
-                const mTit = html.match(/var EP_TITLES=(\[.*?\]);/s);
-                const srcs = mSrc ? JSON.parse(mSrc[1]) : [];
-                let titles = [];
-                try { titles = mTit ? JSON.parse(mTit[1]) : []; } catch { titles = []; }
-                document.getElementById('defaultVideo').value = srcs[0] || '';
-                document.getElementById('episodeList').innerHTML = ''; epCount = 0;
-                if (srcs.length) srcs.forEach((s, i) => addEpisode(titles[i] || '', s));
-                else addEpisode();
-                updateSlugPreview(); updatePreview();
-                setStatus('Pronta para editar. Adicione o EP3 e clique Publicar.', 'success');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            } catch (e) { setStatus('❌ ' + e.message, 'error'); }
-        }
-        function downloadPost() {
-            const data = getFormData();
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(new Blob([buildHTML(data)], { type: 'text/html' }));
-            a.download = 'posts/' + (data.slug || 'anime') + '.html'; a.click();
-        }
+        function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
         function clearForm() {
-            document.getElementById('title').value = ''; document.getElementById('slug').value = '';
+            document.getElementById('title').value = '';
+            document.getElementById('slug').value = '';
             delete document.getElementById('slug').dataset.author;
-            document.getElementById('image').value = ''; document.getElementById('image').dataset.dataurl = '';
+            document.getElementById('image').value = '';
             document.getElementById('coverPreview').style.display = 'none';
-            document.getElementById('cardImage').value = ''; document.getElementById('cardImage').dataset.dataurl = '';
+            document.getElementById('cardImage').value = '';
             document.getElementById('cardPreview').style.display = 'none';
-            document.getElementById('synopsis').value = ''; document.getElementById('defaultVideo').value = '';
+            document.getElementById('synopsis').value = '';
+            document.getElementById('defaultVideo').value = '';
             document.getElementById('genresExtra').value = '';
-            document.querySelectorAll('#catGrid input:checked').forEach(i => i.checked = false);
-            document.getElementById('episodeList').innerHTML = ''; epCount = 0;
-            addEpisode(); updateSlugPreview(); updatePreview();
+            document.querySelectorAll('#catGrid input:checked').forEach(function (i) { i.checked = false; });
+            document.getElementById('episodeList').innerHTML = '';
+            epCount = 0;
+            addEpisode();
+            updateSlugPreview();
+            updatePreview();
         }
-        window.addEventListener('DOMContentLoaded', () => { addEpisode(); updateSlugPreview(); checkAuth(); });
+        window.addEventListener('DOMContentLoaded', function () { addEpisode(); updateSlugPreview(); checkAuth(); });
     </script>
 </body>
 </html>
