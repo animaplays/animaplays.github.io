@@ -584,15 +584,19 @@
             var raw = extractSrc(input);
             var enc = function (s) { return s.split('/').map(function (p) { try { return encodeURIComponent(decodeURIComponent(p)); } catch (e) { return encodeURIComponent(p); } }).join('/'); };
             var m = raw.match(/archive\.org\/details\/([^/?#]+)\/(.+)/i);
-            if (m) return 'https://archive.org/download/' + m[1] + '/' + enc(m[2].replace(/\+/g, ' '));
+            if (m) {
+                var fname = m[2].replace(/\+/g, ' ').replace(/\.(mkv|avi)$/i, '.mp4');
+                return 'https://archive.org/download/' + m[1] + '/' + enc(fname);
+            }
             m = raw.match(/archive\.org\/details\/([^/?#]+)/i);
             if (m) return 'https://archive.org/embed/' + m[1];
             if (/archive\.org\/download\//i.test(raw)) {
-                var dm = raw.match(/(archive\.org\/download\/[^?#]+\/)(.+?)(\?|#|$)(.*)/i);
-                if (dm) return raw.slice(0, raw.indexOf(dm[1]) + dm[1].length) + enc(dm[2].replace(/\+/g, ' ')) + (dm[3] || '') + (dm[4] || '');
-                return raw.replace(/\+/g, '%20');
+                var normalized = raw.replace(/\+/g, ' ').replace(/\.(mkv|avi)$/i, '.mp4');
+                var dm = normalized.match(/(archive\.org\/download\/[^?#]+\/)(.+?)(\?|#|$)(.*)/i);
+                if (dm) return normalized.slice(0, normalized.indexOf(dm[1]) + dm[1].length) + enc(dm[2]) + (dm[3] || '') + (dm[4] || '');
+                return normalized.replace(/\+/g, '%20');
             }
-            return raw;
+            return raw.replace(/\.(mkv|avi)$/i, '.mp4');
         }
         function videoPlayerHTML(url) {
             var src = normalizeVideo(url);

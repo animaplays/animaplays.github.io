@@ -134,10 +134,13 @@ function buildPostHTML(d) {
     let raw = extractSrc(input);
     const enc = (s) => s.split('/').map(p => { try { return encodeURIComponent(decodeURIComponent(p)); } catch { return encodeURIComponent(p); } }).join('/');
     let m = raw.match(/archive\.org\/details\/([^/?#]+)\/(.+)/i);
-    if (m) return 'https://archive.org/download/' + m[1] + '/' + enc(m[2].replace(/\+/g, ' '));
+    if (m) {
+      const fname = m[2].replace(/\+/g, ' ').replace(/\.(mkv|avi)$/i, '.mp4');
+      return 'https://archive.org/download/' + m[1] + '/' + enc(fname);
+    }
     m = raw.match(/archive\.org\/details\/([^/?#]+)/i);
     if (m) return 'https://archive.org/embed/' + m[1];
-    return raw;
+    return raw.replace(/\.(mkv|avi)$/i, '.mp4');
   };
   const videoPlayerHTML = (url) => {
     const src = normalizeVideo(url);
