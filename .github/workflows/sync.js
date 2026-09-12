@@ -44,7 +44,25 @@ async function main() {
   log('SA present: ' + !!SA_RAW);
 
   const sa = JSON.parse(SA_RAW);
-  if (sa.private_key) sa.private_key = sa.private_key.replace(/\\n/g, '\n');
+  log('SA keys: ' + Object.keys(sa).join(', '));
+  log('private_key type: ' + typeof sa.private_key);
+  log('private_key length: ' + (sa.private_key ? sa.private_key.length : 'null'));
+  if (sa.private_key) {
+    log('private_key first 30 chars: ' + JSON.stringify(sa.private_key.slice(0, 30)));
+    log('has \\n literal: ' + sa.private_key.includes('\\n'));
+    log('has real newline: ' + sa.private_key.includes('\n'));
+    // Try multiple fixes for mangled keys
+    let key = sa.private_key;
+    if (!key.includes('\n')) {
+      key = key.replace(/\\n/g, '\n');
+    }
+    if (key.startsWith('"') && key.endsWith('"')) {
+      key = JSON.parse(key);
+    }
+    sa.private_key = key;
+    log('fixed key length: ' + sa.private_key.length);
+    log('fixed first 30: ' + JSON.stringify(sa.private_key.slice(0, 30)));
+  }
   log('SA email: ' + sa.client_email);
 
   log('Getting Firebase token...');
