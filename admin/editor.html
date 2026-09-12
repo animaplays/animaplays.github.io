@@ -204,9 +204,8 @@
         var db = firebase.database();
         var provider = new firebase.auth.GoogleAuthProvider();
 
-        var ALLOWED_EMAILS = [
-            "kingveio.contato@gmail.com"
-        ];
+        var ALLOWED_EMAILS = [];
+        fetch('../allowed-emails.json?v=' + Date.now()).then(function(r){return r.json()}).then(function(d){ALLOWED_EMAILS=d}).catch(function(){});
 
         function setStatus(msg, kind) {
             var el = document.getElementById('statusMsg');
