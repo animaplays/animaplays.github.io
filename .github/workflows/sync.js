@@ -4,80 +4,113 @@ const { execSync } = require('child_process');
 
 const DB_URL = process.env.FIREBASE_DB_URL;
 const SA_RAW = process.env.FIREBASE_SA;
-const LOG = path.resolve(__dirname, '../../sync-debug.txt');
 
-function log(msg) { console.log(msg); try { fs.appendFileSync(LOG, msg + '\n'); } catch {} }
+function log(msg) { console.log(msg); }
 
-fs.writeFileSync(LOG, '--- SYNC RUN ---\n');
-log('DB_URL set: ' + !!DB_URL);
-log('SA set: ' + !!SA_RAW);
-log('SA length: ' + (SA_RAW ? SA_RAW.length : 0));
-log('SA starts: ' + (SA_RAW ? SA_RAW.slice(0, 40) : 'EMPTY'));
-
-if (!DB_URL || !SA_RAW) {
-  console.log('FIREBASE_DB_URL or FIREBASE_SA not set, skipping.');
-  process.exit(0);
-}
-
-let sa;
-try {
-  sa = JSON.parse(SA_RAW);
-  log('SA parsed OK, email: ' + sa.client_email);
-} catch (e) {
-  log('SA parse FAILED: ' + e.message);
-  process.exit(1);
+function git(cmd) {
+  log('git ' + cmd);
+  const r = execSync('git ' + cmd, { stdio: 'pipe', cwd: path.resolve(__dirname, '../..') });
+  log('  -> ' + (r.toString().trim() || 'ok'));
+  return r;
 }
 
 async function getAccessToken() {
   const now = Math.floor(Date.now() / 1000);
   const header = Buffer.from(JSON.stringify({ alg: 'RS256', typ: 'JWT' })).toString('base64url');
   const claim = Buffer.from(JSON.stringify({
-    iss: sa.client_email,
+    iss: SA_RAW.client_email,
     scope: 'https://www.googleapis.com/auth/firebase.database https://www.googleapis.com/auth/cloud-platform',
     aud: 'https://oauth2.googleapis.com/token',
     exp: now + 3600,
     iat: now
   })).toString('base64url');
-
   const crypto = require('crypto');
   const sign = crypto.createSign('RSA-SHA256');
   sign.update(header + '.' + claim);
-  const jwt = (header + '.' + claim + '.' + sign.sign(sa.private_key, 'base64url'));
-
+  const jwt = header + '.' + claim + '.' + sign.sign(SA_RAW.private_key, 'base64url');
   const res = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=' + jwt
   });
   const data = await res.json();
-  if (!data.access_token) throw new Error('Failed to get access token: ' + JSON.stringify(data));
+  if (!data.access_token) throw new Error('Token error: ' + JSON.stringify(data));
   return data.access_token;
 }
 
-async function dbGet(token, path) {
-  const res = await fetch(DB_URL + path + '.json?access_token=' + token);
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error('DB GET failed: ' + res.status);
-  return await res.json();
+async function main() {
+  log('=== SYNC START ===');
+  log('DB_URL: ' + (DB_URL || 'MISSING'));
+  log('SA present: ' + !!SA_RAW);
+
+  const sa = JSON.parse(SA_RAW);
+  log('SA email: ' + sa.client_email);
+
+  log('Getting Firebase token...');
+  const token = await getAccessToken();
+  log('Token OK, length: ' + token.length);
+
+  log('Reading posts...');
+  const res = await fetch(DB_URL + '/animaplays/posts.json?access_token=' + token);
+  const posts = await res.json();
+  log('Posts: ' + (posts ? Object.keys(posts).length : 0));
+
+  if (!posts) { log('No posts.'); return; }
+
+  const pending = Object.values(posts).filter(p => p.status === 'pending');
+  log('Pending: ' + pending.length);
+
+  for (const p of pending) {
+    log('Post: ' + p.slug + ' -> ' + (p.episodes||[]).length + ' eps');
+  }
+
+  if (!pending.length) { log('Nothing to do.'); return; }
+
+  // Build HTML for each pending post
+  const postsDir = path.resolve(__dirname, '../../posts');
+  if (!fs.existsSync(postsDir)) fs.mkdirSync(postsDir, { recursive: true });
+
+  for (const post of pending) {
+    log('Writing HTML: ' + post.slug);
+    const html = buildPostHTML(post);
+    fs.writeFileSync(path.join(postsDir, post.slug + '.html'), html, 'utf-8');
+
+    // Mark published
+    await fetch(DB_URL + '/animaplays/posts/' + post.slug + '/status.json?access_token=' + token, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify('published')
+    });
+  }
+
+  // Update posts.json
+  const postsJsonPath = path.resolve(__dirname, '../../posts.json');
+  let list = [];
+  try { list = JSON.parse(fs.readFileSync(postsJsonPath, 'utf-8')); } catch {}
+
+  for (const post of pending) {
+    const episodeUrls = (post.episodes || []).map(e => e.video).filter(Boolean);
+    const entry = {
+      slug: post.slug, title: post.title, image: post.cardImage || post.image || '',
+      subtitle: (post.episodes && post.episodes[0] && post.episodes[0].title) || '',
+      genres: post.genres || [], author: post.author || '', episodes: episodeUrls,
+      createdAt: post.createdAt || new Date().toISOString(),
+      updatedAt: post.updatedAt || new Date().toISOString()
+    };
+    const idx = list.findIndex(p => p.slug === post.slug);
+    if (idx >= 0) { entry.createdAt = list[idx].createdAt || entry.createdAt; list[idx] = entry; }
+    else list.push(entry);
+  }
+  list.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+  fs.writeFileSync(postsJsonPath, JSON.stringify(list, null, 2), 'utf-8');
+
+  // Git
+  git('add -A');
+  git('commit -m "Auto-sync: publish pending posts from Firebase"');
+  git('push origin main');
+  log('=== DONE ===');
 }
 
-async function dbSet(token, path, value) {
-  const res = await fetch(DB_URL + path + '.json?access_token=' + token, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(value)
-  });
-  if (!res.ok) throw new Error('DB SET failed: ' + res.status);
-}
-
-async function dbRemove(token, path) {
-  const res = await fetch(DB_URL + path + '.json?access_token=' + token, {
-    method: 'DELETE'
-  });
-  if (!res.ok) throw new Error('DB DELETE failed: ' + res.status);
-}
-
-function buildHTML(d) {
+function buildPostHTML(d) {
+  const esc = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   const normalizeVideo = (input) => {
     if (!input) return '';
     const extractSrc = (s) => { if (!s) return ''; const m = String(s).match(/src=["']([^"']+)["']/i); return m ? m[1] : String(s).trim(); };
@@ -85,32 +118,26 @@ function buildHTML(d) {
     const id = ytId(input);
     if (id) return 'https://www.youtube.com/embed/' + id;
     let raw = extractSrc(input);
-    const enc = (s) => s.split('/').map(p => { try { return encodeURIComponent(decodeURIComponent(p)); } catch (e) { return encodeURIComponent(p); } }).join('/');
+    const enc = (s) => s.split('/').map(p => { try { return encodeURIComponent(decodeURIComponent(p)); } catch { return encodeURIComponent(p); } }).join('/');
     let m = raw.match(/archive\.org\/details\/([^/?#]+)\/(.+)/i);
     if (m) return 'https://archive.org/download/' + m[1] + '/' + enc(m[2].replace(/\+/g, ' '));
     m = raw.match(/archive\.org\/details\/([^/?#]+)/i);
     if (m) return 'https://archive.org/embed/' + m[1];
-    if (/archive\.org\/download\//i.test(raw)) {
-      const dm = raw.match(/(archive\.org\/download\/[^?#]+\/)(.+?)(\?|#|$)(.*)/i);
-      if (dm) return raw.slice(0, raw.indexOf(dm[1]) + dm[1].length) + enc(dm[2].replace(/\+/g, ' ')) + (dm[3] || '') + (dm[4] || '');
-      return raw.replace(/\+/g, '%20');
-    }
     return raw;
   };
-  const esc = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   const videoPlayerHTML = (url) => {
     const src = normalizeVideo(url);
-    if (!src) return '<div style="padding:40px;text-align:center;color:#666;">Nenhum vídeo informado</div>';
+    if (!src) return '<div style="padding:40px;text-align:center;color:#666;">Nenhum vídeo</div>';
     if (/\.(mp4|webm)(\?|#|$)/i.test(src)) return '<video controls preload="none" style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;" src="' + esc(src) + '"></video>';
     return '<iframe src="' + esc(src) + '" title="Vídeo" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"></iframe>';
   };
   const thumbHTML = (video, idx) => {
-    const id = (function(url){if(!url)return'';var s=extractSrc(url);var m=s.match(/youtube\.com\/embed\/([^?&#]+)/)||s.match(/[?&]v=([^&#]+)/)||s.match(/youtu\.be\/([^?&#]+)/);return m?m[1]:'';})(video);
+    const extractSrc = (s) => { if (!s) return ''; const m = String(s).match(/src=["']([^"']+)["']/i); return m ? m[1] : String(s).trim(); };
+    const ytId = (url) => { if (!url) return ''; const s = extractSrc(url); const m = s.match(/youtube\.com\/embed\/([^?&#]+)/) || s.match(/[?&]v=([^&#]+)/) || s.match(/youtu\.be\/([^?&#]+)/); return m ? m[1] : ''; };
+    const id = ytId(video);
     if (id) return '<img src="https://img.youtube.com/vi/' + id + '/mqdefault.jpg" class="episode-thumb" alt="EP' + idx + '">';
     return '<div class="episode-thumb" style="background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:10px;color:#888;">EP' + String(idx).padStart(2, '0') + '</div>';
   };
-  const extractSrc = (s) => { if (!s) return ''; const m = String(s).match(/src=["']([^"']+)["']/i); return m ? m[1] : String(s).trim(); };
-  const ytId = (url) => { if (!url) return ''; const s = extractSrc(url); const m = s.match(/youtube\.com\/embed\/([^?&#]+)/) || s.match(/[?&]v=([^&#]+)/) || s.match(/youtu\.be\/([^?&#]+)/); return m ? m[1] : ''; };
 
   const srcs = (d.episodes || []).map(ep => normalizeVideo(ep.video || d.defaultVideo));
   const eps = (d.episodes || []).map((ep, i) => {
@@ -124,6 +151,7 @@ function buildHTML(d) {
   const epJson = JSON.stringify(srcs);
   const epTitles = JSON.stringify((d.episodes || []).map((ep, i) => ep.title || ('Episódio ' + (i + 1))));
   const cardImg = d.cardImage || d.image || '';
+
   return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>${esc(d.title)} — Anima Play</title>
 <meta name="description" content="${esc((d.synopsis || '').slice(0, 160) || d.title + ' - Assista online no Anima Play.')}">
@@ -145,7 +173,7 @@ ${cardImg ? '<meta property="og:image" content="https://animaplays.github.io/' +
 ${eps}
 </div><div class="section-label">Comentários</div><div id="disqus_thread"></div><script>var disqus_config=function(){this.page.url='https://animaplays.github.io/posts/${esc(d.slug)}.html';this.page.identifier='${esc(d.slug)}';};(function(){var b=document,s=b.createElement('script');s.src='https://anima-play.disqus.com/embed.js';s.setAttribute('data-timestamp',+new Date());(b.head||b.body).appendChild(s);})();<\/script><noscript>Ative o JavaScript para ver os comentários.</noscript></main></div><aside class="post-side" id="postSide"></aside></div>
 <footer class="main-footer"><p>&copy; 2026 Anima Play</p></footer>
-<script>function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}var EPISODES=${epJson};var EP_TITLES=${epTitles};var cur=0;function isDirect(s){return /\\.(mp4|webm)(\\?|#|$)/i.test(s||'');}function paint(src){var box=document.getElementById('vp');if(!src){box.innerHTML='<div style="padding:40px;text-align:center;color:#666;">Nenhum vídeo</div>';return;}if(isDirect(src)){box.innerHTML='<video controls autoplay style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;" src="'+esc(src)+'"></video>';}else{box.innerHTML='<iframe src="'+esc(src)+'" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"></iframe>';}}function syncUI(){var items=document.querySelectorAll('.episode-item');items.forEach(function(el,i){el.classList.toggle('active',i===cur);});var label=document.getElementById('epLabel');if(label){label.textContent=(EP_TITLES[cur]||('Episódio '+(cur+1)))+' • '+(cur+1)+' / '+EPISODES.length;}var pv=document.getElementById('btnPrev');var nx=document.getElementById('btnNext');if(pv){pv.disabled=cur<=0;}if(nx){nx.disabled=cur>=EPISODES.length-1;}try{var u=new URL(window.location.href);u.searchParams.set('ep',String(cur+1));window.history.replaceState(null,'',u);}catch(e){}}function renderEp(i){if(i<0||i>=EPISODES.length||!EPISODES[i])return;cur=i;paint(EPISODES[i]);syncUI();var vp=document.getElementById('vp');if(vp&&vp.scrollIntoView){vp.scrollIntoView({behavior:'smooth',block:'center'});}}function goEp(i){renderEp(i);}function nextEp(){if(cur<EPISODES.length-1){renderEp(cur+1);}}function prevEp(){if(cur>0){renderEp(cur-1);}}try{var u=new URL(window.location.href);var epParam=parseInt(u.searchParams.get('ep')||'1',10);if(epParam>=1&&epParam<=EPISODES.length)renderEp(epParam-1);else renderEp(0);}catch(e){renderEp(0);}</script>
+<script>function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}var EPISODES=${epJson};var EP_TITLES=${epTitles};var cur=0;function isDirect(s){return /\\.(mp4|webm)(\\?|#|$)/i.test(s||'');}function paint(src){var box=document.getElementById('vp');if(!src){box.innerHTML='<div style="padding:40px;text-align:center;color:#666;">Nenhum vídeo</div>';return;}if(isDirect(src)){box.innerHTML='<video controls preload="none" style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;" src="'+esc(src)+'"></video>';}else{box.innerHTML='<iframe src="'+esc(src)+'" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"></iframe>';}}function syncUI(){var items=document.querySelectorAll('.episode-item');items.forEach(function(el,i){el.classList.toggle('active',i===cur);});var label=document.getElementById('epLabel');if(label){label.textContent=(EP_TITLES[cur]||('Episódio '+(cur+1)))+' • '+(cur+1)+' / '+EPISODES.length;}var pv=document.getElementById('btnPrev');var nx=document.getElementById('btnNext');if(pv){pv.disabled=cur<=0;}if(nx){nx.disabled=cur>=EPISODES.length-1;}try{var u=new URL(window.location.href);u.searchParams.set('ep',String(cur+1));window.history.replaceState(null,'',u);}catch(e){}}function renderEp(i){if(i<0||i>=EPISODES.length||!EPISODES[i])return;cur=i;paint(EPISODES[i]);syncUI();var vp=document.getElementById('vp');if(vp&&vp.scrollIntoView){vp.scrollIntoView({behavior:'smooth',block:'center'});}}function goEp(i){renderEp(i);}function nextEp(){if(cur<EPISODES.length-1){renderEp(cur+1);}}function prevEp(){if(cur>0){renderEp(cur-1);}}try{var u=new URL(window.location.href);var epParam=parseInt(u.searchParams.get('ep')||'1',10);if(epParam>=1&&epParam<=EPISODES.length)renderEp(epParam-1);else renderEp(0);}catch(e){renderEp(0);}</script>
 <script src="../post-layout.js?v=5"></script>
 <script src="../update-check.js?v=5"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -157,99 +185,4 @@ ${eps}
 </body></html>`;
 }
 
-function git(cmd) {
-  try {
-    return execSync('git ' + cmd, { stdio: 'pipe', cwd: path.resolve(__dirname, '../..') });
-  } catch (e) {
-    console.error('Git error:', cmd, e.stderr ? e.stderr.toString() : e.message);
-    throw e;
-  }
-}
-
-async function main() {
-  log('Step 1: Authenticating with Firebase...');
-  let token;
-  try {
-    token = await getAccessToken();
-    log('Token obtained OK, length: ' + token.length);
-  } catch (e) {
-    log('AUTH FAILED: ' + e.message);
-    return;
-  }
-
-  log('Step 2: Reading posts from Firebase...');
-  let posts;
-  try {
-    posts = await dbGet(token, '/animaplays/posts');
-    log('Posts found: ' + (posts ? Object.keys(posts).length : 0));
-  } catch (e) {
-    log('DB READ FAILED: ' + e.message);
-    return;
-  }
-  if (!posts) { log('No posts found.'); return; }
-
-  const pending = Object.values(posts).filter(p => p.status === 'pending');
-  log('Found ' + pending.length + ' pending post(s).');
-  Object.values(posts).forEach(p => log('  ' + p.slug + ': status=' + p.status + ', episodes=' + (p.episodes||[]).length));
-
-  // Ensure directories exist
-  const postsDir = path.resolve(__dirname, '../../posts');
-  if (!fs.existsSync(postsDir)) fs.mkdirSync(postsDir, { recursive: true });
-
-  for (const post of pending) {
-    log('Generating HTML for: ' + post.slug + ' (' + (post.episodes||[]).length + ' episodes)');
-    const html = buildHTML(post);
-    fs.writeFileSync(path.join(postsDir, post.slug + '.html'), html, 'utf-8');
-
-    // Mark as published in Firebase
-    await dbSet(token, '/animaplays/posts/' + post.slug + '/status', 'published');
-    log('  Published: ' + post.slug);
-  }
-
-  // Update posts.json
-  const postsJsonPath = path.resolve(__dirname, '../../posts.json');
-  let list = [];
-  if (fs.existsSync(postsJsonPath)) {
-    try { list = JSON.parse(fs.readFileSync(postsJsonPath, 'utf-8')); } catch { list = []; }
-  }
-
-  for (const post of pending) {
-    const cardImg = post.cardImage || post.image || '';
-    const episodeUrls = (post.episodes || []).map(e => e.video).filter(Boolean);
-    log('  posts.json: ' + post.slug + ' -> ' + episodeUrls.length + ' episode URLs');
-    const entry = {
-      slug: post.slug,
-      title: post.title,
-      image: cardImg,
-      subtitle: (post.episodes && post.episodes[0] && post.episodes[0].title) || 'Nova Postagem',
-      genres: post.genres || [],
-      author: post.author || '',
-      episodes: episodeUrls,
-      createdAt: post.createdAt || new Date().toISOString(),
-      updatedAt: post.updatedAt || new Date().toISOString()
-    };
-    const idx = list.findIndex(p => p.slug === post.slug);
-    if (idx >= 0) { entry.createdAt = list[idx].createdAt || entry.createdAt; list[idx] = entry; }
-    else list.push(entry);
-  }
-
-  list.sort((a, b) => (b.updatedAt || b.createdAt || '').localeCompare(a.updatedAt || a.createdAt || ''));
-  fs.writeFileSync(postsJsonPath, JSON.stringify(list, null, 2), 'utf-8');
-
-  // Git commit and push
-  log('Committing changes...');
-  git('add -A');
-  try {
-    git('commit -m "Auto-sync: publish pending posts from Firebase"');
-    git('pull --rebase origin main');
-    git('push origin main');
-    log('Pushed to GitHub.');
-  } catch (e) {
-    log('Commit/push error: ' + e.message);
-  }
-
-  log('Done!');
-  fs.writeFileSync(path.resolve(__dirname, '../../sync-debug.txt'), 'Done! Posts: ' + Object.keys(posts).length + ', Pending: ' + pending.length + '\n');
-}
-
-main().catch(e => { console.error('FATAL ERROR:', e.message); console.error(e.stack); process.exit(1); });
+main().catch(e => { console.error('ERROR:', e.message); process.exit(1); });
