@@ -24,7 +24,7 @@ jobs:
           node-version: '20'
 
       - name: Install firebase-admin
-        run: npm install firebase-admin
+        run: npm install firebase-admin@13.2.0
 
       - name: Sync posts from Firebase
         env:
