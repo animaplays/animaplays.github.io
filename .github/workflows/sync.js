@@ -62,12 +62,12 @@ async function main() {
 
   if (!posts) { log('No posts.'); return; }
 
-  const pending = Object.values(posts).filter(p => p.status === 'pending');
-  log('Pending: ' + pending.length);
+  const allPosts = Object.values(posts);
+  log('All posts: ' + allPosts.length);
+  allPosts.forEach(p => log('  ' + p.slug + ' | status="' + p.status + '" | eps=' + (p.episodes||[]).length));
 
-  for (const p of pending) {
-    log('Post: ' + p.slug + ' -> ' + (p.episodes||[]).length + ' eps');
-  }
+  const pending = allPosts.filter(p => p.status === 'pending');
+  log('Pending: ' + pending.length);
 
   if (!pending.length) { log('Nothing to do.'); return; }
 
