@@ -281,7 +281,7 @@
             document.getElementById('userArea').classList.remove('hidden');
             document.getElementById('userAvatar').src = user.photoURL || '';
             document.getElementById('userName').textContent = user.displayName || user.email;
-            db.ref('animaplays/config/ghToken').once('value').then(function(s){GH_TOKEN=s.val()||''});
+            db.ref('animaplays/ghToken').once('value').then(function(s){GH_TOKEN=s.val()||''});
             buildCatGrid();
             updatePreview();
             loadPostList();
