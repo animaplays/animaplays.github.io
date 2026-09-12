@@ -43,10 +43,11 @@ function resolveCapa(post, imgFiles) {
   return post.image || post.cardImage || '';
 }
 
+const admin = require('firebase-admin');
+
 async function main() {
   log('=== SYNC START ===');
 
-  const admin = require('firebase-admin');
   admin.initializeApp({
     credential: admin.credential.cert(SA),
     databaseURL: DB_URL
@@ -63,7 +64,7 @@ async function main() {
   const posts = snap.val();
   log('Posts: ' + (posts ? Object.keys(posts).length : 0));
 
-  if (!posts) { log('No posts.'); return; }
+  if (!posts) { log('No posts.'); finish(); return; }
 
   const allPosts = Object.values(posts);
 
@@ -72,7 +73,7 @@ async function main() {
   log('Force: ' + FORCE);
   log('Pending: ' + pending.length);
 
-  if (!pending.length) { log('Nothing to do.'); return; }
+  if (!pending.length) { log('Nothing to do.'); finish(); return; }
 
   const postsDir = path.resolve(__dirname, '../../posts');
   if (!fs.existsSync(postsDir)) fs.mkdirSync(postsDir, { recursive: true });
@@ -115,8 +116,12 @@ async function main() {
     log('No changes to commit.');
   }
   log('=== DONE ===');
+  finish();
+}
 
-  admin.app().delete();
+function finish() {
+  try { admin.app().delete(); } catch (e) {}
+  setTimeout(() => process.exit(0), 100);
 }
 
 function buildPostHTML(d) {
