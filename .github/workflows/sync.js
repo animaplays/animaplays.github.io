@@ -19,6 +19,8 @@ try {
   console.log('SA parsed OK, email:', sa.client_email);
 } catch (e) {
   console.error('Failed to parse FIREBASE_SA:', e.message);
+  console.error('SA_RAW starts with:', SA_RAW ? SA_RAW.slice(0, 30) : 'EMPTY');
+  fs.writeFileSync(path.resolve(__dirname, '../../sync-debug.txt'), 'SA parse error: ' + e.message + '\nSA_RAW starts with: ' + (SA_RAW ? SA_RAW.slice(0, 50) : 'EMPTY'));
   process.exit(1);
 }
 
@@ -247,6 +249,7 @@ async function main() {
   }
 
   console.log('Done!');
+  fs.writeFileSync(path.resolve(__dirname, '../../sync-debug.txt'), 'Done! Posts: ' + Object.keys(posts).length + ', Pending: ' + pending.length + '\n');
 }
 
 main().catch(e => { console.error('FATAL ERROR:', e.message); console.error(e.stack); process.exit(1); });
