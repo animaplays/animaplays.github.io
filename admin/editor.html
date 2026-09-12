@@ -68,6 +68,8 @@
         .post-row button:hover { background: rgba(248,113,113,0.1); }
         .video-hint { font-size: 11px; color: #555; margin-top: 4px; line-height: 1.5; }
         .hidden { display: none !important; }
+        .btn-upload { background: #1a1a1a; color: #888; border: 1px dashed #333; border-radius: 8px; padding: 10px 14px; font-size: 12px; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
+        .btn-upload:hover { border-color: #e50914; color: #e50914; }
         .field-group { margin-bottom: 16px; text-align: left; }
         .field-group label { display: block; font-size: 12px; color: #888; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
         .field-group input, .field-group textarea { width: 100%; background: #15191d; border: 1px solid #2a2a2a; border-radius: 8px; color: #fff; padding: 10px 14px; font-size: 14px; outline: none; }
@@ -132,18 +134,22 @@
             </div>
 
             <div class="field-group">
-                <label>Capa (página da postagem) — URL da imagem</label>
+                <label>Capa (página da postagem) — URL ou upload</label>
                 <div class="cover-row">
                     <input type="text" id="image" placeholder="https://exemplo.com/capa.jpg" oninput="onImageInput()">
+                    <label class="btn-upload" for="imageFileCapa">📤 Enviar</label>
+                    <input type="file" id="imageFileCapa" accept="image/*" style="display:none" onchange="uploadImage(this,'image','coverPreview')">
                     <img id="coverPreview" class="cover-preview" alt="Prévia da capa">
                 </div>
-                <div class="video-hint">Use URLs de imagens externas (Unsplash, imgur, etc).</div>
+                <div class="video-hint">URL externa ou envie uma imagem do computador.</div>
             </div>
 
             <div class="field-group">
-                <label>Imagem do card (home) — URL da imagem</label>
+                <label>Imagem do card (home) — URL ou upload</label>
                 <div class="cover-row">
                     <input type="text" id="cardImage" placeholder="https://... (se vazio, usa a capa)" oninput="onCardInput()">
+                    <label class="btn-upload" for="imageFileCard">📤 Enviar</label>
+                    <input type="file" id="imageFileCard" accept="image/*" style="display:none" onchange="uploadImage(this,'cardImage','cardPreview')">
                     <img id="cardPreview" class="cover-preview" alt="Prévia do card">
                 </div>
                 <div class="video-hint">É esta imagem que aparece no card da página principal.</div>
@@ -279,6 +285,45 @@
             buildCatGrid();
             updatePreview();
             loadPostList();
+        }
+
+        async function uploadImage(fileInput, inputId, previewId) {
+            var file = fileInput.files[0];
+            if (!file) return;
+            if (!GH_TOKEN) { setStatus('Token GitHub não disponível. Aguarde o login.', 'error'); return; }
+            setStatus('Enviando imagem para o GitHub...', 'loading');
+            try {
+                var slug = document.getElementById('slug').value || 'post-' + Date.now();
+                var ext = file.name.split('.').pop().toLowerCase();
+                if (ext === 'jpg') ext = 'jpeg';
+                var filename = slug + '-' + Date.now() + '.' + ext;
+                var path = 'img/' + filename;
+                var reader = new FileReader();
+                var b64 = await new Promise(function(resolve, reject) {
+                    reader.onload = function() { resolve(reader.result.split(',')[1]); };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+                var res = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + path, {
+                    method: 'PUT',
+                    headers: { 'Authorization': 'Bearer ' + GH_TOKEN, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: 'Upload: ' + filename, content: b64, branch: 'main' })
+                });
+                var data = await res.json();
+                if (data.content && data.content.html_url) {
+                    var rawUrl = '../' + path;
+                    document.getElementById(inputId).value = rawUrl;
+                    var preview = document.getElementById(previewId);
+                    if (preview) { preview.src = rawUrl; preview.style.display = 'block'; }
+                    setStatus('Imagem enviada!', 'success');
+                    updatePreview();
+                } else {
+                    setStatus('Erro: ' + (data.message || 'falha ao enviar'), 'error');
+                }
+            } catch (e) {
+                setStatus('Erro: ' + e.message, 'error');
+            }
+            fileInput.value = '';
         }
 
         function getFormData() {
