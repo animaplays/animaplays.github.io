@@ -85,7 +85,7 @@ function buildHTML(d) {
   const videoPlayerHTML = (url) => {
     const src = normalizeVideo(url);
     if (!src) return '<div style="padding:40px;text-align:center;color:#666;">Nenhum vídeo informado</div>';
-    if (/\.(mp4|webm)(\?|#|$)/i.test(src)) return '<video controls preload="metadata" style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;" src="' + esc(src) + '"></video>';
+    if (/\.(mp4|webm)(\?|#|$)/i.test(src)) return '<video controls preload="none" style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;" src="' + esc(src) + '"></video>';
     return '<iframe src="' + esc(src) + '" title="Vídeo" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"></iframe>';
   };
   const thumbHTML = (video, idx) => {
