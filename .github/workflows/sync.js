@@ -152,7 +152,12 @@ ${eps}
 }
 
 function git(cmd) {
-  execSync('git ' + cmd, { stdio: 'pipe', cwd: path.resolve(__dirname, '../..') });
+  try {
+    return execSync('git ' + cmd, { stdio: 'pipe', cwd: path.resolve(__dirname, '../..') });
+  } catch (e) {
+    console.error('Git error:', cmd, e.stderr ? e.stderr.toString() : e.message);
+    throw e;
+  }
 }
 
 async function main() {
@@ -237,6 +242,7 @@ async function main() {
   } catch (e) {
     console.log('Changes detected, committing...');
     git('commit -m "Auto-sync: publish pending posts from Firebase"');
+    git('pull --rebase origin main');
     git('push origin main');
     console.log('Pushed to GitHub.');
   }
