@@ -18,4 +18,7 @@ jobs:
         env:
           FIREBASE_DB_URL: ${{ secrets.FIREBASE_DB_URL }}
           FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
-        run: node .github/workflows/sync.js
+        run: |
+          git config user.email "bot@animaplays.github.io"
+          git config user.name "Anima Play Bot"
+          node .github/workflows/sync.js

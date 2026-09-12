@@ -187,7 +187,7 @@ async function main() {
   if (!fs.existsSync(postsDir)) fs.mkdirSync(postsDir, { recursive: true });
 
   for (const post of pending) {
-    console.log(`Generating HTML for: ${post.slug}`);
+    console.log(`Generating HTML for: ${post.slug} (${(post.episodes||[]).length} episodes)`);
     const html = buildHTML(post);
     fs.writeFileSync(path.join(postsDir, post.slug + '.html'), html, 'utf-8');
 
@@ -206,6 +206,7 @@ async function main() {
   for (const post of pending) {
     const cardImg = post.cardImage || post.image || '';
     const episodeUrls = (post.episodes || []).map(e => e.video).filter(Boolean);
+    console.log(`  posts.json: ${post.slug} -> ${episodeUrls.length} episode URLs`);
     const entry = {
       slug: post.slug,
       title: post.title,
@@ -229,9 +230,12 @@ async function main() {
   console.log('Committing changes...');
   git('add -A');
   try {
+    const diff = git('diff --cached --stat');
+    console.log('Changes:', diff.toString().trim() || 'none');
     git('diff --cached --quiet');
     console.log('No changes to commit.');
-  } catch {
+  } catch (e) {
+    console.log('Changes detected, committing...');
     git('commit -m "Auto-sync: publish pending posts from Firebase"');
     git('push origin main');
     console.log('Pushed to GitHub.');
