@@ -4,9 +4,15 @@ const { execSync } = require('child_process');
 
 const DB_URL = process.env.FIREBASE_DB_URL;
 const SA_RAW = process.env.FIREBASE_SA;
+const LOG = path.resolve(__dirname, '../../sync-debug.txt');
 
-console.log('DB_URL set:', !!DB_URL);
-console.log('SA set:', !!SA_RAW);
+function log(msg) { console.log(msg); try { fs.appendFileSync(LOG, msg + '\n'); } catch {} }
+
+fs.writeFileSync(LOG, '--- SYNC RUN ---\n');
+log('DB_URL set: ' + !!DB_URL);
+log('SA set: ' + !!SA_RAW);
+log('SA length: ' + (SA_RAW ? SA_RAW.length : 0));
+log('SA starts: ' + (SA_RAW ? SA_RAW.slice(0, 40) : 'EMPTY'));
 
 if (!DB_URL || !SA_RAW) {
   console.log('FIREBASE_DB_URL or FIREBASE_SA not set, skipping.');
@@ -16,11 +22,9 @@ if (!DB_URL || !SA_RAW) {
 let sa;
 try {
   sa = JSON.parse(SA_RAW);
-  console.log('SA parsed OK, email:', sa.client_email);
+  log('SA parsed OK, email: ' + sa.client_email);
 } catch (e) {
-  console.error('Failed to parse FIREBASE_SA:', e.message);
-  console.error('SA_RAW starts with:', SA_RAW ? SA_RAW.slice(0, 30) : 'EMPTY');
-  fs.writeFileSync(path.resolve(__dirname, '../../sync-debug.txt'), 'SA parse error: ' + e.message + '\nSA_RAW starts with: ' + (SA_RAW ? SA_RAW.slice(0, 50) : 'EMPTY'));
+  log('SA parse FAILED: ' + e.message);
   process.exit(1);
 }
 
@@ -163,43 +167,43 @@ function git(cmd) {
 }
 
 async function main() {
-  console.log('Step 1: Authenticating with Firebase...');
+  log('Step 1: Authenticating with Firebase...');
   let token;
   try {
     token = await getAccessToken();
-    console.log('Token obtained OK, length:', token.length);
+    log('Token obtained OK, length: ' + token.length);
   } catch (e) {
-    console.error('AUTH FAILED:', e.message);
+    log('AUTH FAILED: ' + e.message);
     return;
   }
 
-  console.log('Step 2: Reading posts from Firebase...');
+  log('Step 2: Reading posts from Firebase...');
   let posts;
   try {
     posts = await dbGet(token, '/animaplays/posts');
-    console.log('Posts found:', posts ? Object.keys(posts).length : 0);
+    log('Posts found: ' + (posts ? Object.keys(posts).length : 0));
   } catch (e) {
-    console.error('DB READ FAILED:', e.message);
+    log('DB READ FAILED: ' + e.message);
     return;
   }
-  if (!posts) { console.log('No posts found.'); return; }
+  if (!posts) { log('No posts found.'); return; }
 
   const pending = Object.values(posts).filter(p => p.status === 'pending');
-  console.log(`Found ${pending.length} pending post(s).`);
-  Object.values(posts).forEach(p => console.log(`  ${p.slug}: status=${p.status}, episodes=${(p.episodes||[]).length}`));
+  log('Found ' + pending.length + ' pending post(s).');
+  Object.values(posts).forEach(p => log('  ' + p.slug + ': status=' + p.status + ', episodes=' + (p.episodes||[]).length));
 
   // Ensure directories exist
   const postsDir = path.resolve(__dirname, '../../posts');
   if (!fs.existsSync(postsDir)) fs.mkdirSync(postsDir, { recursive: true });
 
   for (const post of pending) {
-    console.log(`Generating HTML for: ${post.slug} (${(post.episodes||[]).length} episodes)`);
+    log('Generating HTML for: ' + post.slug + ' (' + (post.episodes||[]).length + ' episodes)');
     const html = buildHTML(post);
     fs.writeFileSync(path.join(postsDir, post.slug + '.html'), html, 'utf-8');
 
     // Mark as published in Firebase
-    await dbSet(token, `/animaplays/posts/${post.slug}/status`, 'published');
-    console.log(`  Published: ${post.slug}`);
+    await dbSet(token, '/animaplays/posts/' + post.slug + '/status', 'published');
+    log('  Published: ' + post.slug);
   }
 
   // Update posts.json
@@ -212,7 +216,7 @@ async function main() {
   for (const post of pending) {
     const cardImg = post.cardImage || post.image || '';
     const episodeUrls = (post.episodes || []).map(e => e.video).filter(Boolean);
-    console.log(`  posts.json: ${post.slug} -> ${episodeUrls.length} episode URLs`);
+    log('  posts.json: ' + post.slug + ' -> ' + episodeUrls.length + ' episode URLs');
     const entry = {
       slug: post.slug,
       title: post.title,
