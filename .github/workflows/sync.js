@@ -62,6 +62,7 @@ async function main() {
 
   if (!posts) { log('No posts.'); return; }
 
+  log('Posts raw: ' + JSON.stringify(posts).slice(0, 500));
   const allPosts = Object.values(posts);
   log('All posts: ' + allPosts.length);
   allPosts.forEach(p => log('  ' + p.slug + ' | status="' + p.status + '" | eps=' + (p.episodes||[]).length));
