@@ -350,63 +350,105 @@
                 setStatus('❌ ' + e.message, 'error');
             }
         }
-
+        var remotePosts = [];
         async function loadPostList() {
             var box = document.getElementById('postList');
             box.innerHTML = '<p style="font-size:12px;color:#555;">Carregando...</p>';
             try {
                 var snap = await db.ref('animaplays/posts').orderByChild('updatedAt').once('value');
-                var posts = [];
-                snap.forEach(function (child) {
-                    posts.push(child.val());
+                var fbPosts = [];
+                snap.forEach(function (child) { fbPosts.push(child.val()); });
+                remotePosts = fbPosts;
+                var remoteSlugs = fbPosts.map(function (p) { return p.slug; });
+                var ghPosts = [];
+                try {
+                    var r = await fetch('https://raw.githubusercontent.com/' + REPO + '/main/posts.json?t=' + Date.now());
+                    if (r.ok) ghPosts = await r.json();
+                } catch (e) {}
+                var merged = fbPosts.slice();
+                ghPosts.forEach(function (p) {
+                    if (remoteSlugs.indexOf(p.slug) < 0) {
+                        merged.push({ slug: p.slug, title: p.title, status: 'antigo', updatedAt: p.updatedAt });
+                    }
                 });
-                posts.reverse();
-                if (!posts.length) {
+                merged.sort(function (a, b) { return (b.updatedAt || '').localeCompare(a.updatedAt || ''); });
+                if (!merged.length) {
                     box.innerHTML = '<p style="font-size:12px;color:#555;">Nenhuma postagem ainda.</p>';
                     return;
                 }
-                box.innerHTML = posts.map(function (p) {
-                    var status = p.status === 'published' ? '✅' : '⏳';
-                    return '<div class="post-row"><a href="https://animaplays.github.io/posts/' + p.slug + '.html" target="_blank">' + status + ' ' + (p.title || p.slug) + '</a><span><button onclick="loadPostForEdit(\'' + p.slug + '\')">Editar</button> <button onclick="deletePost(\'' + p.slug + '\')">Apagar</button></span></div>';
+                box.innerHTML = merged.map(function (p) {
+                    var badge = p.status === 'published' ? '✅' : p.status === 'antigo' ? '📦' : '⏳';
+                    return '<div class="post-row"><a href="https://animaplays.github.io/posts/' + p.slug + '.html" target="_blank">' + badge + ' ' + (p.title || p.slug) + '</a><span><button onclick="loadPostForEdit(\'' + p.slug + '\')">Editar</button> <button onclick="deletePost(\'' + p.slug + '\')">Apagar</button></span></div>';
                 }).join('');
             } catch (e) {
                 box.innerHTML = '<p style="font-size:12px;color:#f87171;">' + e.message + '</p>';
             }
         }
-
         async function loadPostForEdit(slug) {
             setStatus('Carregando ' + slug + '...', 'loading');
             try {
                 var snap = await db.ref('animaplays/posts/' + slug).once('value');
-                if (!snap.exists()) { setStatus('Postagem não encontrada.', 'error'); return; }
-                var d = snap.val();
-                document.getElementById('title').value = d.title || '';
-                document.getElementById('slug').value = d.slug || slug;
-                document.getElementById('slug').dataset.author = d.author || '';
-                document.getElementById('image').value = d.image || '';
-                onImageInput();
-                document.getElementById('cardImage').value = d.cardImage || '';
-                onCardInput();
-                var genres = d.genres || [];
-                document.querySelectorAll('#catGrid input').forEach(function (i) { i.checked = genres.indexOf(i.value) >= 0; });
-                document.getElementById('genresExtra').value = genres.filter(function (g) { return CATS.indexOf(g) < 0; }).join(', ');
-                document.getElementById('synopsis').value = d.synopsis || '';
-                document.getElementById('defaultVideo').value = d.defaultVideo || '';
-                document.getElementById('episodeList').innerHTML = '';
-                epCount = 0;
-                var eps = d.episodes || [];
-                if (eps.length) {
-                    eps.forEach(function (ep) { addEpisode(ep.title, ep.video); });
-                } else {
-                    addEpisode();
+                if (snap.exists()) {
+                    var d = snap.val();
+                    fillForm(d, slug);
+                    setStatus('Pronta para editar. Modifique e clique Publicar.', 'success');
+                    return;
                 }
-                updateSlugPreview();
-                updatePreview();
-                setStatus('Pronta para editar. Modifique e clique Publicar.', 'success');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                var res = await fetch('https://raw.githubusercontent.com/' + REPO + '/main/posts/' + slug + '.html?t=' + Date.now());
+                if (!res.ok) throw new Error('Postagem não encontrada.');
+                var html = await res.text();
+                var doc = new DOMParser().parseFromString(html, 'text/html');
+                var meta = function (n) { var m = doc.querySelector('meta[name="' + n + '"]'); return m ? (m.getAttribute('content') || '') : ''; };
+                var textOf = function (sel) { var el = doc.querySelector(sel); return el ? ((el.textContent || '').trim()) : ''; };
+                var mSrc = html.match(/var EPISODES=(\[.*?\]);/s);
+                var mTit = html.match(/var EP_TITLES=(\[.*?\]);/s);
+                var srcs = mSrc ? JSON.parse(mSrc[1]) : [];
+                var titles = [];
+                try { titles = mTit ? JSON.parse(mTit[1]) : []; } catch (e) { titles = []; }
+                var genres = (meta('anima-genres') || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+                var episodes = srcs.map(function (s, i) { return { title: titles[i] || '', video: s }; });
+                var d = {
+                    title: meta('anima-title') || textOf('.post-hero-overlay h1') || '',
+                    slug: slug,
+                    image: textOf('.post-hero img[src]') ? doc.querySelector('.post-hero img').getAttribute('src') : '',
+                    cardImage: meta('anima-card') || '',
+                    genres: genres,
+                    synopsis: textOf('.post-synopsis'),
+                    defaultVideo: srcs[0] || '',
+                    author: meta('anima-author') || '',
+                    episodes: episodes
+                };
+                fillForm(d, slug);
+                setStatus('Post antigo carregado do GitHub. Clique Publicar para migrar para o Firebase.', 'success');
             } catch (e) {
                 setStatus('❌ ' + e.message, 'error');
             }
+        }
+
+        function fillForm(d, slug) {
+            document.getElementById('title').value = d.title || '';
+            document.getElementById('slug').value = slug;
+            document.getElementById('slug').dataset.author = d.author || '';
+            document.getElementById('image').value = d.image || '';
+            onImageInput();
+            document.getElementById('cardImage').value = d.cardImage || '';
+            onCardInput();
+            var genres = d.genres || [];
+            document.querySelectorAll('#catGrid input').forEach(function (i) { i.checked = genres.indexOf(i.value) >= 0; });
+            document.getElementById('genresExtra').value = genres.filter(function (g) { return CATS.indexOf(g) < 0; }).join(', ');
+            document.getElementById('synopsis').value = d.synopsis || '';
+            document.getElementById('defaultVideo').value = d.defaultVideo || '';
+            document.getElementById('episodeList').innerHTML = '';
+            epCount = 0;
+            var eps = d.episodes || [];
+            if (eps.length) {
+                eps.forEach(function (ep) { addEpisode(ep.title, ep.video); });
+            } else {
+                addEpisode();
+            }
+            updateSlugPreview();
+            updatePreview();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // --- Form helpers (mantidos do editor original) ---
