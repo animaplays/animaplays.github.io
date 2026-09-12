@@ -183,9 +183,8 @@ async function main() {
   if (!posts) { console.log('No posts found.'); return; }
 
   const pending = Object.values(posts).filter(p => p.status === 'pending');
-  if (!pending.length) { console.log('No pending posts.'); return; }
-
   console.log(`Found ${pending.length} pending post(s).`);
+  Object.values(posts).forEach(p => console.log(`  ${p.slug}: status=${p.status}, episodes=${(p.episodes||[]).length}`));
 
   // Ensure directories exist
   const postsDir = path.resolve(__dirname, '../../posts');
