@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
-const crypto = require('crypto');
 
 const DB_URL = process.env.FIREBASE_DB_URL;
 const SA_RAW = process.env.FIREBASE_SA;
@@ -23,56 +22,31 @@ function git(cmd) {
   return r;
 }
 
-async function getAccessToken() {
-  const now = Math.floor(Date.now() / 1000);
-  const header = Buffer.from(JSON.stringify({ alg: 'RS256', typ: 'JWT' })).toString('base64url');
-  const claim = Buffer.from(JSON.stringify({
-    iss: SA.client_email,
-    scope: 'https://www.googleapis.com/auth/firebase.database https://www.googleapis.com/auth/cloud-platform',
-    aud: 'https://oauth2.googleapis.com/token',
-    exp: now + 3600,
-    iat: now
-  })).toString('base64url');
-  const sign = crypto.createSign('RSA-SHA256');
-  sign.update(header + '.' + claim);
-  const jwt = header + '.' + claim + '.' + sign.sign(SA.private_key, 'base64url');
-  const res = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=' + jwt
-  });
-  const data = await res.json();
-  if (!data.access_token) throw new Error('Token error: ' + JSON.stringify(data));
-  return data.access_token;
-}
-
 async function main() {
   log('=== SYNC START ===');
-  log('DB_URL: ' + (DB_URL || 'MISSING'));
-  log('SA email: ' + (SA ? SA.client_email : 'MISSING'));
 
-  log('Getting Firebase token...');
-  const token = await getAccessToken();
-  log('Token OK, length: ' + token.length);
+  const admin = require('firebase-admin');
+  admin.initializeApp({
+    credential: admin.credential.cert(SA),
+    databaseURL: DB_URL
+  });
+  const db = admin.database();
+  log('Firebase Admin initialized');
 
-  log('Reading posts...');
-  const res = await fetch(DB_URL + '/animaplays/posts.json?access_token=' + token);
-  const posts = await res.json();
+  const snap = await db.ref('animaplays/posts').once('value');
+  const posts = snap.val();
   log('Posts: ' + (posts ? Object.keys(posts).length : 0));
 
   if (!posts) { log('No posts.'); return; }
 
-  log('Posts raw: ' + JSON.stringify(posts).slice(0, 500));
   const allPosts = Object.values(posts);
-  log('All posts: ' + allPosts.length);
-  allPosts.forEach(p => log('  ' + p.slug + ' | status="' + p.status + '" | eps=' + (p.episodes||[]).length));
+  allPosts.forEach(p => log('  ' + (p.slug||'?') + ' | status="' + (p.status||'?') + '" | eps=' + (p.episodes||[]).length));
 
   const pending = allPosts.filter(p => p.status === 'pending');
   log('Pending: ' + pending.length);
 
   if (!pending.length) { log('Nothing to do.'); return; }
 
-  // Build HTML for each pending post
   const postsDir = path.resolve(__dirname, '../../posts');
   if (!fs.existsSync(postsDir)) fs.mkdirSync(postsDir, { recursive: true });
 
@@ -81,13 +55,10 @@ async function main() {
     const html = buildPostHTML(post);
     fs.writeFileSync(path.join(postsDir, post.slug + '.html'), html, 'utf-8');
 
-    // Mark published
-    await fetch(DB_URL + '/animaplays/posts/' + post.slug + '/status.json?access_token=' + token, {
-      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify('published')
-    });
+    await db.ref('animaplays/posts/' + post.slug + '/status').set('published');
+    log('Marked published: ' + post.slug);
   }
 
-  // Update posts.json
   const postsJsonPath = path.resolve(__dirname, '../../posts.json');
   let list = [];
   try { list = JSON.parse(fs.readFileSync(postsJsonPath, 'utf-8')); } catch {}
@@ -108,11 +79,12 @@ async function main() {
   list.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
   fs.writeFileSync(postsJsonPath, JSON.stringify(list, null, 2), 'utf-8');
 
-  // Git
   git('add -A');
   git('commit -m "Auto-sync: publish pending posts from Firebase"');
   git('push origin main');
   log('=== DONE ===');
+
+  admin.app().delete();
 }
 
 function buildPostHTML(d) {

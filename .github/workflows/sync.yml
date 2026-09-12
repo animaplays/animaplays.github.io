@@ -16,6 +16,9 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Install firebase-admin
+        run: npm install firebase-admin
+
       - name: Sync posts from Firebase
         env:
           FIREBASE_DB_URL: ${{ secrets.FIREBASE_DB_URL }}
