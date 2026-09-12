@@ -156,11 +156,25 @@ function git(cmd) {
 }
 
 async function main() {
-  console.log('Authenticating with Firebase...');
-  const token = await getAccessToken();
+  console.log('Step 1: Authenticating with Firebase...');
+  let token;
+  try {
+    token = await getAccessToken();
+    console.log('Token obtained OK, length:', token.length);
+  } catch (e) {
+    console.error('AUTH FAILED:', e.message);
+    return;
+  }
 
-  console.log('Reading posts from Firebase...');
-  const posts = await dbGet(token, '/animaplays/posts');
+  console.log('Step 2: Reading posts from Firebase...');
+  let posts;
+  try {
+    posts = await dbGet(token, '/animaplays/posts');
+    console.log('Posts found:', posts ? Object.keys(posts).length : 0);
+  } catch (e) {
+    console.error('DB READ FAILED:', e.message);
+    return;
+  }
   if (!posts) { console.log('No posts found.'); return; }
 
   const pending = Object.values(posts).filter(p => p.status === 'pending');
