@@ -2,6 +2,11 @@ name: Sync Firebase Posts to Static HTML
 
 on:
   workflow_dispatch:
+    inputs:
+      force:
+        description: 'Regenerar todos os posts (não só pendentes)'
+        required: false
+        default: 'false'
 
 jobs:
   sync:
@@ -23,6 +28,7 @@ jobs:
         env:
           FIREBASE_DB_URL: ${{ secrets.FIREBASE_DB_URL }}
           FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
+          FORCE: ${{ github.event.inputs.force }}
         run: |
           git config user.email "bot@animaplays.github.io"
           git config user.name "Anima Play Bot"
