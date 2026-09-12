@@ -44,6 +44,7 @@ async function main() {
   log('SA present: ' + !!SA_RAW);
 
   const sa = JSON.parse(SA_RAW);
+  if (sa.private_key) sa.private_key = sa.private_key.replace(/\\n/g, '\n');
   log('SA email: ' + sa.client_email);
 
   log('Getting Firebase token...');
