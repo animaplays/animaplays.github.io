@@ -60,7 +60,6 @@ async function main() {
 
   log('Reading posts from Firebase...');
   const snap = await withTimeout(db.ref('animaplays/posts').once('value'), 30000, 'Firebase read');
-  log('Read complete, fetching val...');
   const posts = snap.val();
   log('Posts: ' + (posts ? Object.keys(posts).length : 0));
 
@@ -80,7 +79,7 @@ async function main() {
 
   for (const post of pending) {
     post._heroImg = resolveCapa(post, imgFiles);
-    log('Writing HTML: ' + post.slug + ' (hero: ' + post._heroImg + ')');
+    log('Writing HTML: ' + post.slug);
     const html = buildPostHTML(post);
     fs.writeFileSync(path.join(postsDir, post.slug + '.html'), html, 'utf-8');
 
