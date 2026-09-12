@@ -15,6 +15,13 @@ if (SA_RAW) {
 
 function log(msg) { console.log(msg); }
 
+function withTimeout(promise, ms, label) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error((label || 'operation') + ' timed out after ' + ms + 'ms')), ms))
+  ]);
+}
+
 function git(cmd) {
   log('git ' + cmd);
   const r = execSync('git ' + cmd, { stdio: 'pipe', cwd: path.resolve(__dirname, '../..') });
@@ -50,7 +57,9 @@ async function main() {
   const imgDir = path.resolve(__dirname, '../../img');
   const imgFiles = fs.existsSync(imgDir) ? fs.readdirSync(imgDir) : [];
 
-  const snap = await db.ref('animaplays/posts').once('value');
+  log('Reading posts from Firebase...');
+  const snap = await withTimeout(db.ref('animaplays/posts').once('value'), 30000, 'Firebase read');
+  log('Read complete, fetching val...');
   const posts = snap.val();
   log('Posts: ' + (posts ? Object.keys(posts).length : 0));
 
