@@ -237,22 +237,18 @@ async function main() {
   fs.writeFileSync(postsJsonPath, JSON.stringify(list, null, 2), 'utf-8');
 
   // Git commit and push
-  console.log('Committing changes...');
+  log('Committing changes...');
   git('add -A');
   try {
-    const diff = git('diff --cached --stat');
-    console.log('Changes:', diff.toString().trim() || 'none');
-    git('diff --cached --quiet');
-    console.log('No changes to commit.');
-  } catch (e) {
-    console.log('Changes detected, committing...');
     git('commit -m "Auto-sync: publish pending posts from Firebase"');
     git('pull --rebase origin main');
     git('push origin main');
-    console.log('Pushed to GitHub.');
+    log('Pushed to GitHub.');
+  } catch (e) {
+    log('Commit/push error: ' + e.message);
   }
 
-  console.log('Done!');
+  log('Done!');
   fs.writeFileSync(path.resolve(__dirname, '../../sync-debug.txt'), 'Done! Posts: ' + Object.keys(posts).length + ', Pending: ' + pending.length + '\n');
 }
 
