@@ -5,12 +5,22 @@ const { execSync } = require('child_process');
 const DB_URL = process.env.FIREBASE_DB_URL;
 const SA_RAW = process.env.FIREBASE_SA;
 
+console.log('DB_URL set:', !!DB_URL);
+console.log('SA set:', !!SA_RAW);
+
 if (!DB_URL || !SA_RAW) {
   console.log('FIREBASE_DB_URL or FIREBASE_SA not set, skipping.');
   process.exit(0);
 }
 
-const sa = JSON.parse(SA_RAW);
+let sa;
+try {
+  sa = JSON.parse(SA_RAW);
+  console.log('SA parsed OK, email:', sa.client_email);
+} catch (e) {
+  console.error('Failed to parse FIREBASE_SA:', e.message);
+  process.exit(1);
+}
 
 async function getAccessToken() {
   const now = Math.floor(Date.now() / 1000);
@@ -216,4 +226,4 @@ async function main() {
   console.log('Done!');
 }
 
-main().catch(e => { console.error('Error:', e); process.exit(1); });
+main().catch(e => { console.error('FATAL ERROR:', e.message); console.error(e.stack); process.exit(1); });
