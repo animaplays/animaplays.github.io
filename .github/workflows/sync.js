@@ -1,9 +1,18 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const crypto = require('crypto');
 
 const DB_URL = process.env.FIREBASE_DB_URL;
 const SA_RAW = process.env.FIREBASE_SA;
+
+let SA = null;
+if (SA_RAW) {
+  SA = JSON.parse(SA_RAW);
+  if (SA.private_key && !SA.private_key.includes('\n')) {
+    SA.private_key = SA.private_key.replace(/\\n/g, '\n');
+  }
+}
 
 function log(msg) { console.log(msg); }
 
@@ -18,16 +27,15 @@ async function getAccessToken() {
   const now = Math.floor(Date.now() / 1000);
   const header = Buffer.from(JSON.stringify({ alg: 'RS256', typ: 'JWT' })).toString('base64url');
   const claim = Buffer.from(JSON.stringify({
-    iss: SA_RAW.client_email,
+    iss: SA.client_email,
     scope: 'https://www.googleapis.com/auth/firebase.database https://www.googleapis.com/auth/cloud-platform',
     aud: 'https://oauth2.googleapis.com/token',
     exp: now + 3600,
     iat: now
   })).toString('base64url');
-  const crypto = require('crypto');
   const sign = crypto.createSign('RSA-SHA256');
   sign.update(header + '.' + claim);
-  const jwt = header + '.' + claim + '.' + sign.sign(SA_RAW.private_key, 'base64url');
+  const jwt = header + '.' + claim + '.' + sign.sign(SA.private_key, 'base64url');
   const res = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -41,29 +49,7 @@ async function getAccessToken() {
 async function main() {
   log('=== SYNC START ===');
   log('DB_URL: ' + (DB_URL || 'MISSING'));
-  log('SA present: ' + !!SA_RAW);
-
-  const sa = JSON.parse(SA_RAW);
-  log('SA keys: ' + Object.keys(sa).join(', '));
-  log('private_key type: ' + typeof sa.private_key);
-  log('private_key length: ' + (sa.private_key ? sa.private_key.length : 'null'));
-  if (sa.private_key) {
-    log('private_key first 30 chars: ' + JSON.stringify(sa.private_key.slice(0, 30)));
-    log('has \\n literal: ' + sa.private_key.includes('\\n'));
-    log('has real newline: ' + sa.private_key.includes('\n'));
-    // Try multiple fixes for mangled keys
-    let key = sa.private_key;
-    if (!key.includes('\n')) {
-      key = key.replace(/\\n/g, '\n');
-    }
-    if (key.startsWith('"') && key.endsWith('"')) {
-      key = JSON.parse(key);
-    }
-    sa.private_key = key;
-    log('fixed key length: ' + sa.private_key.length);
-    log('fixed first 30: ' + JSON.stringify(sa.private_key.slice(0, 30)));
-  }
-  log('SA email: ' + sa.client_email);
+  log('SA email: ' + (SA ? SA.client_email : 'MISSING'));
 
   log('Getting Firebase token...');
   const token = await getAccessToken();
