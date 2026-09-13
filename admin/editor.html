@@ -724,6 +724,27 @@
         function closeArcSearch() {
             document.getElementById('arcModal').classList.add('hidden');
         }
+        var arcCbCounter = 0;
+        function arcJsonp(url, callback) {
+            var cbName = 'arcCb' + (++arcCbCounter);
+            var timer = setTimeout(function () { fail(); }, 30000);
+            var scr = document.createElement('script');
+            scr.src = url + (url.indexOf('?') > -1 ? '&' : '?') + 'callback=' + cbName + '&output=json';
+            function fail() {
+                clearTimeout(timer);
+                if (scr.parentNode) scr.parentNode.removeChild(scr);
+                delete window[cbName];
+                callback(null);
+            }
+            window[cbName] = function (data) {
+                clearTimeout(timer);
+                if (scr.parentNode) scr.parentNode.removeChild(scr);
+                delete window[cbName];
+                callback(data);
+            };
+            scr.onerror = fail;
+            document.body.appendChild(scr);
+        }
         function searchArchive() {
             var q = document.getElementById('arcQuery').value.trim();
             var out = document.getElementById('arcResults');
@@ -732,28 +753,27 @@
             st.textContent = 'Buscando no Archive.org...';
             out.innerHTML = '<div class="arc-loading">Buscando "' + esc(q) + '" ...</div>';
             var url = 'https://archive.org/advancedsearch.php?q=' + encodeURIComponent(q) +
-                '&fl[]=identifier&fl[]=title&fl[]=mediatype&rows=12&page=1&output=json';
-            fetch(url, { headers: { 'Content-Type': 'application/json' } })
-                .then(function (r) { return r.json(); })
-                .then(function (data) {
-                    var docs = (data.response && data.response.docs) || [];
-                    docs = docs.filter(function (d) { return (d.mediatype || '') === 'movies' || (d.mediatype || '') === 'movingimage'; });
-                    if (!docs.length) {
-                        st.textContent = 'Nenhum resultado na categoria "movies". Tente outro termo.';
-                        out.innerHTML = '<div class="arc-empty">Nada encontrado. Tente outro termo.</div>';
-                        return;
-                    }
-                    st.textContent = docs.length + ' resultado(s) encontrado(s). Clique para ver os arquivos.';
-                    out.innerHTML = docs.map(function (d) {
-                        return '<div class="arc-item" onclick="openArcItem(this)" data-id="' + esc(d.identifier) + '">' +
-                            '<div class="arc-item-title">' + esc(d.title || d.identifier) + '</div>' +
-                            '<div class="arc-item-id">' + esc(d.identifier) + '</div></div>';
-                    }).join('');
-                })
-                .catch(function () {
+                '&fl[]=identifier&fl[]=title&fl[]=mediatype&rows=12&page=1';
+            arcJsonp(url, function (data) {
+                if (!data) {
                     st.textContent = 'Erro ao buscar no Archive.org.';
                     out.innerHTML = '<div class="arc-empty">Falha de conexão. Tente novamente.</div>';
-                });
+                    return;
+                }
+                var docs = (data.response && data.response.docs) || [];
+                docs = docs.filter(function (d) { return (d.mediatype || '') === 'movies' || (d.mediatype || '') === 'movingimage'; });
+                if (!docs.length) {
+                    st.textContent = 'Nenhum resultado na categoria "movies". Tente outro termo.';
+                    out.innerHTML = '<div class="arc-empty">Nada encontrado. Tente outro termo.</div>';
+                    return;
+                }
+                st.textContent = docs.length + ' resultado(s) encontrado(s). Clique para ver os arquivos.';
+                out.innerHTML = docs.map(function (d) {
+                    return '<div class="arc-item" onclick="openArcItem(this)" data-id="' + esc(d.identifier) + '">' +
+                        '<div class="arc-item-title">' + esc(d.title || d.identifier) + '</div>' +
+                        '<div class="arc-item-id">' + esc(d.identifier) + '</div></div>';
+                }).join('');
+            });
         }
         function openArcItem(el) {
             var id = el.getAttribute('data-id');
@@ -763,24 +783,22 @@
             sub.className = 'arc-files';
             sub.innerHTML = '<div class="arc-loading">Carregando arquivos...</div>';
             el.appendChild(sub);
-            fetch('https://archive.org/metadata/' + encodeURIComponent(id))
-                .then(function (r) { return r.json(); })
-                .then(function (meta) {
-                    var files = (meta.files || []).filter(function (f) {
-                        return /\.(mp4|webm|mkv|m4v|ogv)(\?|#|$)/i.test(f.name || '');
-                    });
-                    if (!files.length) {
-                        sub.innerHTML = '<div class="arc-empty">Nenhum arquivo de vídeo neste item.</div>';
-                        return;
-                    }
-                    sub.innerHTML = files.map(function (f) {
-                        var sizeLabel = f.size ? (f.size > 1048576 ? Math.round(f.size / 1048576) + ' MB' : Math.round(f.size / 1024) + ' KB') : '';
-                        return '<div class="arc-file" onclick="pickArcFile(this)" data-id="' + esc(id).replace(/"/g, '&quot;') + '" data-file="' + esc(f.name).replace(/"/g, '&quot;') + '" title="Clique para usar este vídeo">' +
-                            '<span class="arc-file-name">' + esc(f.name) + '</span>' +
-                            '<span class="arc-file-meta">' + esc(f.format || '') + ' · ' + sizeLabel + '</span></div>';
-                    }).join('');
-                })
-                .catch(function () { sub.innerHTML = '<div class="arc-empty">Erro ao carregar arquivos.</div>'; });
+            arcJsonp('https://archive.org/metadata/' + encodeURIComponent(id), function (meta) {
+                if (!meta) { sub.innerHTML = '<div class="arc-empty">Erro ao carregar arquivos.</div>'; return; }
+                var files = (meta.files || []).filter(function (f) {
+                    return /\.(mp4|webm|mkv|m4v|ogv)(\?|#|$)/i.test(f.name || '');
+                });
+                if (!files.length) {
+                    sub.innerHTML = '<div class="arc-empty">Nenhum arquivo de vídeo neste item.</div>';
+                    return;
+                }
+                sub.innerHTML = files.map(function (f) {
+                    var sizeLabel = f.size ? (f.size > 1048576 ? Math.round(f.size / 1048576) + ' MB' : Math.round(f.size / 1024) + ' KB') : '';
+                    return '<div class="arc-file" onclick="pickArcFile(this)" data-id="' + esc(id).replace(/"/g, '&quot;') + '" data-file="' + esc(f.name).replace(/"/g, '&quot;') + '" title="Clique para usar este vídeo">' +
+                        '<span class="arc-file-name">' + esc(f.name) + '</span>' +
+                        '<span class="arc-file-meta">' + esc(f.format || '') + ' · ' + sizeLabel + '</span></div>';
+                }).join('');
+            });
         }
         function pickArcFile(el) {
             var id = el.getAttribute('data-id');
