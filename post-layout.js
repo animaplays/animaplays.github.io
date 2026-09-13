@@ -34,7 +34,7 @@
   }).join('');
 
   box.innerHTML =
-    '<div class="side-section"><div class="side-title">Visitas ao site</div><div class="visits-widget"><span class="visits-count" id="siteViews">—</span><span class="visits-label">visitantes únicos (24h)</span></div></div>'
+    '<div class="side-section"><div class="side-title">Visitas ao site</div><div class="visits-widget"><span class="visits-count" id="siteViews">—</span><span class="visits-label">total de visitas ao site</span></div></div>'
     + '<div class="side-section"><div class="side-title">Navegação</div><a class="side-link" href="/">← Início</a></div>'
     + '<div class="side-section"><div class="side-title">Animes</div><div id="sideAnimes"><p style="font-size:12px;color:#666;">Carregando...</p></div></div>'
     + '<div class="side-section"><div class="side-title">Gêneros</div><div class="side-chips">'
