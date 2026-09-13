@@ -70,6 +70,28 @@
         .hidden { display: none !important; }
         .btn-upload { background: #1a1a1a; color: #888; border: 1px dashed #333; border-radius: 8px; padding: 10px 14px; font-size: 12px; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
         .btn-upload:hover { border-color: #e50914; color: #e50914; }
+        .btn-arc { background:#1a1a1a;color:#888;border:1px dashed #333;border-radius:8px;padding:8px 12px;font-size:12px;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;margin-top:4px; }
+        .btn-arc:hover { border-color:#e50914;color:#e50914; }
+        .arc-modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px; }
+        .arc-modal { background:#111;border:1px solid #333;border-radius:14px;width:100%;max-width:680px;max-height:82vh;display:flex;flex-direction:column;overflow:hidden; }
+        .arc-modal-head { padding:16px 20px;border-bottom:1px solid #222;display:flex;justify-content:space-between;align-items:center; }
+        .arc-modal-title { color:#e50914;font-weight:700;text-transform:uppercase;letter-spacing:1px;font-size:14px; }
+        .arc-modal-close { background:none;border:none;color:#fff;font-size:22px;cursor:pointer;line-height:1; }
+        .arc-modal-body { padding:18px 20px;overflow-y:auto; }
+        .arc-search-row { display:flex;gap:8px; }
+        .arc-search-row input { flex:1; }
+        .arc-status { font-size:12px;color:#888;margin-top:8px; }
+        .arc-item { background:rgba(255,255,255,.04);border:1px solid #2a2a2a;border-radius:8px;padding:10px 12px;margin-top:10px;cursor:pointer;transition:border-color .15s; }
+        .arc-item:hover { border-color:#e50914; }
+        .arc-item-title { color:#fff;font-size:13px;font-weight:600; }
+        .arc-item-id { color:#666;font-size:11px;margin-top:2px;word-break:break-all; }
+        .arc-files { margin-top:6px;padding-left:14px;border-left:2px solid #222; }
+        .arc-file { display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;background:rgba(255,255,255,.03);border:1px solid #222;margin-top:6px;cursor:pointer; }
+        .arc-file:hover { border-color:#4ade80; }
+        .arc-file-name { font-size:12px;color:#ddd;flex:1;word-break:break-all; }
+        .arc-file-meta { font-size:11px;color:#666;white-space:nowrap; }
+        .arc-loading { color:#888;font-size:13px;padding:14px 0;text-align:center; }
+        .arc-empty { color:#666;font-size:13px;padding:14px 0;text-align:center; }
         .field-group { margin-bottom: 16px; text-align: left; }
         .field-group label { display: block; font-size: 12px; color: #888; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
         .field-group input, .field-group textarea { width: 100%; background: #15191d; border: 1px solid #2a2a2a; border-radius: 8px; color: #fff; padding: 10px 14px; font-size: 14px; outline: none; }
@@ -170,6 +192,7 @@
                 <label>Vídeo principal — YouTube, Archive.org, iframe ou MP4</label>
                 <textarea id="defaultVideo" placeholder="Cole aqui: iframe completo, link youtube.com/watch, youtu.be, embed, archive.org/details, archive.org/embed ou .mp4" oninput="updatePreview()" style="min-height:64px;"></textarea>
                 <div class="video-hint" id="videoTypeHint">Detectado: —</div>
+                <button class="btn-arc" onclick="openArcSearch('defaultVideo')">↕ Buscar vídeo no Archive.org</button>
             </div>
 
             <div class="field-group">
@@ -546,7 +569,7 @@
             div.className = 'episode-item-editor';
             div.innerHTML = '<span class="ep-num">EP ' + String(epCount).padStart(2, '0') + '</span>' +
                 '<div class="field-group"><label>Título</label><input type="text" class="ep-title" placeholder="Episódio ' + epCount + '" value="' + (title || '').replace(/"/g, '&quot;') + '" oninput="updatePreview()"></div>' +
-                '<div class="field-group"><label>Vídeo (YouTube, Archive.org, iframe, MP4...)</label><input type="text" class="ep-video" placeholder="Cole iframe ou link" value="' + (video || '').replace(/"/g, '&quot;') + '" oninput="updatePreview()"></div>' +
+                '<div class="field-group"><label>Vídeo (YouTube, Archive.org, iframe, MP4...)</label><input type="text" class="ep-video" id="epVideo' + epCount + '" placeholder="Cole iframe ou link" value="' + (video || '').replace(/"/g, '&quot;') + '" oninput="updatePreview()"><div><button class="btn-arc" onclick="openArcSearchForEpisode(this)">↕ Buscar vídeo no Archive.org</button></div></div>' +
                 '<button class="btn-remove-ep" onclick="removeEpisode(this)">✕ Remover</button>';
             document.getElementById('episodeList').appendChild(div);
             updatePreview();
@@ -683,6 +706,112 @@
             updatePreview();
         }
         window.addEventListener('DOMContentLoaded', function () { addEpisode(); updateSlugPreview(); checkAuth(); });
+
+        var arcTargetInput = '';
+        function openArcSearchForEpisode(btn) {
+            var input = btn.closest('.episode-item-editor').querySelector('.ep-video');
+            openArcSearch(input.id || '');
+        }
+        function openArcSearch(inputId) {
+            arcTargetInput = inputId;
+            var val = document.getElementById(inputId) ? document.getElementById(inputId).value : '';
+            document.getElementById('arcQuery').value = val || '';
+            document.getElementById('arcStatus').textContent = 'Pesquise por um anime, filme ou nome do episódio. Depois escolha o arquivo de vídeo desejado.';
+            document.getElementById('arcResults').innerHTML = '';
+            document.getElementById('arcModal').classList.remove('hidden');
+            if (!val) document.getElementById('arcQuery').focus();
+        }
+        function closeArcSearch() {
+            document.getElementById('arcModal').classList.add('hidden');
+        }
+        function searchArchive() {
+            var q = document.getElementById('arcQuery').value.trim();
+            var out = document.getElementById('arcResults');
+            var st = document.getElementById('arcStatus');
+            if (!q) { st.textContent = 'Digite algo para buscar.'; return; }
+            st.textContent = 'Buscando no Archive.org...';
+            out.innerHTML = '<div class="arc-loading">Buscando "' + esc(q) + '" ...</div>';
+            var url = 'https://archive.org/advancedsearch.php?q=' + encodeURIComponent(q) +
+                '&fl[]=identifier&fl[]=title&fl[]=mediatype&rows=12&page=1&output=json';
+            fetch(url, { headers: { 'Content-Type': 'application/json' } })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    var docs = (data.response && data.response.docs) || [];
+                    docs = docs.filter(function (d) { return (d.mediatype || '') === 'movies' || (d.mediatype || '') === 'movingimage'; });
+                    if (!docs.length) {
+                        st.textContent = 'Nenhum resultado na categoria "movies". Tente outro termo.';
+                        out.innerHTML = '<div class="arc-empty">Nada encontrado. Tente outro termo.</div>';
+                        return;
+                    }
+                    st.textContent = docs.length + ' resultado(s) encontrado(s). Clique para ver os arquivos.';
+                    out.innerHTML = docs.map(function (d) {
+                        return '<div class="arc-item" onclick="openArcItem(this)" data-id="' + esc(d.identifier) + '">' +
+                            '<div class="arc-item-title">' + esc(d.title || d.identifier) + '</div>' +
+                            '<div class="arc-item-id">' + esc(d.identifier) + '</div></div>';
+                    }).join('');
+                })
+                .catch(function () {
+                    st.textContent = 'Erro ao buscar no Archive.org.';
+                    out.innerHTML = '<div class="arc-empty">Falha de conexão. Tente novamente.</div>';
+                });
+        }
+        function openArcItem(el) {
+            var id = el.getAttribute('data-id');
+            var existing = el.querySelector('.arc-files');
+            if (existing) { existing.remove(); return; }
+            var sub = document.createElement('div');
+            sub.className = 'arc-files';
+            sub.innerHTML = '<div class="arc-loading">Carregando arquivos...</div>';
+            el.appendChild(sub);
+            fetch('https://archive.org/metadata/' + encodeURIComponent(id))
+                .then(function (r) { return r.json(); })
+                .then(function (meta) {
+                    var files = (meta.files || []).filter(function (f) {
+                        return /\.(mp4|webm|mkv|m4v|ogv)(\?|#|$)/i.test(f.name || '');
+                    });
+                    if (!files.length) {
+                        sub.innerHTML = '<div class="arc-empty">Nenhum arquivo de vídeo neste item.</div>';
+                        return;
+                    }
+                    sub.innerHTML = files.map(function (f) {
+                        var sizeLabel = f.size ? (f.size > 1048576 ? Math.round(f.size / 1048576) + ' MB' : Math.round(f.size / 1024) + ' KB') : '';
+                        return '<div class="arc-file" onclick="pickArcFile(this)" data-id="' + esc(id).replace(/"/g, '&quot;') + '" data-file="' + esc(f.name).replace(/"/g, '&quot;') + '" title="Clique para usar este vídeo">' +
+                            '<span class="arc-file-name">' + esc(f.name) + '</span>' +
+                            '<span class="arc-file-meta">' + esc(f.format || '') + ' · ' + sizeLabel + '</span></div>';
+                    }).join('');
+                })
+                .catch(function () { sub.innerHTML = '<div class="arc-empty">Erro ao carregar arquivos.</div>'; });
+        }
+        function pickArcFile(el) {
+            var id = el.getAttribute('data-id');
+            var file = el.getAttribute('data-file');
+            var link = 'https://archive.org/details/' + id + '/' + file;
+            if (arcTargetInput && document.getElementById(arcTargetInput)) {
+                document.getElementById(arcTargetInput).value = link;
+                document.getElementById(arcTargetInput).dispatchEvent(new Event('input'));
+            }
+            document.getElementById('arcResults').innerHTML = '';
+            document.getElementById('arcStatus').textContent = 'Vídeo escolhido para: ' + link;
+            closeArcSearch();
+            updatePreview();
+        }
     </script>
+
+    <div id="arcModal" class="arc-modal-overlay hidden">
+        <div class="arc-modal">
+            <div class="arc-modal-head">
+                <span class="arc-modal-title">Buscar vídeo no Archive.org</span>
+                <button class="arc-modal-close" onclick="closeArcSearch()" aria-label="Fechar">✕</button>
+            </div>
+            <div class="arc-modal-body">
+                <div class="arc-search-row">
+                    <input type="text" id="arcQuery" placeholder="Ex: Naruto Clássico dublado episódio 1" onkeydown="if(event.key==='Enter'){searchArchive();return false;}">
+                    <button class="btn-publish" style="padding:10px 18px;" onclick="searchArchive()">Buscar</button>
+                </div>
+                <div id="arcStatus" class="arc-status">Pesquise por um anime, filme ou nome do episódio. Depois escolha o arquivo de vídeo desejado.</div>
+                <div id="arcResults"></div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
