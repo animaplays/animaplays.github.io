@@ -5,6 +5,14 @@ const { execSync } = require('child_process');
 const DB_URL = process.env.FIREBASE_DB_URL;
 const SA_RAW = process.env.FIREBASE_SA;
 
+// Blogger (opcional): se os 4 secrets existirem, cada publish também cria/atualiza o post no Blogger.
+const BLOGGER_CLIENT_ID = process.env.BLOGGER_CLIENT_ID;
+const BLOGGER_CLIENT_SECRET = process.env.BLOGGER_CLIENT_SECRET;
+const BLOGGER_REFRESH_TOKEN = process.env.BLOGGER_REFRESH_TOKEN;
+const BLOGGER_BLOG_ID = process.env.BLOGGER_BLOG_ID;
+const FORCE_BLOGGER = process.env.FORCE_BLOGGER === 'true';
+const bloggerEnabled = () => Boolean(BLOGGER_CLIENT_ID && BLOGGER_CLIENT_SECRET && BLOGGER_REFRESH_TOKEN && BLOGGER_BLOG_ID);
+
 let SA = null;
 if (SA_RAW) {
   SA = JSON.parse(SA_RAW);
@@ -85,6 +93,8 @@ async function main() {
 
     await db.ref('animaplays/posts/' + post.slug + '/status').set('published');
     log('Marked published: ' + post.slug);
+
+    await maybePostToBlogger(db, post);
   }
 
   const postsJsonPath = path.resolve(__dirname, '../../posts.json');
@@ -121,6 +131,111 @@ async function main() {
 function finish() {
   try { admin.app().delete(); } catch (e) {}
   setTimeout(() => process.exit(0), 100);
+}
+
+function absUrl(u) {
+  const s = String(u || '').trim();
+  if (!s) return '';
+  if (/^https?:\/\//i.test(s)) return s;
+  if (s.startsWith('../')) return 'https://animaplays.github.io/' + s.replace(/^(\.\.\/)+/, '');
+  if (s.startsWith('/')) return 'https://animaplays.github.io' + s;
+  return 'https://animaplays.github.io/' + s;
+}
+
+// HTML simplificado para o Blogger (sem <script>: o Blogger remove scripts dos posts).
+function buildBloggerHTML(post) {
+  const esc = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const extractSrc = (s) => { if (!s) return ''; const m = String(s).match(/src=["']([^"']+)["']/i); return m ? m[1] : String(s).trim(); };
+  const ytId = (url) => { if (!url) return ''; const s = extractSrc(url); const m = s.match(/youtube\.com\/embed\/([^?&#]+)/) || s.match(/[?&]v=([^&#]+)/) || s.match(/youtu\.be\/([^?&#]+)/); return m ? m[1] : ''; };
+  const norm = (input) => {
+    if (!input) return '';
+    const id = ytId(input);
+    if (id) return 'https://www.youtube.com/embed/' + id;
+    let raw = extractSrc(input);
+    const enc = (s) => s.split('/').map(p => { try { return encodeURIComponent(decodeURIComponent(p)); } catch { return encodeURIComponent(p); } }).join('/');
+    let m = raw.match(/archive\.org\/details\/([^/?#]+)\/(.+)/i);
+    if (m) {
+      const fname = m[2].replace(/\+/g, ' ').replace(/\.(mkv|avi)$/i, '.mp4');
+      return 'https://archive.org/download/' + m[1] + '/' + enc(fname);
+    }
+    m = raw.match(/archive\.org\/details\/([^/?#]+)/i);
+    if (m) return 'https://archive.org/embed/' + m[1];
+    return raw.replace(/\.(mkv|avi)$/i, '.mp4');
+  };
+  const serversOf = (ep) => (ep.videos && ep.videos.length ? ep.videos : (ep.video ? [{ name: 'Servidor 1', url: ep.video }] : []))
+    .filter(v => v && v.url).map(v => ({ name: v.name || 'Servidor', url: norm(v.url) })).filter(v => v.url);
+  const isDirect = (s) => /\.(mp4|webm)(\?|#|$)/i.test(s || '');
+  const wrap = (inner) => '<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;background:#000;margin:8px 0 16px 0;">' + inner + '</div>';
+  const embedOf = (url) => {
+    if (!url) return '<p>Nenhum vídeo informado.</p>';
+    if (isDirect(url)) {
+      return wrap('<video controls preload="none" src="' + esc(url) + '" style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;"></video>') +
+        '<p><a href="' + esc(url) + '" target="_blank" rel="noopener">Baixar / assistir em nova aba</a></p>';
+    }
+    return wrap('<iframe src="' + esc(url) + '" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen="true" loading="lazy"></iframe>');
+  };
+
+  const hero = absUrl(post._heroImg || post.cardImage || post.image || '');
+  const genres = (post.genres || []).map(g => '<span style="display:inline-block;background:#eee;border-radius:12px;padding:3px 10px;margin:0 6px 6px 0;font-size:12px;color:#333;">' + esc(g) + '</span>').join('');
+  const eps = (post.episodes || []).map((ep, i) => {
+    const list = serversOf(ep);
+    const links = list.map((v, j) => '<a href="' + esc(v.url) + '" target="_blank" rel="noopener" style="display:inline-block;background:#15191d;color:#fff;border-radius:999px;padding:7px 14px;margin:0 8px 8px 0;font-size:13px;text-decoration:none;">' + esc(v.name || ('Servidor ' + (j + 1))) + '</a>').join('');
+    return '<h3>' + esc(ep.title || ('Episódio ' + (i + 1))) + '</h3>' + embedOf((list[0] || {}).url || '') + (list.length > 1 ? '<p><b>Outros servidores:</b><br>' + links + '</p>' : '');
+  }).join('\n');
+
+  return (hero ? '<p><img src="' + esc(hero) + '" alt="' + esc(post.title) + '" style="max-width:100%;height:auto;border-radius:12px;"></p>' : '') +
+    (post.synopsis ? '<p>' + esc(post.synopsis) + '</p>' : '') +
+    (genres ? '<p>' + genres + '</p>' : '') +
+    '<h2>Episódios</h2>' + eps +
+    '<hr><p><a href="https://animaplays.github.io/posts/' + esc(post.slug) + '.html" target="_blank" rel="noopener" style="display:inline-block;background:#e50914;color:#fff;border-radius:8px;padding:10px 18px;font-weight:700;text-decoration:none;">Assistir no Anima Play</a></p>';
+}
+
+async function bloggerToken() {
+  const r = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ client_id: BLOGGER_CLIENT_ID, client_secret: BLOGGER_CLIENT_SECRET, refresh_token: BLOGGER_REFRESH_TOKEN, grant_type: 'refresh_token' })
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok || !j.access_token) throw new Error('Blogger token: ' + (j.error_description || j.error || ('HTTP ' + r.status)));
+  return j.access_token;
+}
+
+async function maybePostToBlogger(db, post) {
+  if (!bloggerEnabled()) { log('Blogger: secrets ausentes, pulando.'); return; }
+  const hasId = Boolean(post.bloggerPostId);
+  // Sem ID e em regeneração geral (FORCE): não cria duplicado, só atualiza quem já tem ID.
+  if (!hasId && FORCE && !FORCE_BLOGGER) { log('Blogger: ' + post.slug + ' sem ID e FORCE ativo, pulando (sem duplicar).'); return; }
+  try {
+    const token = await bloggerToken();
+    const content = buildBloggerHTML(post);
+    const labels = (post.genres || []).filter(Boolean);
+    let url, id;
+    if (hasId) {
+      const r = await fetch('https://www.googleapis.com/blogger/v3/blogs/' + BLOGGER_BLOG_ID + '/posts/' + post.bloggerPostId, {
+        method: 'PUT',
+        headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: post.title, content, labels })
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error('Blogger update: ' + (j.error && j.error.message ? j.error.message : ('HTTP ' + r.status)));
+      url = j.url; id = j.id;
+      log('Blogger atualizado: ' + url);
+    } else {
+      const r = await fetch('https://www.googleapis.com/blogger/v3/blogs/' + BLOGGER_BLOG_ID + '/posts/', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: post.title, content, labels })
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error('Blogger insert: ' + (j.error && j.error.message ? j.error.message : ('HTTP ' + r.status)));
+      url = j.url; id = j.id;
+      log('Blogger criado: ' + url);
+    }
+    if (id) await db.ref('animaplays/posts/' + post.slug).update({ bloggerPostId: id, bloggerUrl: url || '' });
+  } catch (e) {
+    log('Blogger ERRO (' + post.slug + '): ' + e.message);
+  }
 }
 
 function buildPostHTML(d) {
