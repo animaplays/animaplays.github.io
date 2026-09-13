@@ -14,7 +14,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
     <script src="firebase-config.js?v=1"></script>
     <script>if(typeof firebase!=='undefined'&&firebase.initializeApp)firebase.initializeApp(firebaseConfig);</script>
-    <script src="views.js?v=2"></script>
+    <script src="views.js?v=3"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MMP1CVNLRE"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-MMP1CVNLRE');</script>
 </head>
 <body>
 
@@ -46,6 +48,10 @@
         <section class="genre-rows" id="genreRows" aria-label="Categorias"></section>
         </div>
         <aside class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Visitas ao site</h3>
+                <div id="siteViews" class="visits-widget"><span class="visits-count">—</span><span class="visits-label">visitantes únicos (24h)</span></div>
+            </div>
             <div class="sidebar-section">
                 <h3 class="sidebar-title">Animes</h3>
                 <div id="postLinks"></div>
@@ -406,6 +412,13 @@
         }
 
         init();
+
+        if (typeof ViewCounter !== 'undefined') {
+            ViewCounter.incrementSite().then(function (v) {
+                var el = document.querySelector('#siteViews .visits-count');
+                if (el) el.textContent = Number(v || 0).toLocaleString('pt-BR');
+            }).catch(function () {});
+        }
     </script>
     <script src="update-check.js?v=5"></script>
 

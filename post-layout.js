@@ -13,6 +13,13 @@
     return s;
   }
 
+  if (!document.getElementById('ap-visits-style')) {
+    var st = document.createElement('style');
+    st.id = 'ap-visits-style';
+    st.textContent = '.visits-widget{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0}.visits-widget .visits-count{font-size:34px;font-weight:800;color:#e50914;line-height:1}.visits-widget .visits-label{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.5px}';
+    document.head.appendChild(st);
+  }
+
   var box = document.getElementById('postSide');
   if (!box) return;
 
@@ -27,11 +34,28 @@
   }).join('');
 
   box.innerHTML =
-    '<div class="side-section"><div class="side-title">Navegação</div><a class="side-link" href="/">← Início</a></div>'
+    '<div class="side-section"><div class="side-title">Visitas ao site</div><div class="visits-widget"><span class="visits-count" id="siteViews">—</span><span class="visits-label">visitantes únicos (24h)</span></div></div>'
+    + '<div class="side-section"><div class="side-title">Navegação</div><a class="side-link" href="/">← Início</a></div>'
     + '<div class="side-section"><div class="side-title">Animes</div><div id="sideAnimes"><p style="font-size:12px;color:#666;">Carregando...</p></div></div>'
     + '<div class="side-section"><div class="side-title">Gêneros</div><div class="side-chips">'
     + (chips || '<p style="font-size:12px;color:#666;">—</p>') + '</div></div>'
     + '<div class="side-section"><div class="side-title">Recomendado para você</div><div id="sideRec"><p style="font-size:12px;color:#666;">Carregando...</p></div></div>';
+
+  function refreshSiteViews() {
+    if (typeof ViewCounter === 'undefined' || typeof ViewCounter.incrementSite !== 'function') return false;
+    ViewCounter.incrementSite().then(function (v) {
+      var el = document.getElementById('siteViews');
+      if (el) el.textContent = Number(v || 0).toLocaleString('pt-BR');
+    }).catch(function () {});
+    return true;
+  }
+  if (!refreshSiteViews()) {
+    var tries = 0;
+    var iv = setInterval(function () {
+      tries++;
+      if (refreshSiteViews() || tries > 20) clearInterval(iv);
+    }, 400);
+  }
 
   var overlay = document.createElement('div');
   overlay.className = 'post-overlay';

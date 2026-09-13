@@ -285,6 +285,28 @@ body {
     letter-spacing: 0.5px;
 }
 
+.visits-widget {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 0;
+}
+
+.visits-widget .visits-count {
+    font-size: 34px;
+    font-weight: 800;
+    color: #e50914;
+    line-height: 1;
+}
+
+.visits-widget .visits-label {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 .sidebar .genre-filters {
     display: flex;
     flex-direction: column;
