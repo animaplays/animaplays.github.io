@@ -110,8 +110,7 @@
         return String(b.updatedAt || b.createdAt || '').localeCompare(String(a.updatedAt || a.createdAt || ''));
       });
       boxA.innerHTML = ordered.length ? ordered.map(function (p) {
-        var cur = p.slug === slug ? ' style="border-color:#e50914;"' : '';
-        return '<a class="post-link" href="' + p.slug + '.html"' + cur + '><span>›</span> ' + esc(p.title || p.slug) + '</a>';
+        return '<a class="post-link" href="' + p.slug + '.html"><span>›</span> ' + esc(p.title || p.slug) + '</a>';
       }).join('') : '<p style="font-size:12px;color:#666;">Em breve.</p>';
     }
     var boxR = document.getElementById('sideRec');
