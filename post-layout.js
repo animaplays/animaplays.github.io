@@ -16,7 +16,7 @@
   if (!document.getElementById('ap-visits-style')) {
     var st = document.createElement('style');
     st.id = 'ap-visits-style';
-    st.textContent = '.visits-widget{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0}.visits-widget .visits-count{font-size:34px;font-weight:800;color:#e50914;line-height:1}.visits-widget .visits-label{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.5px}.post-link{display:block;padding:8px 10px;border-left:3px solid transparent;color:#bbb;text-decoration:none;font-size:13px;border-radius:4px;transition:background .15s,color .15s}.post-link:hover{background:rgba(255,255,255,.06);color:#fff}.post-link span{color:#e50914;margin-right:6px}';
+    st.textContent = '.visits-widget{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0}.visits-widget .visits-count{font-size:34px;font-weight:800;color:#e50914;line-height:1}.visits-widget .visits-label{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.5px}.post-link{display:block;padding:8px 10px;border-left:3px solid transparent;color:#bbb;text-decoration:none;font-size:13px;border-radius:4px;transition:background .15s,color .15s}.post-link:hover{background:rgba(255,255,255,.06);color:#fff}.post-link span{color:#e50914;margin-right:6px}.post-link.active{border-left-color:#e50914}';
     document.head.appendChild(st);
   }
 
@@ -110,7 +110,8 @@
         return String(b.updatedAt || b.createdAt || '').localeCompare(String(a.updatedAt || a.createdAt || ''));
       });
       boxA.innerHTML = ordered.length ? ordered.map(function (p) {
-        return '<a class="post-link" href="' + p.slug + '.html"><span>›</span> ' + esc(p.title || p.slug) + '</a>';
+        var active = p.slug === slug ? ' active' : '';
+        return '<a class="post-link' + active + '" href="' + p.slug + '.html"><span>›</span> ' + esc(p.title || p.slug) + '</a>';
       }).join('') : '<p style="font-size:12px;color:#666;">Em breve.</p>';
     }
     var boxR = document.getElementById('sideRec');
