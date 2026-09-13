@@ -205,7 +205,7 @@ async function maybePostToBlogger(db, post) {
   if (!bloggerEnabled()) { log('Blogger: secrets ausentes, pulando.'); return; }
   const hasId = Boolean(post.bloggerPostId);
   // Sem ID e em regeneração geral (FORCE): não cria duplicado, só atualiza quem já tem ID.
-  if (!hasId && FORCE && !FORCE_BLOGGER) { log('Blogger: ' + post.slug + ' sem ID e FORCE ativo, pulando (sem duplicar).'); return; }
+  if (!hasId && process.env.FORCE === 'true' && !FORCE_BLOGGER) { log('Blogger: ' + post.slug + ' sem ID e FORCE ativo, pulando (sem duplicar).'); return; }
   try {
     const token = await bloggerToken();
     const content = buildBloggerHTML(post);
