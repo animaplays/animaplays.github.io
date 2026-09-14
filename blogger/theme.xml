@@ -50,7 +50,7 @@ img{display:block;max-width:100%}
 .carousel-wrapper{position:relative;padding:0 40px}
 .carousel{display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;scrollbar-width:none;-ms-overflow-style:none;padding:10px 0 20px}
 .carousel::-webkit-scrollbar{display:none}
-.top-layout .carousel .anime-card{flex:1 0 calc((100% - 60px) / 6);width:auto;min-width:0;max-width:320px}
+.top-layout .carousel .anime-card{flex:1 0 calc((100% - 108px) / 10);width:auto;min-width:0;max-width:320px}
 .carousel-btn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:20px;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;transition:background .2s}
 .carousel-btn:hover{background:rgba(0,0,0,.9)}
 .carousel-btn.prev{left:10px}
@@ -236,10 +236,6 @@ body#layout .sidebar{position:static}
 <h3 class='sidebar-title'>Generos</h3>
 <div id='genreFilters' class='genre-filters'></div>
 </div>
-<div class='sidebar-section'>
-<h3 class='sidebar-title'>Recomendado para voce</h3>
-<div id='sideRec'></div>
-</div>
 </aside>
 </div>
 
@@ -414,42 +410,31 @@ var AP = (function () {
     return h;
   }
 
-  function loadLatestEpisodes(posts, perPost, total) {
-    perPost = perPost || 6; total = total || 18;
+  function loadLatestEpisodes(posts, total) {
+    total = total || 10;
     var sorted = posts.slice().sort(function (a, b) { return (b.updatedAt || '').localeCompare(a.updatedAt || ''); });
-    var lists = [];
-    sorted.forEach(function (post) {
-      var srcs = post.episodes || [];
-      if (!srcs.length) return;
-      var list = [];
-      for (var i = srcs.length - 1; i >= 0 && list.length < perPost; i--) {
-        var url = '';
-        if (typeof srcs[i] === 'string') url = srcs[i];
-        else if (srcs[i] && srcs[i].videos && srcs[i].videos[0]) url = srcs[i].videos[0].url;
+    var out = [];
+    for (var r = 0; out.length < total && r < 4; r++) {
+      for (var i = 0; i < sorted.length && out.length < total; i++) {
+        var p = sorted[i];
+        var srcs = p.episodes || [];
+        if (!srcs.length) continue;
+        var n = srcs.length;
+        var idx = n - 1 - r;
+        if (idx < 0) idx = n - 1;
+        var ep = srcs[idx];
+        var url = typeof ep === 'string' ? ep : (ep && ep.videos && ep.videos[0] ? ep.videos[0].url : '');
         if (!url) continue;
-        list.push({ title: 'Episodio ' + (i + 1), subtitle: post.title, image: post.image, genres: post.genres, isNew: post.isNew, slug: post.slug, href: post.href + '?ep=' + (i + 1) });
+        out.push({ title: p.title, subtitle: 'Episodio ' + (idx + 1), image: p.image, genres: p.genres, isNew: p.isNew, slug: p.slug, href: p.href + '?ep=' + (idx + 1) });
       }
-      if (list.length) lists.push(list);
-    });
-    var eps = [];
-    for (var r = 0; eps.length < total; r++) {
-      var added = false;
-      for (var p = 0; p < lists.length; p++) {
-        if (r < lists[p].length && eps.length < total) { eps.push(lists[p][r]); added = true; }
-      }
-      if (!added) break;
     }
-    var seen = {}, out = [];
-    for (var i = 0; i < eps.length; i++) {
-      if (!seen[eps[i].slug]) { seen[eps[i].slug] = 1; out.push(eps[i]); }
-    }
-    return out;
+    return out.slice(0, total);
   }
 
   function renderCarousel(items) {
     var el = document.getElementById('carousel');
     if (!el) return;
-    el.innerHTML = items.slice(0, 18).map(function (a) { return cardHTML(a); }).join('');
+    el.innerHTML = items.slice(0, 10).map(function (a) { return cardHTML(a); }).join('');
   }
 
   function renderGenreRows(posts) {
@@ -469,15 +454,6 @@ var AP = (function () {
       return h;
     }
     var html = topRowHTML(top10HTML());
-    var allL = {};
-    posts.forEach(function (p) { (p.labels || []).forEach(function (l) { allL[l] = 1; }); });
-    Object.keys(allL).sort().forEach(function (label) {
-      var items = posts.filter(function (p) { return (p.labels || []).indexOf(label) >= 0; });
-      if (items.length < 2) return;
-      html += '<div class="genre-row"><h3 class="genre-row-title">' + esc(label) + '</h3><div class="genre-row-scroll">';
-      items.slice(0, 12).forEach(function (a) { html += cardHTML(a); });
-      html += '</div></div>';
-    });
     box.innerHTML = html;
     afterFirebase(function () {
       try {
@@ -530,7 +506,6 @@ var AP = (function () {
 
   function renderSidebar() {
     renderPostLinks();
-    renderRec();
     renderGenreFilters();
     bootFirebase();
     afterFirebase(function () {
