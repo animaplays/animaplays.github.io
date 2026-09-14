@@ -106,7 +106,7 @@ a{color:#e50914}
 <div class='ap-wrap'>
 <main class='ap-main'>
 <b:section class='main' id='main' name='Main' showaddelement='no'>
-<b:widget id='Blog1' locked='true' title='Postagens do blog' type='Blog'>
+<b:widget id='Blog1' locked='true' title='Postagens do blog' type='Blog' version='1' visible='true'>
 <b:includable id='main' var='top'>
 <div class='blog-posts hfeed'>
 <b:loop values='data:posts' var='post'>
