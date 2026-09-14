@@ -5,16 +5,152 @@
 <meta content='width=device-width,initial-scale=1' name='viewport'/>
 <title><data:blog.pageTitle/></title>
 <b:skin><![CDATA[
-
 /* Variable definitions
 =======================
+*/
 
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+body{background:#0a0a0a;color:#fff;min-height:100vh;overflow-x:hidden}
+a{color:#e50914;text-decoration:none}
+img{display:block;max-width:100%}
+.hidden{display:none!important}
+
+/* HEADER */
+.main-header{display:flex;align-items:center;justify-content:space-between;padding:20px 40px;background:linear-gradient(180deg,rgba(10,10,10,1) 0%,rgba(10,10,10,0) 100%);position:fixed;top:0;left:0;right:0;z-index:100;gap:24px}
+.logo{font-size:96px;font-weight:800;color:#e50914;letter-spacing:-1px;text-transform:uppercase;flex-shrink:0}
+.header-tools{display:flex;align-items:center;gap:16px;flex:1;max-width:600px}
+.search-input{flex:1;max-width:300px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:10px 16px;color:#fff;font-size:14px;outline:none;transition:border-color .2s,background .2s}
+.search-input::placeholder{color:#888}
+.search-input:focus{border-color:#e50914;background:rgba(255,255,255,.15)}
+.nav-links{display:flex;gap:24px;list-style:none}
+.nav-links a{color:#b3b3b3;font-size:14px;transition:color .2s}
+.nav-links a:hover{color:#fff}
+
+/* TOP LAYOUT */
+.top-layout{display:grid;grid-template-columns:1fr 260px;gap:24px;align-items:start;padding:200px 40px 0}
+.top-main{min-width:0}
+.top-main .genre-rows{padding:10px 0 0}
+.section-title{font-size:20px;font-weight:600;margin-bottom:16px;padding:0 40px;color:#e5e5e5}
+
+/* CAROUSEL */
+.carousel-section{position:relative;min-width:0}
+.carousel-wrapper{position:relative;padding:0 40px}
+.carousel{display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;scrollbar-width:none;-ms-overflow-style:none;padding:10px 0 20px}
+.carousel::-webkit-scrollbar{display:none}
+.top-layout .carousel .anime-card{flex:1 0 calc((100% - 60px) / 6);width:auto;min-width:0;max-width:320px}
+.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:20px;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.carousel-btn:hover{background:rgba(0,0,0,.9)}
+.carousel-btn.prev{left:10px}
+.carousel-btn.next{right:10px}
+
+/* ANIME CARD */
+.anime-card{flex:0 0 auto;width:200px;cursor:pointer;transition:transform .3s ease;text-decoration:none;color:#fff}
+.anime-card:hover{transform:scale(1.05)}
+.card-poster-wrapper{position:relative;width:100%;padding-top:150%;border-radius:8px;overflow:hidden;background:#1a1a1a}
+.card-badge{position:absolute;top:8px;left:8px;background:#e50914;color:#fff;font-size:10px;font-weight:800;letter-spacing:.5px;padding:3px 8px;border-radius:4px;z-index:2}
+.card-poster{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;transition:transform .3s ease}
+.anime-card:hover .card-poster{transform:scale(1.08)}
+.card-overlay{position:absolute;bottom:0;left:0;right:0;padding:40px 10px 10px;background:linear-gradient(transparent,rgba(0,0,0,.9));border-radius:0 0 8px 8px}
+.card-overlay .card-title-overlay{font-size:13px;font-weight:700;line-height:1.2;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.card-info{padding:10px 2px}
+.card-title{font-size:13px;font-weight:600;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff}
+.card-subtitle{font-size:11px;color:#808080;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-genres{display:inline-block;margin-top:6px;padding:2px 8px;background:rgba(229,9,20,.2);border-radius:4px;font-size:10px;font-weight:600;color:#e50914;text-transform:uppercase;letter-spacing:.5px}
+.rank-badge{position:absolute;top:8px;right:8px;min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.75);border:1px solid #e50914;color:#fff;font-size:16px;font-weight:800;padding:0 6px;border-radius:6px;z-index:2}
+
+/* SIDEBAR */
+.sidebar{position:sticky;top:210px;align-self:start;display:flex;flex-direction:column;gap:16px}
+.sidebar-section{background:rgba(20,20,20,.8);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:20px}
+.sidebar-title{font-size:14px;font-weight:700;color:#e5e5e5;margin-bottom:16px;text-transform:uppercase;letter-spacing:.5px}
+.visits-widget{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0}
+.visits-widget .visits-count{font-size:34px;font-weight:800;color:#e50914;line-height:1}
+.visits-widget .visits-label{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.5px}
+.sidebar .genre-filters{display:flex;flex-direction:column;gap:6px}
+.sidebar .genre-chip{background:rgba(255,255,255,.05);border:1px solid transparent;border-radius:8px;padding:10px 14px;font-size:13px;color:#b3b3b3;cursor:pointer;transition:all .2s;text-align:left;width:100%}
+.sidebar .genre-chip:hover{background:rgba(229,9,20,.2);border-color:#e50914;color:#fff}
+.sidebar .genre-chip.active{background:#e50914;border-color:#e50914;color:#fff}
+
+/* GENRE ROWS + TOP 10 */
+.genre-rows{padding:10px 40px 0;display:flex;flex-direction:column;gap:28px}
+.genre-row-title{font-size:18px;font-weight:700;color:#e5e5e5;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.genre-row-scroll{display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-ms-overflow-style:none;padding:10px 0 14px}
+.genre-row-scroll::-webkit-scrollbar{display:none}
+.genre-row-scroll .anime-card{flex:0 0 160px;width:160px}
+.genre-row-scroll-wrap{position:relative}
+.row-btn{position:absolute;top:38%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:22px;cursor:pointer;z-index:5;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.row-btn:hover{background:#e50914;border-color:#e50914}
+.row-btn.prev{left:-8px}
+.row-btn.next{right:-8px}
+.top10-item{position:relative;flex:0 0 auto;display:flex;align-items:flex-end}
+.top10-item .anime-card{position:relative;z-index:1;flex:0 0 160px;width:160px}
+.rank-big{font-size:260px;font-weight:900;line-height:.78;color:#1c6dd0;margin-right:-46px;margin-bottom:-10px;user-select:none;text-shadow:0 4px 24px rgba(0,0,0,.6)}
+.top10-title{font-size:20px;font-weight:800}
+.top10-sub{font-size:13px;color:#888;font-weight:400;margin-left:10px}
+
+/* SIDEBAR LINKS */
+.post-link{display:flex;align-items:center;gap:8px;padding:8px 12px;margin-bottom:4px;background:rgba(255,255,255,.05);border:1px solid transparent;border-radius:8px;color:#e5e5e5;font-size:13px;font-weight:600;transition:all .2s}
+.post-link span{color:#e50914;font-weight:800}
+.post-link:hover{border-color:#e50914;background:rgba(229,9,20,.15);color:#fff}
+.side-post{display:flex;gap:10px;align-items:center;text-decoration:none;color:#fff;margin-bottom:10px}
+.side-post img{width:44px;height:62px;object-fit:cover;border-radius:6px;background:#1a1a1a;flex-shrink:0}
+.side-post span{font-size:11px;font-weight:600;line-height:1.3}
+
+/* FOOTER */
+.main-footer{text-align:center;padding:40px;color:#555;font-size:12px;border-top:1px solid #1a1a1a}
+
+/* POST PAGE */
+.ap-post{max-width:900px;margin:0 auto;padding:20px 40px 40px}
+.back-link{display:inline-block;color:#e50914;font-weight:700;margin-bottom:16px;text-decoration:none}
+.post-hero{position:relative;border-radius:12px;overflow:hidden;margin-bottom:16px;min-height:260px;background:#1a1a1a}
+.post-hero img{width:100%;max-height:400px;object-fit:cover}
+.post-hero-overlay{position:absolute;bottom:0;left:0;right:0;padding:60px 24px 20px;background:linear-gradient(transparent,#0a0a0a)}
+.post-hero-overlay h1{font-size:28px;font-weight:800}
+.ap-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.ap-meta span{background:rgba(255,255,255,.15);padding:3px 10px;border-radius:12px;font-size:12px;color:#ccc}
+.post-synopsis{color:#aaa;font-size:14px;line-height:1.7;margin-bottom:6px}
+.video-player{position:relative;width:100%;padding-top:56.25%;background:#000;border-radius:12px;overflow:hidden;margin-bottom:12px}
+.video-player iframe,.video-player video{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
+.server-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.server-tabs button{background:#15191d;color:#ccc;border:1px solid #2a2a2a;padding:7px 14px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer}
+.server-tabs button.active{background:#e50914;border-color:#e50914;color:#fff}
+.ep-nav{display:flex;gap:10px;align-items:center;margin-bottom:24px;flex-wrap:wrap}
+.ep-nav button{background:#15191d;color:#fff;border:1px solid #2a2a2a;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer}
+.ep-nav button:hover:not(:disabled){border-color:#e50914;color:#e50914}
+.ep-nav button:disabled{opacity:.35;cursor:not-allowed}
+.ep-nav button.primary{background:#e50914;border-color:#e50914}
+.ep-nav #epLabel{font-size:13px;color:#888}
+.section-label{font-size:13px;color:#e50914;text-transform:uppercase;letter-spacing:1px;margin:18px 0 12px;font-weight:700}
+.episode-list{display:flex;flex-direction:column;gap:8px}
+.episode-item{display:flex;gap:12px;align-items:center;background:#141414;border:1px solid #222;border-radius:10px;padding:10px 12px;text-decoration:none;color:#fff;cursor:pointer;transition:border-color .2s}
+.episode-item:hover{border-color:#e50914}
+.episode-item.active{border-color:#e50914}
+.episode-item .ep-thumb{width:96px;height:54px;object-fit:cover;border-radius:6px;background:#1a1a1a;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#888}
+.episode-item .episode-info{flex:1;min-width:0}
+.episode-item .ep-title{font-size:14px;font-weight:700}
+.episode-item .ep-meta{font-size:12px;color:#888}
+.episode-item .btn-play{background:none;border:2px solid #555;color:#fff;border-radius:50%;width:36px;height:36px;font-size:13px;cursor:pointer;flex-shrink:0}
+.episode-item:hover .btn-play{border-color:#e50914;color:#e50914}
+.ap-watch-main{display:inline-block;background:#e50914;color:#fff;border-radius:8px;padding:10px 18px;font-weight:700;text-decoration:none;margin-top:14px}
+
+/* RESPONSIVE */
+@media(max-width:1024px){.top-layout{grid-template-columns:1fr;padding:170px 20px 0}.top-layout .carousel .anime-card{flex-basis:calc((100% - 36px)/4)}.carousel-btn{display:none}.genre-rows{padding:10px 0 0}.carousel-wrapper{padding:0 20px}.section-title{padding:0 16px}}
+@media(max-width:768px){.main-header{flex-wrap:wrap;padding:12px 16px;gap:10px}.logo{font-size:42px}.nav-links{gap:12px}.nav-links a{font-size:12px}.header-tools{order:3;flex-basis:100%;max-width:none}.search-input{max-width:none}.top-layout{padding-top:150px;padding-left:16px;padding-right:16px}.top-layout .carousel .anime-card{flex-basis:calc((100% - 24px)/3)}.rank-big{font-size:140px;margin-right:-12px}.top10-item .anime-card,.genre-row-scroll .anime-card{flex:0 0 140px;width:140px}}
+@media(max-width:520px){.top-layout .carousel .anime-card{flex-basis:calc((100% - 12px)/2)}.logo{font-size:32px}.nav-links{display:none}.top10-item .anime-card,.genre-row-scroll .anime-card{flex:0 0 120px;width:120px}.rank-big{font-size:100px;margin-right:-8px;margin-bottom:-6px}}
 ]]></b:skin>
 </head>
 <body>
-<b:section class='main' id='main' maxwidgets='1' showaddelement='no'>
-<b:widget id='Blog1' locked='true' title='Postagens do blog' type='Blog'></b:widget>
+<b:section class='hidden' id='main' name='Main' showaddelement='no'>
+<b:widget id='Blog1' locked='true' title='Postagens do blog' type='Blog'>
+<b:includable id='main' var='top'>
+<b:loop values='data:posts' var='post'>
+<div class='post-body' style='display:none'>
+<data:post.body/>
+</div>
+</b:loop>
+</b:includable>
+</b:widget>
 </b:section>
+
 <header class='main-header'>
 <div class='logo'>Anima Play</div>
 <div class='header-tools'>
@@ -23,9 +159,11 @@
 <nav>
 <ul class='nav-links'>
 <li><a href='/'>Inicio</a></li>
+<li><a href='https://animaplays.github.io/'>Site principal</a></li>
 </ul>
 </nav>
 </header>
+
 <div class='top-layout' id='homeContent'>
 <div class='top-main'>
 <section class='carousel-section'>
@@ -59,13 +197,357 @@
 </div>
 </aside>
 </div>
+
 <main class='ap-post hidden' id='postContent'></main>
+
 <footer class='main-footer'>
-<p>&#169; 2026 Anima Play.</p>
+<p>&#169; 2026 Anima Play. Todos os direitos reservados.</p>
 </footer>
+
 <script src='https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js'></script>
 <script src='https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js'></script>
 <script src='https://animaplays.github.io/firebase-config.js?v=1'></script>
 <script src='https://animaplays.github.io/views.js?v=3'></script>
+<script>
+//<![CDATA[
+if (typeof firebase !== 'undefined' && typeof firebaseConfig !== 'undefined' && firebase.initializeApp) {
+  try { if (!firebase.apps.length) firebase.initializeApp(firebaseConfig); } catch (e) {}
+}
+var AP = (function () {
+  var BLOG = 'https://animedplay.blogspot.com';
+  var FALLBACK = 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600&auto=format&fit=crop';
+  var POSTS = [];
+  var carouselTimer = null;
+
+  function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function isDirect(s) { return /\.(mp4|webm)(\?|#|$)/i.test(s || ''); }
+  function normImg(u) { if (!u) return FALLBACK; var s = String(u).trim(); if (s.indexOf('data:') === 0 || s.indexOf('http') === 0) return s; return s; }
+
+  function fetchAll(page) {
+    page = page || 1;
+    var url = BLOG + '/feeds/posts/default?alt=json&max-results=50&start-index=' + page;
+    return fetch(url).then(function (r) { return r.json(); }).then(function (j) {
+      var entries = (j.feed && j.feed.entry) || [];
+      entries.forEach(function (e) { parseEntry(e); });
+      var total = j.feed && j.feed.openSearch$totalResults && parseInt(j.feed.openSearch$totalResults.$t, 10);
+      var nextIdx = page + entries.length;
+      if (entries.length && nextIdx <= (total || 0)) return fetchAll(nextIdx);
+      return POSTS;
+    });
+  }
+
+  function parseEntry(e) {
+    var title = (e.title && e.title.$t) || '';
+    var href = '#';
+    (e.link || []).forEach(function (l) { if (l.rel === 'alternate') href = l.href; });
+    var img = '';
+    if (e.media$thumbnail && e.media$thumbnail.url) img = String(e.media$thumbnail.url).replace(/\/s72(-c)?\//, '/s400/');
+    var labels = [];
+    (e.category || []).forEach(function (c) { if (c.term) labels.push(c.term); });
+    var synopsis = '', genres = [], episodes = [], slug = '', cover = '', subtitle = '', updatedAt = '';
+    if (e.content && e.content.$t) {
+      var tmp = document.createElement('div');
+      tmp.innerHTML = e.content.$t;
+      var dataEl = tmp.querySelector('#anima-data');
+      if (dataEl) {
+        try {
+          var d = JSON.parse(dataEl.textContent);
+          if (d.title) title = d.title;
+          if (d.slug) slug = d.slug;
+          if (d.cover) cover = d.cover;
+          if (d.synopsis) synopsis = d.synopsis;
+          if (d.genres) genres = d.genres;
+          if (d.episodes) episodes = d.episodes;
+          if (d.subtitle) subtitle = d.subtitle;
+        } catch (x) {}
+      }
+      if (!synopsis) synopsis = (tmp.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 140);
+    }
+    if (e.updated && e.updated.$t) updatedAt = e.updated.$t;
+    var ec = episodes.length;
+    POSTS.push({
+      title: title,
+      slug: slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''),
+      href: href,
+      image: normImg(cover || img),
+      subtitle: subtitle || (ec ? 'Episodio 1' : 'Nova Postagem'),
+      genres: genres.length ? genres : (labels.length ? labels : ['Nova']),
+      episodes: episodes,
+      synopsis: synopsis,
+      labels: labels.length ? labels : genres,
+      isNew: updatedAt ? (Date.now() - new Date(updatedAt).getTime()) < 24 * 3600 * 1000 : false,
+      updatedAt: updatedAt
+    });
+  }
+
+  function cardHTML(a, rank) {
+    var h = '<a href="' + esc(a.href || '/') + '" class="anime-card">';
+    h += '<div class="card-poster-wrapper">';
+    h += '<img src="' + esc(a.image || FALLBACK) + '" alt="' + esc(a.title) + '" class="card-poster" loading="lazy"/>';
+    if (a.isNew) h += '<span class="card-badge">NOVO</span>';
+    if (rank) h += '<span class="rank-badge">' + rank + '</span>';
+    h += '<div class="card-overlay"><span class="card-title-overlay">' + esc(a.title) + '</span></div>';
+    h += '</div><div class="card-info">';
+    h += '<h3 class="card-title">' + esc(a.title) + '</h3>';
+    h += '<p class="card-subtitle">' + esc(a.subtitle || '') + '</p>';
+    var g = (a.genres || []).slice(0, 2).join(', ');
+    if (g) h += '<span class="card-genres">' + esc(g) + '</span>';
+    h += '</div></a>';
+    return h;
+  }
+
+  function loadLatestEpisodes(posts, perPost, total) {
+    perPost = perPost || 6; total = total || 18;
+    var sorted = posts.slice().sort(function (a, b) { return (b.updatedAt || '').localeCompare(a.updatedAt || ''); });
+    var lists = [];
+    sorted.forEach(function (post) {
+      var srcs = post.episodes || [];
+      if (!srcs.length) return;
+      var list = [];
+      for (var i = srcs.length - 1; i >= 0 && list.length < perPost; i--) {
+        var url = '';
+        if (typeof srcs[i] === 'string') url = srcs[i];
+        else if (srcs[i] && srcs[i].videos && srcs[i].videos[0]) url = srcs[i].videos[0].url;
+        if (!url) continue;
+        list.push({ title: 'Episodio ' + (i + 1), subtitle: post.title, image: post.image, genres: post.genres, isNew: post.isNew, slug: post.slug, href: post.href + '?ep=' + (i + 1) });
+      }
+      if (list.length) lists.push(list);
+    });
+    var eps = [];
+    for (var r = 0; eps.length < total; r++) {
+      var added = false;
+      for (var p = 0; p < lists.length; p++) {
+        if (r < lists[p].length && eps.length < total) { eps.push(lists[p][r]); added = true; }
+      }
+      if (!added) break;
+    }
+    return eps;
+  }
+
+  function renderCarousel(items) {
+    var el = document.getElementById('carousel');
+    if (!el) return;
+    el.innerHTML = items.slice(0, 18).map(function (a) { return cardHTML(a); }).join('');
+  }
+
+  function renderGenreRows(posts) {
+    var box = document.getElementById('genreRows');
+    if (!box) return;
+    var slugs = posts.map(function (p) { return p.slug; });
+    var views = {};
+    if (typeof ViewCounter !== 'undefined') {
+      try { if (ViewCounter.getMultiple) ViewCounter.getMultiple(slugs).then(function (v) { views = v; }).catch(function () {}); } catch (e) {}
+    }
+    var byOrder = posts.slice().sort(function (a, b) { return (b.updatedAt || '').localeCompare(a.updatedAt || ''); });
+    var top10 = byOrder.slice(0, 10);
+    if (Object.keys(views).length) {
+      top10 = posts.slice().sort(function (a, b) { return (views[b.slug] || 0) - (views[a.slug] || 0); }).slice(0, 10);
+    }
+    var html = '<div class="genre-row"><h3 class="genre-row-title"><span class="top10-title">Top 10 mais vistos</span><span class="top10-sub">Em alta no site</span></h3><div class="genre-row-scroll-wrap"><button class="row-btn prev" onclick="scrollRow(this,-1)">&#8249;</button><div class="genre-row-scroll">';
+    top10.forEach(function (a, i) { html += '<div class="top10-item"><span class="rank-big">' + (i + 1) + '</span>' + cardHTML(a) + '</div>'; });
+    html += '</div><button class="row-btn next" onclick="scrollRow(this,1)">&#8250;</button></div></div>';
+    var allL = {};
+    posts.forEach(function (p) { (p.labels || []).forEach(function (l) { allL[l] = 1; }); });
+    Object.keys(allL).sort().forEach(function (label) {
+      var items = posts.filter(function (p) { return (p.labels || []).indexOf(label) >= 0; });
+      if (items.length < 2) return;
+      html += '<div class="genre-row"><h3 class="genre-row-title">' + esc(label) + '</h3><div class="genre-row-scroll">';
+      items.slice(0, 12).forEach(function (a) { html += cardHTML(a); });
+      html += '</div></div>';
+    });
+    box.innerHTML = html;
+  }
+
+  function renderPostLinks() {
+    var box = document.getElementById('postLinks');
+    if (!box) return;
+    var items = POSTS.slice().sort(function (a, b) { return (b.updatedAt || '').localeCompare(a.updatedAt || ''); });
+    box.innerHTML = items.length ? items.map(function (a) {
+      return '<a class="post-link" href="' + esc(a.href) + '"><span>&#8250;</span> ' + esc(a.title) + '</a>';
+    }).join('') : '<p style="font-size:12px;color:#666;">Em breve.</p>';
+  }
+
+  function renderRec() {
+    var box = document.getElementById('sideRec');
+    if (!box) return;
+    var items = POSTS.slice().sort(function (a, b) { return (b.updatedAt || '').localeCompare(a.updatedAt || ''); }).slice(0, 4);
+    box.innerHTML = items.length ? items.map(function (a) {
+      return '<a class="side-post" href="' + esc(a.href) + '"><img src="' + esc(a.image) + '" alt="" loading="lazy"/><span>' + esc(a.title) + '</span></a>';
+    }).join('') : '<p style="font-size:12px;color:#666;">Em breve.</p>';
+  }
+
+  function renderGenreFilters() {
+    var box = document.getElementById('genreFilters');
+    if (!box) return;
+    var gs = {};
+    POSTS.forEach(function (p) { (p.genres || []).forEach(function (g) { gs[g] = 1; }); });
+    box.innerHTML = '<button class="genre-chip active" data-genre="all">Todos</button>' + Object.keys(gs).sort().map(function (g) {
+      return '<button class="genre-chip" data-genre="' + esc(g) + '">' + esc(g) + '</button>';
+    }).join('');
+    box.querySelectorAll('.genre-chip').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        box.querySelectorAll('.genre-chip').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        var g = btn.getAttribute('data-genre');
+        if (g === 'all') location.href = '/';
+        else location.href = '/search/label/' + encodeURIComponent(g);
+      });
+    });
+  }
+
+  function renderHome() {
+    var latest = loadLatestEpisodes(POSTS);
+    renderCarousel(latest.length ? latest : POSTS);
+    renderGenreRows(POSTS);
+    renderPostLinks();
+    renderRec();
+    renderGenreFilters();
+    startCarouselAuto();
+    if (typeof ViewCounter !== 'undefined') {
+      try {
+        ViewCounter.incrementSite().then(function (v) {
+          var el = document.getElementById('siteViews');
+          if (el) el.textContent = Number(v || 0).toLocaleString('pt-BR');
+        }).catch(function () {});
+      } catch (e) {}
+    }
+  }
+
+  function renderPost(d) {
+    var el = document.getElementById('postContent');
+    if (!el) return;
+    document.getElementById('homeContent').classList.add('hidden');
+    el.classList.remove('hidden');
+    if (!d.episodes || !d.episodes.length) { el.innerHTML = '<p style="padding:40px;color:#888;">Sem episodios</p>'; return; }
+    var cur = 0, srv = 0;
+    function curUrl() {
+      var ep = d.episodes[cur];
+      if (!ep) return '';
+      if (typeof ep === 'string') return ep;
+      var vids = ep.videos || [];
+      return (vids[srv] && vids[srv].url) || (vids[0] && vids[0].url) || '';
+    }
+    function paintPlayer() {
+      var box = document.getElementById('vp');
+      if (!box) return;
+      var src = curUrl();
+      if (!src) { box.innerHTML = '<div style="padding:40px;text-align:center;color:#666">Nenhum video</div>'; return; }
+      if (isDirect(src)) box.innerHTML = '<video controls preload="none" src="' + esc(src) + '"></video>';
+      else box.innerHTML = '<iframe src="' + esc(src) + '" allowfullscreen="true" loading="lazy"></iframe>';
+    }
+    function render() {
+      var pills = (d.genres || []).map(function (g) { return '<span>' + esc(g) + '</span>'; }).join('');
+      var h = '<a class="back-link" href="/">&#8249; Inicio</a>';
+      h += '<div class="post-hero">';
+      if (d.cover) h += '<img src="' + esc(d.cover) + '" alt="' + esc(d.title) + '"/>';
+      h += '<div class="post-hero-overlay"><h1>' + esc(d.title) + '</h1><div class="ap-meta">' + pills + '</div></div></div>';
+      if (d.synopsis) h += '<p class="post-synopsis">' + esc(d.synopsis) + '</p>';
+      h += '<div class="section-label">Assistir</div>';
+      h += '<div class="video-player" id="vp"></div>';
+      var ep = d.episodes[cur];
+      var vids = (typeof ep === 'object' && ep && ep.videos) ? ep.videos : [];
+      if (vids.length > 1) {
+        h += '<div class="server-tabs" id="svTabs">';
+        vids.forEach(function (v, j) { h += '<button class="' + (j === srv ? 'active' : '') + '" data-srv="' + j + '">' + esc(v.name || ('Servidor ' + (j + 1))) + '</button>'; });
+        h += '</div>';
+      }
+      h += '<div class="ep-nav">';
+      h += '<button onclick="location.href=\'/\'">&#8249; Inicio</button>';
+      h += '<button id="btnPrev"' + (cur <= 0 ? ' disabled' : '') + '>&#8249; Anterior</button>';
+      h += '<span id="epLabel">' + esc((typeof ep === 'object' && ep && ep.title) ? ep.title : ('Episodio ' + (cur + 1))) + ' &#183; ' + (cur + 1) + '/' + d.episodes.length + '</span>';
+      h += '<button id="btnNext" class="primary"' + (cur >= d.episodes.length - 1 ? ' disabled' : '') + '>Proximo &#8250;</button>';
+      h += '</div>';
+      h += '<div class="section-label">Episodios</div>';
+      h += '<div class="episode-list">';
+      d.episodes.forEach(function (e, i) {
+        var n = (typeof e === 'object' && e && e.videos) ? e.videos.length : 1;
+        var label = n > 1 ? (n + ' servidores') : 'Toque para assistir';
+        var title = (typeof e === 'object' && e) ? (e.title || ('Episodio ' + (i + 1))) : ('Episodio ' + (i + 1));
+        h += '<a class="episode-item' + (i === cur ? ' active' : '') + '" data-ep="' + i + '">';
+        h += '<div class="ep-thumb">EP ' + String(i + 1).padStart(2, '0') + '</div>';
+        h += '<div class="episode-info"><div class="ep-title">' + esc(title) + '</div>';
+        h += '<div class="ep-meta">' + esc(label) + '</div></div>';
+        h += '<button class="btn-play">&#9654;</button></a>';
+      });
+      h += '</div>';
+      if (d.slug) h += '<a class="ap-watch-main" href="https://animaplays.github.io/posts/' + esc(d.slug) + '.html">Assistir no Anima Play</a>';
+      el.innerHTML = h;
+      paintPlayer();
+      el.querySelectorAll('[data-srv]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          srv = parseInt(this.getAttribute('data-srv'), 10);
+          paintPlayer();
+          el.querySelectorAll('[data-srv]').forEach(function (b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+        });
+      });
+      el.querySelectorAll('[data-ep]').forEach(function (item) {
+        item.addEventListener('click', function (e) {
+          e.preventDefault();
+          cur = parseInt(this.getAttribute('data-ep'), 10);
+          srv = 0;
+          render();
+          var vp = document.getElementById('vp');
+          if (vp && vp.scrollIntoView) vp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+      });
+      var pv = document.getElementById('btnPrev');
+      var nx = document.getElementById('btnNext');
+      if (pv) pv.addEventListener('click', function () { if (cur > 0) { cur--; srv = 0; render(); } });
+      if (nx) nx.addEventListener('click', function () { if (cur < d.episodes.length - 1) { cur++; srv = 0; render(); } });
+      try {
+        var u = new URL(window.location.href);
+        var epP = parseInt(u.searchParams.get('ep') || '1', 10);
+        if (epP >= 1 && epP <= d.episodes.length) { cur = epP - 1; render(); }
+      } catch (x) {}
+      if (typeof ViewCounter !== 'undefined' && d.slug) {
+        try { ViewCounter.increment(d.slug).then(function (v) {}).catch(function () {}); } catch (e) {}
+      }
+    }
+    render();
+  }
+
+  function carouselStep() {
+    var el = document.getElementById('carousel');
+    if (!el || !el.children.length) return;
+    var page = el.clientWidth;
+    if (el.scrollLeft + page >= el.scrollWidth - 10) el.scrollTo({ left: 0, behavior: 'smooth' });
+    else el.scrollBy({ left: page, behavior: 'smooth' });
+  }
+  function startCarouselAuto() { stopCarouselAuto(); carouselTimer = setInterval(carouselStep, 4000); }
+  function stopCarouselAuto() { if (carouselTimer) { clearInterval(carouselTimer); carouselTimer = null; } }
+
+  function boot() {
+    var q = document.getElementById('searchInput');
+    if (q) q.addEventListener('keydown', function (e) { if (e.key === 'Enter') { var v = q.value.trim(); if (v) location.href = '/search?q=' + encodeURIComponent(v); } });
+    var isItem = /(^|\s)item(\s|$)/.test(document.body.className || '');
+    if (isItem) {
+      var dataEl = document.getElementById('anima-data');
+      if (dataEl) { try { renderPost(JSON.parse(dataEl.textContent)); } catch (x) {} }
+    } else {
+      fetchAll(1).then(function () { renderHome(); }).catch(function () {
+        var cr = document.getElementById('carousel');
+        if (cr) cr.innerHTML = '<p style="text-align:center;color:#888;padding:40px;">Erro ao carregar</p>';
+      });
+    }
+    var cel = document.getElementById('carousel');
+    if (cel) {
+      cel.addEventListener('mouseenter', stopCarouselAuto);
+      cel.addEventListener('mouseleave', startCarouselAuto);
+      cel.addEventListener('touchstart', stopCarouselAuto, { passive: true });
+      cel.addEventListener('touchend', startCarouselAuto);
+    }
+  }
+
+  if (typeof document !== 'undefined' && document.addEventListener) {
+    document.addEventListener('DOMContentLoaded', boot);
+  }
+  return { boot: boot };
+})();
+
+function scrollCarousel(dir) { var el = document.getElementById('carousel'); if (el) el.scrollBy({ left: dir * el.clientWidth, behavior: 'smooth' }); }
+function scrollRow(btn, dir) { var el = btn.parentElement.querySelector('.genre-row-scroll'); if (el) el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: 'smooth' }); }
+//]]>
+</script>
 </body>
 </html>
