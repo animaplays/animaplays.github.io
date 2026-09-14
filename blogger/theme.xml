@@ -111,6 +111,7 @@ img{display:block;max-width:100%}
 
 /* POST PAGE */
 .ap-post{max-width:900px;margin:0 auto;padding:20px 40px 40px}
+.post-layout{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:24px;align-items:start;padding:0 40px 60px;max-width:1280px;margin:0 auto}
 .back-link{display:inline-block;color:#e50914;font-weight:700;margin-bottom:16px;text-decoration:none}
 .post-hero{position:relative;border-radius:12px;overflow:hidden;margin-bottom:16px;min-height:260px;background:#1a1a1a}
 .post-hero img{width:100%;max-height:400px;object-fit:cover}
@@ -144,7 +145,7 @@ img{display:block;max-width:100%}
 .ap-watch-main{display:inline-block;background:#e50914;color:#fff;border-radius:8px;padding:10px 18px;font-weight:700;text-decoration:none;margin-top:14px}
 
 /* RESPONSIVE */
-@media(max-width:1024px){.top-layout{grid-template-columns:1fr;padding:170px 20px 0}.top-layout .carousel .anime-card{flex-basis:calc((100% - 36px)/4)}.carousel-btn{display:none}.genre-rows{padding:10px 0 0}.carousel-wrapper{padding:0 20px}.section-title{padding:0 16px}}
+@media(max-width:1024px){.top-layout{grid-template-columns:1fr;padding:170px 20px 0}.post-layout{grid-template-columns:1fr;padding:0 20px 60px}.top-layout .carousel .anime-card{flex-basis:calc((100% - 36px)/4)}.carousel-btn{display:none}.genre-rows{padding:10px 0 0}.carousel-wrapper{padding:0 20px}.section-title{padding:0 16px}}
 @media(max-width:768px){.main-header{flex-wrap:wrap;padding:12px 16px;gap:10px}.logo{font-size:42px}.nav-links{gap:12px}.nav-links a{font-size:12px}.header-tools{order:3;flex-basis:100%;max-width:none}.search-input{max-width:none}.top-layout{padding-top:150px;padding-left:16px;padding-right:16px}.top-layout .carousel .anime-card{flex-basis:calc((100% - 24px)/3)}.rank-big{font-size:140px;margin-right:-12px}.top10-item .anime-card,.genre-row-scroll .anime-card{flex:0 0 140px;width:140px}}
 @media(max-width:520px){.top-layout .carousel .anime-card{flex-basis:calc((100% - 12px)/2)}.logo{font-size:32px}.nav-links{display:none}.top10-item .anime-card,.genre-row-scroll .anime-card{flex:0 0 120px;width:120px}.rank-big{font-size:100px;margin-right:-8px;margin-bottom:-6px}}
 ]]></b:skin>
@@ -235,7 +236,10 @@ body#layout .sidebar{position:static}
 </aside>
 </div>
 
-<main class='ap-post hidden' id='postContent'></main>
+<div class='post-layout hidden' id='postLayout'>
+<main class='ap-post' id='postContent'></main>
+<aside class='sidebar' id='postSidebar'></aside>
+</div>
 
 <footer class='main-footer'>
 <p>&#169; 2026 Anima Play. Todos os direitos reservados.</p>
@@ -277,21 +281,6 @@ var AP = (function () {
   var FALLBACK = 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600&auto=format&fit=crop';
   var POSTS = [];
   var carouselTimer = null;
-  var CACHE_KEY = 'animaplay.blog.v1.' + String(BLOG).replace(/^https?:\/\//i, '').replace(/[^a-z0-9.-]+/gi, '').split('.')[0];
-  var CACHE_TTL = 10 * 60 * 1000;
-  function cacheLoad() {
-    try {
-      var raw = localStorage.getItem(CACHE_KEY);
-      if (!raw) return null;
-      var j = JSON.parse(raw);
-      if (!j || !j.at || !Array.isArray(j.posts) || !j.posts.length) return null;
-      if (Date.now() - j.at > CACHE_TTL) return null;
-      return j.posts;
-    } catch (e) { return null; }
-  }
-  function cacheSave() {
-    try { localStorage.setItem(CACHE_KEY, JSON.stringify({ at: Date.now(), posts: POSTS })); } catch (e) {}
-  }
 
   function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
   function normalizeUrl(u) { return String(u || '').split('#')[0].split('?')[0].replace(/\/+$/, ''); }
@@ -481,8 +470,8 @@ var AP = (function () {
     });
   }
 
-  function renderPostLinks() {
-    var box = document.getElementById('postLinks');
+  function renderPostLinks(root) {
+    var box = (root || document).querySelector('#postLinks');
     if (!box) return;
     var items = POSTS.slice().sort(function (a, b) { return (b.updatedAt || '').localeCompare(a.updatedAt || ''); });
     box.innerHTML = items.length ? items.map(function (a) {
@@ -490,8 +479,8 @@ var AP = (function () {
     }).join('') : '<p style="font-size:12px;color:#666;">Em breve.</p>';
   }
 
-  function renderRec() {
-    var box = document.getElementById('sideRec');
+  function renderRec(root) {
+    var box = (root || document).querySelector('#sideRec');
     if (!box) return;
     var items = POSTS.slice().sort(function (a, b) { return (b.updatedAt || '').localeCompare(a.updatedAt || ''); }).slice(0, 4);
     box.innerHTML = items.length ? items.map(function (a) {
@@ -499,8 +488,8 @@ var AP = (function () {
     }).join('') : '<p style="font-size:12px;color:#666;">Em breve.</p>';
   }
 
-  function renderGenreFilters() {
-    var box = document.getElementById('genreFilters');
+  function renderGenreFilters(root) {
+    var box = (root || document).querySelector('#genreFilters');
     if (!box) return;
     var gs = {};
     POSTS.forEach(function (p) { (p.genres || []).forEach(function (g) { gs[g] = 1; }); });
@@ -515,6 +504,23 @@ var AP = (function () {
         if (g === 'all') location.href = '/';
         else location.href = '/search/label/' + encodeURIComponent(g);
       });
+    });
+  }
+
+  function renderPostSidebar() {
+    var sb = document.getElementById('postSidebar');
+    if (!sb) return;
+    sb.innerHTML = '<div class="sidebar-section"><h3 class="sidebar-title">Total de visitas ao site</h3><div class="visits-widget"><span class="visits-count" id="siteViewsPost">--</span></div></div><div class="sidebar-section"><h3 class="sidebar-title">Animes</h3><div id="postLinks"></div></div><div class="sidebar-section"><h3 class="sidebar-title">Generos</h3><div id="genreFilters" class="genre-filters"></div></div><div class="sidebar-section"><h3 class="sidebar-title">Recomendado para voce</h3><div id="sideRec"></div></div>';
+    renderPostLinks(sb);
+    renderRec(sb);
+    renderGenreFilters(sb);
+    afterFirebase(function () {
+      try {
+        ViewCounter.incrementSite().then(function (v) {
+          var el = document.getElementById('siteViewsPost');
+          if (el) el.textContent = Number(v || 0).toLocaleString('pt-BR');
+        }).catch(function () {});
+      } catch (e) {}
     });
   }
 
@@ -541,7 +547,9 @@ var AP = (function () {
     if (d.episodes) d.episodes.forEach(orderServers);
     var el = document.getElementById('postContent');
     if (!el) return;
+    var lay = document.getElementById('postLayout');
     document.getElementById('homeContent').classList.add('hidden');
+    if (lay) lay.classList.remove('hidden');
     el.classList.remove('hidden');
     if (!d.episodes || !d.episodes.length) { el.innerHTML = '<p style="padding:40px;color:#888;">Sem episodios</p>'; return; }
     var cur = 0, srv = 0, countedView = false;
@@ -634,6 +642,7 @@ var AP = (function () {
       }
     }
     render();
+    renderPostSidebar();
   }
 
   function carouselStep() {
@@ -649,47 +658,28 @@ var AP = (function () {
   function boot() {
     var q = document.getElementById('searchInput');
     if (q) q.addEventListener('keydown', function (e) { if (e.key === 'Enter') { var v = q.value.trim(); if (v) location.href = '/search?q=' + encodeURIComponent(v); } });
+    var fail = function () {
+      var cr = document.getElementById('carousel');
+      if (cr) cr.innerHTML = '<p style="text-align:center;color:#888;padding:40px;">Erro ao carregar</p>';
+    };
+    if (isPostPage()) {
+      var cur = normalizeUrl(window.location.href);
+      fetchAll(1).then(function () {
+        var match = null;
+        for (var i = 0; i < POSTS.length; i++) {
+          if (normalizeUrl(POSTS[i].href) === cur) { match = POSTS[i]; break; }
+        }
+        if (match) { try { renderPost(match); } catch (x) {} } else { fail(); }
+      }).catch(fail);
+    } else {
+      fetchAll(1).then(function () { renderHome(); }).catch(fail);
+    }
     var cel = document.getElementById('carousel');
     if (cel) {
       cel.addEventListener('mouseenter', stopCarouselAuto);
       cel.addEventListener('mouseleave', startCarouselAuto);
       cel.addEventListener('touchstart', stopCarouselAuto, { passive: true });
       cel.addEventListener('touchend', startCarouselAuto);
-    }
-    var cur = isPostPage() ? normalizeUrl(window.location.href) : '';
-    function findMatch() {
-      for (var i = 0; i < POSTS.length; i++) {
-        if (normalizeUrl(POSTS[i].href) === cur) return POSTS[i];
-      }
-      return null;
-    }
-    function renderNow() {
-      if (isPostPage()) {
-        var m = findMatch();
-        if (m && m.episodes && m.episodes.length) { try { renderPost(m); } catch (x) {} return; }
-        var cr = document.getElementById('carousel');
-        if (cr) cr.innerHTML = '<p style="text-align:center;color:#888;padding:40px;">Erro ao carregar</p>';
-        return;
-      }
-      if (!POSTS.length) {
-        var cr2 = document.getElementById('carousel');
-        if (cr2) cr2.innerHTML = '<p style="text-align:center;color:#888;padding:40px;">Erro ao carregar</p>';
-        return;
-      }
-      renderHome();
-    }
-    function loadFresh() {
-      return fetchAll(1).then(function () { cacheSave(); renderNow(); }).catch(function () {
-        if (!cacheLoad()) renderNow();
-      });
-    }
-    var cached = cacheLoad();
-    if (cached && cached.length) {
-      POSTS = cached;
-      renderNow();
-      loadFresh();
-    } else {
-      loadFresh();
     }
   }
 
