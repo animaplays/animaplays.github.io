@@ -576,9 +576,33 @@ var AP = (function () {
       if (!box) return;
       var src = curUrl();
       if (!src) { box.innerHTML = '<div style="padding:40px;text-align:center;color:#666">Nenhum video</div>'; return; }
-      if (isDirect(src)) box.innerHTML = '<video controls preload="none" src="' + esc(src) + '"></video>';
-      else if (isArchiveDownload(src)) box.innerHTML = '<iframe src="' + esc(archiveEmbed(src)) + '" allowfullscreen="true" loading="lazy"></iframe>';
+      if (isArchiveDownload(src)) box.innerHTML = '<iframe src="' + esc(archiveEmbed(src)) + '" allowfullscreen="true" loading="lazy"></iframe>';
+      else if (isDirect(src)) {
+        box.innerHTML = '<video controls preload="none" src="' + esc(src) + '"></video>';
+        var v = box.querySelector('video');
+        if (v) v.addEventListener('error', videoError);
+      }
       else box.innerHTML = '<iframe src="' + esc(src) + '" allowfullscreen="true" loading="lazy"></iframe>';
+    }
+    function videoError() {
+      var box = document.getElementById('vp');
+      if (!box) return;
+      var src = curUrl();
+      if (isArchiveDownload(src)) {
+        box.innerHTML = '<iframe src="' + esc(archiveEmbed(src)) + '" allowfullscreen="true" loading="lazy"></iframe>';
+        return;
+      }
+      var ep = d.episodes[cur];
+      var vids = (typeof ep === 'object' && ep && ep.videos) ? ep.videos.filter(function (v) { return v && v.url && !isBad(v.url); }) : [];
+      if (srv < vids.length - 1) {
+        srv++;
+        paintPlayer();
+        el.querySelectorAll('[data-srv]').forEach(function (b) {
+          b.classList.toggle('active', parseInt(b.getAttribute('data-srv'), 10) === srv);
+        });
+      } else {
+        box.innerHTML = '<div style="padding:40px;text-align:center;color:#666">Video indisponivel no momento</div>';
+      }
     }
     function render() {
       var pills = (d.genres || []).map(function (g) { return '<span>' + esc(g) + '</span>'; }).join('');
