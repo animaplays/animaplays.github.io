@@ -304,46 +304,49 @@ var AP = (function () {
   }
 
   function parseEntry(e) {
-    var title = (e.title && e.title.$t) || '';
-    var href = '#';
-    (e.link || []).forEach(function (l) { if (l.rel === 'alternate') href = l.href; });
-    var img = '';
-    if (e.media$thumbnail && e.media$thumbnail.url) img = String(e.media$thumbnail.url).replace(/\/s72(-c)?\//, '/s400/');
-    var labels = [];
-    (e.category || []).forEach(function (c) { if (c.term) labels.push(c.term); });
-    var synopsis = '', genres = [], episodes = [], slug = '', cover = '', subtitle = '', updatedAt = '';
-    if (e.content && e.content.$t) {
-      var content = e.content.$t;
-      var m = content.match(/<div id=anima-data[^>]*>([\s\S]*?)<\/div>/i);
-      if (m && m[1]) {
-        try {
-          var d = JSON.parse(decodeEntities(m[1]));
-          if (d.title) title = d.title;
-          if (d.slug) slug = d.slug;
-          if (d.cover) cover = d.cover;
-          if (d.synopsis) synopsis = d.synopsis;
-          if (d.genres) genres = d.genres;
-          if (d.episodes) episodes = d.episodes;
-          if (d.subtitle) subtitle = d.subtitle;
-        } catch (x) {}
+    try {
+      var title = (e.title && e.title.$t) || '';
+      var href = '#';
+      (e.link || []).forEach(function (l) { if (l.rel === 'alternate') href = l.href; });
+      var img = '';
+      if (e.media$thumbnail && e.media$thumbnail.url) img = String(e.media$thumbnail.url).replace(/\/s72(-c)?\//, '/s400/');
+      var labels = [];
+      (e.category || []).forEach(function (c) { if (c.term) labels.push(c.term); });
+      var synopsis = '', genres = [], episodes = [], slug = '', cover = '', subtitle = '', updatedAt = '';
+      if (e.content && e.content.$t) {
+        var content = e.content.$t;
+        var m = content.match(/<div id=["']?anima-data["']?[^>]*>([\s\S]*?)<\/div>/i);
+        if (m && m[1]) {
+          try {
+            var d = JSON.parse(decodeEntities(m[1]));
+            if (d.title) title = d.title;
+            if (d.slug) slug = d.slug;
+            if (d.cover) cover = d.cover;
+            if (d.synopsis) synopsis = d.synopsis;
+            if (d.genres) genres = d.genres;
+            if (d.episodes) episodes = d.episodes;
+            if (d.subtitle) subtitle = d.subtitle;
+            if (!episodes.length && d.defaultVideo) episodes = [{ title: 'Episodio 1', videos: [{ name: 'Servidor 1', url: d.defaultVideo }] }];
+          } catch (x) {}
+        }
+        if (!m && !synopsis) synopsis = decodeEntities(content).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 140);
       }
-      if (!synopsis) synopsis = decodeEntities(content).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 140);
-    }
-    if (e.updated && e.updated.$t) updatedAt = e.updated.$t;
-    var ec = episodes.length;
-    POSTS.push({
-      title: title,
-      slug: slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''),
-      href: href,
-      image: normImg(cover || img),
-      subtitle: subtitle || (ec ? 'Episodio 1' : 'Nova Postagem'),
-      genres: genres.length ? genres : (labels.length ? labels : ['Nova']),
-      episodes: episodes,
-      synopsis: synopsis,
-      labels: labels.length ? labels : genres,
-      isNew: updatedAt ? (Date.now() - new Date(updatedAt).getTime()) < 24 * 3600 * 1000 : false,
-      updatedAt: updatedAt
-    });
+      if (e.updated && e.updated.$t) updatedAt = e.updated.$t;
+      var ec = episodes.length;
+      POSTS.push({
+        title: title,
+        slug: slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''),
+        href: href,
+        image: normImg(cover || img),
+        subtitle: subtitle || (ec ? 'Episodio 1' : 'Nova Postagem'),
+        genres: genres.length ? genres : (labels.length ? labels : ['Nova']),
+        episodes: episodes,
+        synopsis: synopsis,
+        labels: labels.length ? labels : genres,
+        isNew: updatedAt ? (Date.now() - new Date(updatedAt).getTime()) < 24 * 3600 * 1000 : false,
+        updatedAt: updatedAt
+      });
+    } catch (e) {}
   }
 
   function cardHTML(a, rank) {
