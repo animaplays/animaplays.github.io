@@ -283,6 +283,13 @@ var AP = (function () {
   function isPostPage() { return /\/\d{4}\/\d{2}\//.test(window.location.pathname || ''); }
   function isDirect(s) { return /\.(mp4|webm)(\?|#|$)/i.test(s || ''); }
   function toSecure(u) { if (!u) return u; return String(u).replace(/^http:\/\//i, 'https://'); }
+  function isBad(u) {
+    if (!u) return false;
+    var h = '';
+    try { h = new URL(String(u)).hostname.toLowerCase(); } catch (e) {}
+    if (!h) return false;
+    return /null-null\.shop$/.test(h) || /(^|\.)neosoro\.[a-z]+$/.test(h) || /\.gq$/.test(h);
+  }
   function serverRank(u) {
     if (!u) return 9;
     var s = String(u);
@@ -293,11 +300,14 @@ var AP = (function () {
     return 3;
   }
   function orderServers(ep) {
-    if (ep && typeof ep === 'object' && ep.videos && ep.videos.length > 1) {
-      ep.videos.sort(function (a, b) { return serverRank(a && a.url) - serverRank(b && b.url); });
-      ep.videos.forEach(function (v, i) {
-        if (v && v.name) v.name = String(v.name).replace(/(.*\D)(\d+)$/, function (m, p, n) { return p + (i + 1); });
-      });
+    if (ep && typeof ep === 'object' && ep.videos) {
+      ep.videos = ep.videos.filter(function (v) { return v && v.url && !isBad(v.url); });
+      if (ep.videos.length > 1) {
+        ep.videos.sort(function (a, b) { return serverRank(a && a.url) - serverRank(b && b.url); });
+        ep.videos.forEach(function (v, i) {
+          if (v && v.name) v.name = String(v.name).replace(/(.*\D)(\d+)$/, function (m, p, n) { return p + (i + 1); });
+        });
+      }
     }
   }
   function normImg(u) { if (!u) return FALLBACK; var s = String(u).trim(); if (s.indexOf('data:') === 0 || s.indexOf('http') === 0) return s; return s; }
@@ -530,7 +540,7 @@ var AP = (function () {
       var ep = d.episodes[cur];
       if (!ep) return '';
       if (typeof ep === 'string') return ep;
-      var vids = ep.videos || [];
+      var vids = (ep.videos || []).filter(function (v) { return v && v.url && !isBad(v.url); });
       return toSecure((vids[srv] && vids[srv].url) || (vids[0] && vids[0].url) || '');
     }
     function paintPlayer() {

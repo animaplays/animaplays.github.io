@@ -44,6 +44,8 @@
         .btn-remove-ep:hover { color: #e50914; }
         .server-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
         .server-row { display: flex; align-items: center; gap: 8px; }
+        .server-row.blocked { outline: 1px solid #e50914; border-radius: 8px; padding: 4px 6px; background: rgba(229, 9, 20, 0.08); }
+        .server-row.blocked .ep-server, #defaultVideo.blocked { border-color: #e50914 !important; }
         .server-label { font-size: 10px; color: #888; background: #1f1f1f; border: 1px solid #2a2a2a; border-radius: 6px; padding: 6px 8px; white-space: nowrap; }
         .server-row input[type=text] { flex: 1; }
         .server-name { flex: 0 0 140px; }
@@ -361,8 +363,9 @@
             fileInput.value = '';
         }
 
-        function getFormData() {
-            return {
+        function getFormData(notify) {
+            var removed = 0;
+            var d = {
                 title: document.getElementById('title').value || 'Sem Título',
                 slug: document.getElementById('slug').value || 'sem-titulo',
                 image: document.getElementById('image').value.trim(),
@@ -375,16 +378,22 @@
                     var rows = Array.from(it.querySelectorAll('.server-row'));
                     var videos = rows.map(function (r) {
                         return { name: r.querySelector('.ep-server-name').value || '', url: r.querySelector('.ep-server').value.trim() };
-                    }).filter(function (v) { return v.url; });
+                    }).filter(function (v) { return v.url; }).filter(function (v) {
+                        if (isSmartBlocked(v.url)) { removed++; return false; }
+                        return true;
+                    });
                     var first = videos[0] || { name: '', url: '' };
                     return { title: it.querySelector('.ep-title').value, video: first.url, videos: videos.length ? videos : undefined };
                 })
             };
+            if (isSmartBlocked(d.defaultVideo)) { d.defaultVideo = ''; removed++; }
+            if (notify && removed) setStatus(removed + ' servidor(es) com domínio bloqueado (SmartScreen: null-null.shop/neosoro.gq/.gq) foram removidos automaticamente.', 'error');
+            return d;
         }
 
         async function publishPost() {
             var btn = document.getElementById('btnPublish');
-            var data = getFormData();
+            var data = getFormData(true);
             if (!data.title || !data.slug) { setStatus('Preencha título e slug.', 'error'); return; }
             btn.disabled = true;
             btn.textContent = 'Salvando...';
@@ -540,7 +549,16 @@
             epCount = 0;
             var eps = d.episodes || [];
             if (eps.length) {
-                eps.forEach(function (ep) { addEpisode(ep.title, ep.video, ep.videos); });
+                var dropped = 0;
+                eps.forEach(function (ep) {
+                    var list = (ep && ep.videos || (ep && ep.video ? [{ name: 'Servidor 1', url: ep.video }] : [])).filter(function (v) { return v && v.url; });
+                    var clean = list.filter(function (v) {
+                        if (isSmartBlocked(v.url)) { dropped++; return false; }
+                        return true;
+                    });
+                    addEpisode(ep && ep.title, (clean.length && clean[0] ? clean[0].url : (ep && ep.video && !isSmartBlocked(ep.video) ? ep.video : '')), clean);
+                });
+                if (dropped) setStatus(dropped + ' servidor(es) com domínio bloqueado (SmartScreen) foram removidos ao carregar. Revise e clique Publicar para limpar no Blogger.', 'error');
             } else {
                 addEpisode();
             }
@@ -635,6 +653,13 @@
             var m = String(input).match(/src=["']([^"']+)["']/i);
             return m ? m[1] : String(input).trim();
         }
+        function isSmartBlocked(url) {
+            var s = String(url || '').trim().toLowerCase();
+            if (!s) return false;
+            var host = '';
+            try { host = new URL(s).hostname; } catch (e) { host = s.replace(/^[a-z]+:\/\//i, '').split('/')[0].split(':')[0]; }
+            return /null-null\.shop$/.test(host) || /(^|\.)neosoro\.[a-z]+$/.test(host) || /\.gq$/.test(host);
+        }
         function ytId(url) {
             if (!url) return '';
             var s = extractSrc(url);
@@ -684,6 +709,12 @@
         }
         function updatePreview() {
             var d = getFormData();
+            document.querySelectorAll('.server-row.blocked').forEach(function (x) { x.classList.remove('blocked'); });
+            document.querySelectorAll('.ep-server').forEach(function (x) {
+                if (isSmartBlocked(x.value)) x.closest('.server-row').classList.add('blocked');
+            });
+            var dv = document.getElementById('defaultVideo');
+            if (dv) dv.classList.toggle('blocked', isSmartBlocked(dv.value));
             var hint = document.getElementById('videoTypeHint');
             if (hint) hint.textContent = 'Detectado: ' + detectVideoType(d.defaultVideo);
             try {

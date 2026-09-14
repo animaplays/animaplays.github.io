@@ -142,6 +142,17 @@ function absUrl(u) {
   return 'https://animaplays.github.io/' + s;
 }
 
+// Domínios com reputação ruim que acionam o SmartScreen (Edge). Remove do conteúdo publicado.
+function smartSafe(u) {
+  const s = String(u || '').trim();
+  if (!s) return '';
+  if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(s)) return s;
+  let host = '';
+  try { host = new URL(s).hostname.toLowerCase(); } catch (e) { return s; }
+  if (/null-null\.shop$/.test(host) || /(^|\.)neosoro\.[a-z]+$/.test(host) || /\.gq$/.test(host)) return '';
+  return s.replace(/^http:\/\//i, 'https://');
+}
+
 // HTML simplificado para o Blogger (sem <script>: o Blogger remove scripts dos posts).
 function buildBloggerHTML(post) {
   const esc = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -160,7 +171,7 @@ function buildBloggerHTML(post) {
     }
     m = raw.match(/archive\.org\/details\/([^/?#]+)/i);
     if (m) return 'https://archive.org/embed/' + m[1];
-    return raw.replace(/\.(mkv|avi)$/i, '.mp4');
+    return smartSafe(raw.replace(/\.(mkv|avi)$/i, '.mp4'));
   };
   const serversOf = (ep) => (ep.videos && ep.videos.length ? ep.videos : (ep.video ? [{ name: 'Servidor 1', url: ep.video }] : []))
     .filter(v => v && v.url).map(v => ({ name: v.name || 'Servidor', url: norm(v.url) })).filter(v => v.url);
@@ -277,7 +288,7 @@ function buildPostHTML(d) {
     }
     m = raw.match(/archive\.org\/details\/([^/?#]+)/i);
     if (m) return 'https://archive.org/embed/' + m[1];
-    return raw.replace(/\.(mkv|avi)$/i, '.mp4');
+    return smartSafe(raw.replace(/\.(mkv|avi)$/i, '.mp4'));
   };
   const videoPlayerHTML = (url) => {
     const src = normalizeVideo(url);
