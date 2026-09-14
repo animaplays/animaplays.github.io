@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<html b:version='2' class='v2' expr:dir='data:blog.languageDirection' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
+<!DOCTYPE html>
+<html b:css='false' b:defaultwidgetversion='2' b:js='true' b:layoutsVersion='3' b:responsive='true' expr:dir='data:blog.languageDirection' expr:lang='data:blog.locale' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
 <head>
+<b:include data='blog' name='all-head-content'/>
 <meta charset='UTF-8'/>
 <meta content='width=device-width,initial-scale=1' name='viewport'/>
 <title><data:blog.pageTitle/></title>
+<link expr:href='data:view.url.canonical' rel='canonical'/>
+<link expr:href='data:blog.blogspotFaviconUrl' rel='icon' type='image/x-icon'/>
+<meta expr:content='data:blog.title' property='og:site_name'/>
 <b:skin><![CDATA[
 /* Variable definitions
 =======================
+<Group description="Page">
+<Variable name="body.background.color" description="Background Color" type="color" default="#0a0a0a" value="#0a0a0a"/>
+<Variable name="accent.color" description="Accent Color" type="color" default="#e50914" value="#e50914"/>
+<Variable name="text.color" description="Text Color" type="color" default="#ffffff" value="#ffffff"/>
+<Variable name="content.width" description="Content Width" type="length" min="600px" max="2400px" default="1280px" value="1280px"/>
+</Group>
 */
 
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
@@ -137,10 +148,36 @@ img{display:block;max-width:100%}
 @media(max-width:768px){.main-header{flex-wrap:wrap;padding:12px 16px;gap:10px}.logo{font-size:42px}.nav-links{gap:12px}.nav-links a{font-size:12px}.header-tools{order:3;flex-basis:100%;max-width:none}.search-input{max-width:none}.top-layout{padding-top:150px;padding-left:16px;padding-right:16px}.top-layout .carousel .anime-card{flex-basis:calc((100% - 24px)/3)}.rank-big{font-size:140px;margin-right:-12px}.top10-item .anime-card,.genre-row-scroll .anime-card{flex:0 0 140px;width:140px}}
 @media(max-width:520px){.top-layout .carousel .anime-card{flex-basis:calc((100% - 12px)/2)}.logo{font-size:32px}.nav-links{display:none}.top10-item .anime-card,.genre-row-scroll .anime-card{flex:0 0 120px;width:120px}.rank-big{font-size:100px;margin-right:-8px;margin-bottom:-6px}}
 ]]></b:skin>
+<b:template-skin>
+<![CDATA[
+body#layout #outer-wrapper,body#layout #homeContent{width:auto;padding:0}
+body#layout {position:relative;width:auto;max-width:100%;background-color:#f9f9f9;padding:70px 5px 0;margin:0}
+body#layout #homeContent{display:block}
+body#layout div.section{display:block;background-color:#f1f1f1!important;margin:0 5px 10px!important;padding:16px 16px 18px!important;border-color:#e5e5e5}
+body#layout .hidden.section{display:block}
+body#layout .top-layout{display:block}
+body#layout .sidebar{position:static}
+]]>
+</b:template-skin>
 </head>
 <body>
-<b:section class='hidden' id='main' name='Main' showaddelement='no'>
-<b:widget id='Blog1' locked='true' title='Postagens do blog' type='Blog'>
+<b:section class='hidden' id='main' showaddelement='no'>
+<b:widget id='Blog1' locked='true' title='Postagens do blog' type='Blog' version='2' visible='true'>
+<b:widget-settings>
+<b:widget-setting name='showDateHeader'>false</b:widget-setting>
+<b:widget-setting name='showShareButtons'>false</b:widget-setting>
+<b:widget-setting name='commentLabel'>Comentario</b:widget-setting>
+<b:widget-setting name='showCommentLink'>false</b:widget-setting>
+<b:widget-setting name='showAuthor'>false</b:widget-setting>
+<b:widget-setting name='showAuthorProfile'>false</b:widget-setting>
+<b:widget-setting name='showLabels'>false</b:widget-setting>
+<b:widget-setting name='showTimestamp'>false</b:widget-setting>
+<b:widget-setting name='showBacklinks'>false</b:widget-setting>
+<b:widget-setting name='showInlineAds'>false</b:widget-setting>
+<b:widget-setting name='showReactions'>false</b:widget-setting>
+<b:widget-setting name='timeStampLabel'>Em</b:widget-setting>
+<b:widget-setting name='postLabelsLabel'>Tags</b:widget-setting>
+</b:widget-settings>
 <b:includable id='main' var='top'>
 <b:loop values='data:posts' var='post'>
 <div class='post-body' style='display:none'>
