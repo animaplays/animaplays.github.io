@@ -411,6 +411,9 @@
                 var snap = await db.ref('animaplays/posts/' + data.slug).once('value');
                 if (snap.exists()) {
                     entry.createdAt = snap.val().createdAt || now;
+                    // Preserva o vínculo com o Blogger para republicar atualizando, sem duplicar.
+                    if (snap.val().bloggerPostId) entry.bloggerPostId = snap.val().bloggerPostId;
+                    if (snap.val().bloggerUrl) entry.bloggerUrl = snap.val().bloggerUrl;
                 }
                 await db.ref('animaplays/posts/' + data.slug).set(entry);
                 triggerGitHubAction();
