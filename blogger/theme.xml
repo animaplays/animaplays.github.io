@@ -4,7 +4,7 @@
      Instalação: painel do Blogger > Tema > Fazer backup/Restaurar > enviar este arquivo.
      Os posts publicados pelo robô trazem um bloco #anima-data (JSON) que este tema
      transforma no player completo (multi-servidores, episódios, contador). -->
-<html b:defaultwidgetversion='2' b:layoutsVersion='3' b:responsive='true' b:version='2' expr:dir='data:blog.languageDirection' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
+<html b:version='2' class='v2' expr:dir='data:blog.languageDirection' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
 <head>
 <meta charset='UTF-8'/>
 <meta content='width=device-width,initial-scale=1' name='viewport'/>
@@ -89,7 +89,7 @@ a{color:#e50914}
 </head>
 <body>
 <b:section class='navbar' id='navbar' maxwidgets='1' name='Navbar' showaddelement='no'>
-<b:widget id='Navbar1' locked='true' title='Navbar' type='Navbar'/>
+<b:widget id='Navbar1' locked='true' title='Navbar' type='Navbar'></b:widget>
 </b:section>
 <header class='ap-header'>
 <div class='ap-logo'><a href='/'>Anima Play</a></div>
@@ -106,19 +106,7 @@ a{color:#e50914}
 <div class='ap-wrap'>
 <main class='ap-main'>
 <b:section class='main' id='main' name='Main' showaddelement='no'>
-<b:widget id='Blog1' locked='true' title='Postagens do blog' type='Blog' version='1' visible='true'>
-<b:includable id='main' var='top'>
-<div class='blog-posts hfeed'>
-<b:loop values='data:posts' var='post'>
-<div class='post hentry'>
-<h3 class='post-title entry-title'><b:if cond='data:blog.pageType != "item"'><a expr:href='data:post.url'><data:post.title/></a><b:else/><data:post.title/></b:if></h3>
-<div class='post-body entry-content'><data:post.body/></div>
-<div class='post-footer'><span class='post-labels'><b:loop values='data:post.labels' var='label'><a expr:href='data:label.url' rel='tag'><data:label.name/></a> </b:loop></span></div>
-</div>
-</b:loop>
-</div>
-</b:includable>
-</b:widget>
+<b:widget id='Blog1' locked='true' title='Postagens do blog' type='Blog'></b:widget>
 </b:section>
 </main>
 <aside class='ap-side' id='apSide'></aside>
