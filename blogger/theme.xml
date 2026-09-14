@@ -294,6 +294,11 @@ var AP = (function () {
     if (!h) return false;
     return /null-null\.shop$/.test(h) || /(^|\.)neosoro\.[a-z]+$/.test(h) || /\.gq$/.test(h);
   }
+  function isArchiveDownload(u) { return /archive\.org\/download\//i.test(u || ''); }
+  function archiveEmbed(u) {
+    var m = (u || '').match(/archive\.org\/download\/([^\/?#]+)/i);
+    return m && m[1] ? 'https://archive.org/embed/' + m[1] : u;
+  }
   function serverRank(u) {
     if (!u) return 9;
     var s = String(u);
@@ -571,7 +576,8 @@ var AP = (function () {
       if (!box) return;
       var src = curUrl();
       if (!src) { box.innerHTML = '<div style="padding:40px;text-align:center;color:#666">Nenhum video</div>'; return; }
-      if (isDirect(src)) box.innerHTML = '<video controls preload="none" src="' + esc(src) + '"></video>';
+      if (isArchiveDownload(src)) box.innerHTML = '<iframe src="' + esc(archiveEmbed(src)) + '" allowfullscreen="true" loading="lazy"></iframe>';
+      else if (isDirect(src)) box.innerHTML = '<video controls preload="none" src="' + esc(src) + '"></video>';
       else box.innerHTML = '<iframe src="' + esc(src) + '" allowfullscreen="true" loading="lazy"></iframe>';
     }
     function render() {
