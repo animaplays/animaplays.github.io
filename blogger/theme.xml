@@ -12,11 +12,8 @@
 ]]></b:skin>
 </head>
 <body>
-<b:section class='main' id='main'>
-<b:widget id='Blog1' locked='true' title='Postagens do blog' type='Blog'>
-<b:includable id='main'>
-</b:includable>
-</b:widget>
+<b:section class='main' id='main' maxwidgets='1' showaddelement='no'>
+<b:widget id='Blog1' locked='true' title='Postagens do blog' type='Blog'></b:widget>
 </b:section>
 <header class='main-header'>
 <div class='logo'>Anima Play</div>
@@ -66,9 +63,9 @@
 <footer class='main-footer'>
 <p>&#169; 2026 Anima Play.</p>
 </footer>
-<script src='https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js'/>
-<script src='https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js'/>
-<script src='https://animaplays.github.io/firebase-config.js?v=1'/>
-<script src='https://animaplays.github.io/views.js?v=3'/>
+<script src='https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js'></script>
+<script src='https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js'></script>
+<script src='https://animaplays.github.io/firebase-config.js?v=1'></script>
+<script src='https://animaplays.github.io/views.js?v=3'></script>
 </body>
 </html>
