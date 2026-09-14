@@ -201,18 +201,43 @@ async function bloggerToken() {
   return j.access_token;
 }
 
+// Procura post existente pelo título exato (rede anti-duplicado caso o ID se perca).
+async function bloggerFindByTitle(token, title) {
+  const want = String(title || '').trim().toLowerCase();
+  if (!want) return null;
+  let pageToken = '';
+  for (let page = 0; page < 5; page++) {
+    const u = 'https://www.googleapis.com/blogger/v3/blogs/' + BLOGGER_BLOG_ID + '/posts?fetchBodies=false&maxResults=50' + (pageToken ? '&pageToken=' + encodeURIComponent(pageToken) : '');
+    const r = await fetch(u, { headers: { Authorization: 'Bearer ' + token } });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error('Blogger list: ' + (j.error && j.error.message ? j.error.message : ('HTTP ' + r.status)));
+    const items = j.items || [];
+    for (const it of items) {
+      if (String(it.title || '').trim().toLowerCase() === want) return { id: it.id, url: it.url };
+    }
+    pageToken = j.nextPageToken || '';
+    if (!pageToken) break;
+  }
+  return null;
+}
+
 async function maybePostToBlogger(db, post) {
   if (!bloggerEnabled()) { log('Blogger: secrets ausentes, pulando.'); return; }
-  const hasId = Boolean(post.bloggerPostId);
-  // Sem ID e em regeneração geral (FORCE): não cria duplicado, só atualiza quem já tem ID.
-  if (!hasId && process.env.FORCE === 'true' && !FORCE_BLOGGER) { log('Blogger: ' + post.slug + ' sem ID e FORCE ativo, pulando (sem duplicar).'); return; }
   try {
     const token = await bloggerToken();
+    let targetId = post.bloggerPostId || null;
+    if (!targetId) {
+      try {
+        const found = await bloggerFindByTitle(token, post.title);
+        if (found) { targetId = found.id; log('Blogger: "' + post.title + '" já existe, atualizando (sem duplicar).'); }
+      } catch (e) { log('Blogger busca: ' + e.message); }
+    }
+    if (!targetId && process.env.FORCE === 'true' && !FORCE_BLOGGER) { log('Blogger: ' + post.slug + ' novo e FORCE ativo, pulando (sem duplicar).'); return; }
     const content = buildBloggerHTML(post);
     const labels = (post.genres || []).filter(Boolean);
     let url, id;
-    if (hasId) {
-      const r = await fetch('https://www.googleapis.com/blogger/v3/blogs/' + BLOGGER_BLOG_ID + '/posts/' + post.bloggerPostId, {
+    if (targetId) {
+      const r = await fetch('https://www.googleapis.com/blogger/v3/blogs/' + BLOGGER_BLOG_ID + '/posts/' + targetId, {
         method: 'PUT',
         headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: post.title, content, labels })
