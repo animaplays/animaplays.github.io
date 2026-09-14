@@ -38,10 +38,8 @@ img{display:block;max-width:100%}
 .nav-links a:hover{color:#fff}
 
 /* TOP LAYOUT */
-.page-grid{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:24px;align-items:start;padding:200px 40px 0}
-.page-main{min-width:0}
+.top-layout{display:grid;grid-template-columns:1fr 260px;gap:24px;align-items:start;padding:200px 40px 0}
 .top-main{min-width:0}
-.top-layout{min-width:0}
 .top-main .genre-rows{padding:10px 0 0}
 .section-title{font-size:20px;font-weight:600;margin-bottom:16px;padding:0 40px;color:#e5e5e5}
 
@@ -50,7 +48,7 @@ img{display:block;max-width:100%}
 .carousel-wrapper{position:relative;padding:0 40px}
 .carousel{display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;scrollbar-width:none;-ms-overflow-style:none;padding:10px 0 20px}
 .carousel::-webkit-scrollbar{display:none}
-.top-layout .carousel .anime-card{flex:1 0 calc((100% - 108px) / 10);width:auto;min-width:0;max-width:320px}
+.top-layout .carousel .anime-card{flex:1 0 calc((100% - 60px) / 6);width:auto;min-width:0;max-width:320px}
 .carousel-btn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:20px;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;transition:background .2s}
 .carousel-btn:hover{background:rgba(0,0,0,.9)}
 .carousel-btn.prev{left:10px}
@@ -146,8 +144,8 @@ img{display:block;max-width:100%}
 .ap-watch-main{display:inline-block;background:#e50914;color:#fff;border-radius:8px;padding:10px 18px;font-weight:700;text-decoration:none;margin-top:14px}
 
 /* RESPONSIVE */
-@media(max-width:1024px){.page-grid{grid-template-columns:1fr;padding:170px 20px 0}.top-layout .carousel .anime-card{flex-basis:calc((100% - 36px)/4)}.carousel-btn{display:none}.genre-rows{padding:10px 0 0}.carousel-wrapper{padding:0 20px}.section-title{padding:0 16px}}
-@media(max-width:768px){.main-header{flex-wrap:wrap;padding:12px 16px;gap:10px}.logo{font-size:42px}.nav-links{gap:12px}.nav-links a{font-size:12px}.header-tools{order:3;flex-basis:100%;max-width:none}.search-input{max-width:none}.page-grid{padding-top:150px;padding-left:16px;padding-right:16px}.top-layout .carousel .anime-card{flex-basis:calc((100% - 24px)/3)}.rank-big{font-size:140px;margin-right:-12px}.top10-item .anime-card,.genre-row-scroll .anime-card{flex:0 0 140px;width:140px}}
+@media(max-width:1024px){.top-layout{grid-template-columns:1fr;padding:170px 20px 0}.top-layout .carousel .anime-card{flex-basis:calc((100% - 36px)/4)}.carousel-btn{display:none}.genre-rows{padding:10px 0 0}.carousel-wrapper{padding:0 20px}.section-title{padding:0 16px}}
+@media(max-width:768px){.main-header{flex-wrap:wrap;padding:12px 16px;gap:10px}.logo{font-size:42px}.nav-links{gap:12px}.nav-links a{font-size:12px}.header-tools{order:3;flex-basis:100%;max-width:none}.search-input{max-width:none}.top-layout{padding-top:150px;padding-left:16px;padding-right:16px}.top-layout .carousel .anime-card{flex-basis:calc((100% - 24px)/3)}.rank-big{font-size:140px;margin-right:-12px}.top10-item .anime-card,.genre-row-scroll .anime-card{flex:0 0 140px;width:140px}}
 @media(max-width:520px){.top-layout .carousel .anime-card{flex-basis:calc((100% - 12px)/2)}.logo{font-size:32px}.nav-links{display:none}.top10-item .anime-card,.genre-row-scroll .anime-card{flex:0 0 120px;width:120px}.rank-big{font-size:100px;margin-right:-8px;margin-bottom:-6px}}
 ]]></b:skin>
 <b:template-skin>
@@ -158,7 +156,6 @@ body#layout #homeContent{display:block}
 body#layout div.section{display:block;background-color:#f1f1f1!important;margin:0 5px 10px!important;padding:16px 16px 18px!important;border-color:#e5e5e5}
 body#layout .hidden.section{display:block}
 body#layout .top-layout{display:block}
-body#layout .page-grid{display:block}
 body#layout .sidebar{position:static}
 ]]>
 </b:template-skin>
@@ -204,8 +201,6 @@ body#layout .sidebar{position:static}
 </nav>
 </header>
 
-<div class='page-grid'>
-<div class='page-main'>
 <div class='top-layout' id='homeContent'>
 <div class='top-main'>
 <section class='carousel-section'>
@@ -217,9 +212,6 @@ body#layout .sidebar{position:static}
 </div>
 </section>
 <section class='genre-rows' id='genreRows'></section>
-</div>
-</div>
-<main class='ap-post hidden' id='postContent'></main>
 </div>
 <aside class='sidebar' id='sidebar'>
 <div class='sidebar-section'>
@@ -236,8 +228,14 @@ body#layout .sidebar{position:static}
 <h3 class='sidebar-title'>Generos</h3>
 <div id='genreFilters' class='genre-filters'></div>
 </div>
+<div class='sidebar-section'>
+<h3 class='sidebar-title'>Recomendado para voce</h3>
+<div id='sideRec'></div>
+</div>
 </aside>
 </div>
+
+<main class='ap-post hidden' id='postContent'></main>
 
 <footer class='main-footer'>
 <p>&#169; 2026 Anima Play. Todos os direitos reservados.</p>
@@ -410,31 +408,38 @@ var AP = (function () {
     return h;
   }
 
-  function loadLatestEpisodes(posts, total) {
-    total = total || 10;
+  function loadLatestEpisodes(posts, perPost, total) {
+    perPost = perPost || 6; total = total || 18;
     var sorted = posts.slice().sort(function (a, b) { return (b.updatedAt || '').localeCompare(a.updatedAt || ''); });
-    var out = [];
-    for (var r = 0; out.length < total && r < 4; r++) {
-      for (var i = 0; i < sorted.length && out.length < total; i++) {
-        var p = sorted[i];
-        var srcs = p.episodes || [];
-        if (!srcs.length) continue;
-        var n = srcs.length;
-        var idx = n - 1 - r;
-        if (idx < 0) idx = n - 1;
-        var ep = srcs[idx];
-        var url = typeof ep === 'string' ? ep : (ep && ep.videos && ep.videos[0] ? ep.videos[0].url : '');
+    var lists = [];
+    sorted.forEach(function (post) {
+      var srcs = post.episodes || [];
+      if (!srcs.length) return;
+      var list = [];
+      for (var i = srcs.length - 1; i >= 0 && list.length < perPost; i--) {
+        var url = '';
+        if (typeof srcs[i] === 'string') url = srcs[i];
+        else if (srcs[i] && srcs[i].videos && srcs[i].videos[0]) url = srcs[i].videos[0].url;
         if (!url) continue;
-        out.push({ title: p.title, subtitle: 'Episodio ' + (idx + 1), image: p.image, genres: p.genres, isNew: p.isNew, slug: p.slug, href: p.href + '?ep=' + (idx + 1) });
+        list.push({ title: 'Episodio ' + (i + 1), subtitle: post.title, image: post.image, genres: post.genres, isNew: post.isNew, slug: post.slug, href: post.href + '?ep=' + (i + 1) });
       }
+      if (list.length) lists.push(list);
+    });
+    var eps = [];
+    for (var r = 0; eps.length < total; r++) {
+      var added = false;
+      for (var p = 0; p < lists.length; p++) {
+        if (r < lists[p].length && eps.length < total) { eps.push(lists[p][r]); added = true; }
+      }
+      if (!added) break;
     }
-    return out.slice(0, total);
+    return eps;
   }
 
   function renderCarousel(items) {
     var el = document.getElementById('carousel');
     if (!el) return;
-    el.innerHTML = items.slice(0, 10).map(function (a) { return cardHTML(a); }).join('');
+    el.innerHTML = items.slice(0, 18).map(function (a) { return cardHTML(a); }).join('');
   }
 
   function renderGenreRows(posts) {
@@ -454,6 +459,15 @@ var AP = (function () {
       return h;
     }
     var html = topRowHTML(top10HTML());
+    var allL = {};
+    posts.forEach(function (p) { (p.labels || []).forEach(function (l) { allL[l] = 1; }); });
+    Object.keys(allL).sort().forEach(function (label) {
+      var items = posts.filter(function (p) { return (p.labels || []).indexOf(label) >= 0; });
+      if (items.length < 2) return;
+      html += '<div class="genre-row"><h3 class="genre-row-title">' + esc(label) + '</h3><div class="genre-row-scroll">';
+      items.slice(0, 12).forEach(function (a) { html += cardHTML(a); });
+      html += '</div></div>';
+    });
     box.innerHTML = html;
     afterFirebase(function () {
       try {
@@ -504,9 +518,14 @@ var AP = (function () {
     });
   }
 
-  function renderSidebar() {
+  function renderHome() {
+    var latest = loadLatestEpisodes(POSTS);
+    renderCarousel(latest.length ? latest : POSTS);
+    renderGenreRows(POSTS);
     renderPostLinks();
+    renderRec();
     renderGenreFilters();
+    startCarouselAuto();
     bootFirebase();
     afterFirebase(function () {
       try {
@@ -516,14 +535,6 @@ var AP = (function () {
         }).catch(function () {});
       } catch (e) {}
     });
-  }
-
-  function renderHome() {
-    var latest = loadLatestEpisodes(POSTS);
-    renderCarousel(latest.length ? latest : POSTS);
-    renderGenreRows(POSTS);
-    renderSidebar();
-    startCarouselAuto();
   }
 
   function renderPost(d) {
@@ -622,7 +633,6 @@ var AP = (function () {
         afterFirebase(function () { if (d.slug) { try { ViewCounter.increment(d.slug).then(function () {}).catch(function () {}); } catch (e) {} } });
       }
     }
-    renderSidebar();
     render();
   }
 
