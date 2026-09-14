@@ -282,6 +282,21 @@ var AP = (function () {
   function normalizeUrl(u) { return String(u || '').split('#')[0].split('?')[0].replace(/\/+$/, ''); }
   function isPostPage() { return /\/\d{4}\/\d{2}\//.test(window.location.pathname || ''); }
   function isDirect(s) { return /\.(mp4|webm)(\?|#|$)/i.test(s || ''); }
+  function toSecure(u) { if (!u) return u; return String(u).replace(/^http:\/\//i, 'https://'); }
+  function serverRank(u) {
+    if (!u) return 9;
+    var s = String(u);
+    if (/\.(mp4|webm)(\?|#|$)/i.test(s) || s.indexOf('//archive.org') > -1) return 0;
+    if (s.indexOf('youtube') > -1) return 1;
+    if (s.indexOf('playmogo.com') > -1) return 2;
+    if (s.indexOf('filemoon.org') > -1) return 5;
+    return 3;
+  }
+  function orderServers(ep) {
+    if (ep && typeof ep === 'object' && ep.videos && ep.videos.length > 1) {
+      ep.videos.sort(function (a, b) { return serverRank(a && a.url) - serverRank(b && b.url); });
+    }
+  }
   function normImg(u) { if (!u) return FALLBACK; var s = String(u).trim(); if (s.indexOf('data:') === 0 || s.indexOf('http') === 0) return s; return s; }
 
   function fetchAll(page) {
@@ -495,6 +510,7 @@ var AP = (function () {
   }
 
   function renderPost(d) {
+    if (d.episodes) d.episodes.forEach(orderServers);
     var el = document.getElementById('postContent');
     if (!el) return;
     document.getElementById('homeContent').classList.add('hidden');
@@ -506,7 +522,7 @@ var AP = (function () {
       if (!ep) return '';
       if (typeof ep === 'string') return ep;
       var vids = ep.videos || [];
-      return (vids[srv] && vids[srv].url) || (vids[0] && vids[0].url) || '';
+      return toSecure((vids[srv] && vids[srv].url) || (vids[0] && vids[0].url) || '');
     }
     function paintPlayer() {
       var box = document.getElementById('vp');
