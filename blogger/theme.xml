@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<!-- Anima Play — tema personalizado para o Blogger (Animed Play).
+     Instalação: painel do Blogger > Tema > Fazer backup/Restaurar > enviar este arquivo.
+     Os posts publicados pelo robô trazem um bloco #anima-data (JSON) que este tema
+     transforma no player completo (multi-servidores, episódios, contador). -->
+<html b:version='2' expr:dir='data:blog.languageDirection' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
+<head>
+<meta charset='UTF-8'/>
+<meta content='width=device-width,initial-scale=1' name='viewport'/>
+<title><data:blog.pageTitle/></title>
+<b:include data='blog' name='all-head-content'/>
+<b:skin><![CDATA[
+/* ===== Anima Play / Blogger ===== */
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+body{background:#0a0a0a;color:#fff;min-height:100vh}
+a{color:#e50914}
+.navbar{display:none}
+.ap-header{display:flex;align-items:center;gap:24px;flex-wrap:wrap;padding:18px 32px;background:linear-gradient(180deg,#111 0%,#0a0a0a 100%);border-bottom:1px solid #1a1a1a}
+.ap-logo a{font-size:34px;font-weight:800;color:#e50914;text-transform:uppercase;text-decoration:none;letter-spacing:1px}
+.ap-nav{display:flex;gap:16px;flex-wrap:wrap}
+.ap-nav a{color:#ccc;text-decoration:none;font-size:14px;font-weight:600}
+.ap-nav a:hover{color:#e50914}
+.ap-search{margin-left:auto;display:flex;gap:8px}
+.ap-search input{background:#15191d;border:1px solid #2a2a2a;color:#fff;border-radius:8px;padding:8px 12px;font-size:13px;width:200px}
+.ap-search button{background:#e50914;border:none;color:#fff;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer}
+.ap-wrap{display:flex;gap:24px;max-width:1200px;margin:0 auto;padding:24px 20px;align-items:flex-start}
+.ap-main{flex:1;min-width:0}
+.ap-side{width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:16px}
+.ap-widget{background:rgba(20,20,20,.8);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px}
+.ap-widget h4{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#e50914;margin-bottom:12px}
+.ap-widget .visits-total{font-size:32px;font-weight:800}
+.ap-widget .visits-label{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px}
+.ap-genre{display:inline-block;background:#1a1a1a;border:1px solid #2a2a2a;color:#ccc;border-radius:999px;padding:5px 12px;margin:0 6px 6px 0;font-size:12px;text-decoration:none}
+.ap-genre:hover{border-color:#e50914;color:#e50914}
+.ap-recent{display:flex;gap:10px;margin-bottom:10px;text-decoration:none;color:#fff}
+.ap-recent img{width:64px;height:40px;object-fit:cover;border-radius:6px;background:#1a1a1a;flex-shrink:0}
+.ap-recent span{font-size:12px;font-weight:600;line-height:1.3}
+.ap-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.ap-card{background:#141414;border:1px solid #222;border-radius:12px;overflow:hidden;text-decoration:none;color:#fff;display:block}
+.ap-card:hover{border-color:#e50914}
+.ap-card img{width:100%;aspect-ratio:16/9;object-fit:cover;background:#1a1a1a;display:block}
+.ap-card .ap-card-body{padding:12px}
+.ap-card .ap-card-title{font-size:14px;font-weight:700;line-height:1.3;margin-bottom:6px}
+.ap-card .ap-card-snip{font-size:12px;color:#888;line-height:1.4}
+.post{background:transparent;border:none;margin:0 0 24px 0;padding:0}
+.post-title{font-size:28px;font-weight:800;margin-bottom:6px;color:#fff}
+.post-title a{color:#fff;text-decoration:none}
+.post-title a:hover{color:#e50914}
+.post-timestamp,.post-author,.post-footer{font-size:12px;color:#777}
+.post-body{line-height:1.7;color:#ddd;font-size:14px}
+.post-body img{max-width:100%;height:auto;border-radius:12px}
+.ap-hero{position:relative;border-radius:12px;overflow:hidden;margin-bottom:16px;min-height:220px;background:#1a1a1a}
+.ap-hero img{width:100%;max-height:380px;object-fit:cover;display:block}
+.ap-hero-overlay{position:absolute;bottom:0;left:0;right:0;padding:40px 20px 16px;background:linear-gradient(transparent,#0a0a0a)}
+.ap-hero-overlay h1{font-size:26px;font-weight:800}
+.ap-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.ap-meta span{background:rgba(255,255,255,.15);padding:3px 10px;border-radius:12px;font-size:12px;color:#ccc}
+.section-label{font-size:13px;color:#e50914;text-transform:uppercase;letter-spacing:1px;margin:18px 0 12px;font-weight:700}
+.post-synopsis{color:#aaa;font-size:14px;line-height:1.7;margin-bottom:6px}
+.video-player{position:relative;width:100%;padding-top:56.25%;background:#000;border-radius:12px;overflow:hidden;margin-bottom:12px}
+.server-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.server-tabs button{background:#15191d;color:#ccc;border:1px solid #2a2a2a;padding:7px 14px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer}
+.server-tabs button.active{background:#e50914;border-color:#e50914;color:#fff}
+.ep-nav{display:flex;gap:10px;align-items:center;margin-bottom:24px;flex-wrap:wrap}
+.ep-nav button{background:#15191d;color:#fff;border:1px solid #2a2a2a;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer}
+.ep-nav button:hover:not(:disabled){border-color:#e50914;color:#e50914}
+.ep-nav button:disabled{opacity:.35;cursor:not-allowed}
+.ep-nav button.primary{background:#e50914;border-color:#e50914}
+.ep-nav #epLabel{font-size:13px;color:#888}
+.episode-list{display:flex;flex-direction:column;gap:8px}
+.episode-item{display:flex;gap:12px;align-items:center;background:#141414;border:1px solid #222;border-radius:10px;padding:10px 12px;text-decoration:none;color:#fff;cursor:pointer}
+.episode-item:hover{border-color:#e50914}
+.episode-item.active{border-color:#e50914}
+.episode-item .ep-thumb{width:96px;height:54px;object-fit:cover;border-radius:6px;background:#1a1a1a;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#888}
+.episode-item .episode-info{flex:1;min-width:0}
+.episode-item .ep-title{font-size:14px;font-weight:700}
+.episode-item .ep-meta{font-size:12px;color:#888}
+.episode-item .btn-play{background:none;border:2px solid #555;color:#fff;border-radius:50%;width:36px;height:36px;font-size:13px;cursor:pointer;flex-shrink:0}
+.episode-item:hover .btn-play{border-color:#e50914;color:#e50914}
+.ap-watch-main{display:inline-block;background:#e50914;color:#fff;border-radius:8px;padding:10px 18px;font-weight:700;text-decoration:none;margin-top:14px}
+.blog-pager{margin:20px 0;text-align:center}
+.blog-pager a{color:#e50914;text-decoration:none;font-weight:700;margin:0 10px}
+.comments{margin-top:24px}
+.comments h4{font-size:14px;margin-bottom:12px}
+.ap-footer{text-align:center;padding:32px;color:#555;font-size:12px;border-top:1px solid #1a1a1a;margin-top:20px}
+@media(max-width:900px){.ap-wrap{flex-direction:column}.ap-side{width:100%}.ap-search{margin-left:0;width:100%}.ap-search input{flex:1}}
+]]></b:skin>
+</head>
+<body>
+<b:section class='navbar' id='navbar' maxwidgets='1' name='Navbar' showaddelement='no'>
+<b:widget id='Navbar1' locked='true' title='' type='Navbar'/>
+</b:section>
+<header class='ap-header'>
+<div class='ap-logo'><a href='/'>Anima Play</a></div>
+<nav class='ap-nav'>
+<a href='/'>Início</a>
+<a href='/search/label/Ação'>Ação</a>
+<a href='/search/label/Aventura'>Aventura</a>
+<a href='/search/label/Dublado'>Dublado</a>
+<a href='/search/label/Filme'>Filmes</a>
+<a href='https://animaplays.github.io/'>Site principal</a>
+</nav>
+<div class='ap-search'><input id='apQ' placeholder='Buscar anime...' type='text'/><button id='apGo' type='button'>Buscar</button></div>
+</header>
+<div class='ap-wrap'>
+<main class='ap-main'>
+<b:section class='main' id='main' name='Main' showaddelement='no'>
+<b:widget id='Blog1' locked='true' title='Postagens do blog' type='Blog'/>
+</b:section>
+</main>
+<aside class='ap-side' id='apSide'></aside>
+</div>
+<footer class='ap-footer'><p>Animed Play — parceiro do <a href='https://animaplays.github.io/'>Anima Play</a></p></footer>
+<script src='https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js'></script>
+<script src='https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js'></script>
+<script src='https://animaplays.github.io/firebase-config.js?v=1'></script>
+<script src='https://animaplays.github.io/views.js?v=3'></script>
+<script>//<![CDATA[
+/* Anima Play — tema Blogger: transforma #anima-data em player completo. */
+var APTheme = (function () {
+  var GENRES = ['Ação','Aventura','Comédia','Drama','Fantasia','Terror','Romance','Suspense','Ficção','Esporte','Dublado','Legendado','Clássico','Filme'];
+  var rt = { d: null, cur: 0, srv: 0 };
+  function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function isDirect(s) { return /\.(mp4|webm)(\?|#|$)/i.test(s || ''); }
+  function firstUrl(ep, dflt) {
+    var list = (ep && ep.videos) || [];
+    if (list.length && list[0].url) return list[0].url;
+    return dflt || '';
+  }
+  function heroHTML(d, views) {
+    var pills = (d.genres || []).map(function (g) { return '<span>' + esc(g) + '</span>'; }).join('');
+    return '<div class="ap-hero">' +
+      (d.cover ? '<img src="' + esc(d.cover) + '" alt="' + esc(d.title) + '"/>' : '') +
+      '<div class="ap-hero-overlay"><h1>' + esc(d.title) + '</h1><div class="ap-meta">' + pills +
+      '<span id="apViews">' + (views || '') + '</span></div></div></div>' +
+      (d.synopsis ? '<p class="post-synopsis">' + esc(d.synopsis) + '</p>' : '');
+  }
+  function serversHTML(list, srv) {
+    if (!list || list.length < 2) return '';
+    return '<div class="server-tabs" id="svTabs">' + list.map(function (x, j) {
+      return '<button class="' + (j === srv ? 'active' : '') + '" onclick="APTheme.setSrv(' + j + ')">' + esc(x.name || ('Servidor ' + (j + 1))) + '</button>';
+    }).join('') + '</div>';
+  }
+  function episodesHTML(d, cur) {
+    return '<div class="episode-list">' + d.episodes.map(function (ep, i) {
+      var n = (ep.videos || []).length;
+      var label = n > 1 ? (n + ' servidores') : 'Toque para assistir';
+      return '<a class="episode-item' + (i === cur ? ' active' : '') + '" onclick="APTheme.goEp(' + i + ');return false;" href="?ep=' + (i + 1) + '">' +
+        '<div class="ep-thumb">EP ' + String(i + 1).padStart(2, '0') + '</div>' +
+        '<div class="episode-info"><div class="ep-title">' + esc(ep.title || ('Episódio ' + (i + 1))) + '</div>' +
+        '<div class="ep-meta">' + esc(label) + '</div></div>' +
+        '<button class="btn-play">▶</button></a>';
+    }).join('') + '</div>';
+  }
+  function paintHTML(src) {
+    if (!src) return '<div style="padding:40px;text-align:center;color:#666;">Nenhum vídeo</div>';
+    if (isDirect(src)) return '<video controls preload="none" style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;" src="' + esc(src) + '"></video>';
+    return '<iframe src="' + esc(src) + '" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allowfullscreen="true" loading="lazy"></iframe>';
+  }
+  function curSrc() {
+    var list = (rt.d.episodes[rt.cur] && rt.d.episodes[rt.cur].videos) || [];
+    return (list[rt.srv] && list[rt.srv].url) || firstUrl(rt.d.episodes[rt.cur], rt.d.defaultVideo) || '';
+  }
+  function paint() {
+    var box = document.getElementById('vp');
+    if (box) box.innerHTML = paintHTML(curSrc());
+  }
+  function syncServers() {
+    var box = document.getElementById('svTabs');
+    if (!box) return;
+    var list = ((rt.d.episodes[rt.cur] && rt.d.episodes[rt.cur].videos) || []).filter(function (x) { return x && x.url; });
+    if (list.length < 2) { box.innerHTML = ''; return; }
+    box.innerHTML = list.map(function (x, j) {
+      return '<button class="' + (j === rt.srv ? 'active' : '') + '" onclick="APTheme.setSrv(' + j + ')">' + esc(x.name || ('Servidor ' + (j + 1))) + '</button>';
+    }).join('');
+  }
+  function syncUI() {
+    var items = document.querySelectorAll('.episode-item');
+    for (var k = 0; k < items.length; k++) {
+      if (items[k].className.indexOf('episode-item') >= 0) {
+        items[k].className = 'episode-item' + (k === rt.cur ? ' active' : '');
+      }
+    }
+    var label = document.getElementById('epLabel');
+    if (label) {
+      var t = (rt.d.episodes[rt.cur] && rt.d.episodes[rt.cur].title) || ('Episódio ' + (rt.cur + 1));
+      label.textContent = t + ' • ' + (rt.cur + 1) + ' / ' + rt.d.episodes.length;
+    }
+    var pv = document.getElementById('btnPrev'), nx = document.getElementById('btnNext');
+    if (pv) pv.disabled = rt.cur <= 0;
+    if (nx) nx.disabled = rt.cur >= rt.d.episodes.length - 1;
+    syncServers();
+    try {
+      var u = new URL(window.location.href);
+      u.searchParams.set('ep', String(rt.cur + 1));
+      window.history.replaceState(null, '', u);
+    } catch (e) {}
+  }
+  function setSrv(j) { rt.srv = j; paint(); syncServers(); }
+  function renderEp(i) {
+    if (i < 0 || i >= rt.d.episodes.length) return;
+    if (!firstUrl(rt.d.episodes[i], rt.d.defaultVideo)) return;
+    rt.cur = i; rt.srv = 0; paint(); syncUI();
+    var vp = document.getElementById('vp');
+    if (vp && vp.scrollIntoView) vp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  function postHTML(d) {
+    var first = firstUrl(d.episodes[0], d.defaultVideo);
+    return heroHTML(d, '') +
+      '<div class="section-label">Assistir</div>' +
+      '<div class="video-player" id="vp">' + paintHTML(first) + '</div>' +
+      serversHTML(((d.episodes[0] && d.episodes[0].videos) || []), 0) +
+      '<div class="ep-nav"><button onclick="location.href=\'/\'>← Início</button>' +
+      '<button id="btnPrev" onclick="APTheme.prevEp()">← Anterior</button><span id="epLabel"></span>' +
+      '<button id="btnNext" class="primary" onclick="APTheme.nextEp()">Próximo →</button></div>' +
+      '<div class="section-label">Episódios</div>' + episodesHTML(d, 0) +
+      '<a class="ap-watch-main" href="https://animaplays.github.io/posts/' + esc(d.slug) + '.html">Assistir no Anima Play</a>';
+  }
+  function cardHTML(title, href, img, snip) {
+    return '<a class="ap-card" href="' + esc(href) + '">' +
+      (img ? '<img src="' + esc(img) + '" alt="' + esc(title) + '" loading="lazy"/>' : '') +
+      '<div class="ap-card-body"><div class="ap-card-title">' + esc(title) + '</div>' +
+      (snip ? '<div class="ap-card-snip">' + esc(snip) + '</div>' : '') + '</div></a>';
+  }
+  function sideShellHTML() {
+    return '<div class="ap-widget"><div class="visits-label">Total de visitas ao site</div>' +
+      '<div class="visits-total" id="apTotal">…</div></div>' +
+      '<div class="ap-widget"><h4>Gêneros</h4><div id="apGenres"></div></div>' +
+      '<div class="ap-widget"><h4>Recentes</h4><div id="apRecent">Carregando…</div></div>';
+  }
+  function itemPosts() {
+    if (typeof document === 'undefined') return [];
+    var all = document.querySelectorAll('.blog-posts .post.hentry, .blog-posts .post');
+    var out = [];
+    for (var i = 0; i < all.length; i++) out.push(all[i]);
+    return out;
+  }
+  function readData(postEl) {
+    var el = postEl.querySelector('#anima-data');
+    if (!el) return null;
+    try { return JSON.parse(el.textContent || el.innerText || '{}'); }
+    catch (e) { return null; }
+  }
+  function cleanText(bodyEl) {
+    var clone = bodyEl.cloneNode(true);
+    var junk = clone.querySelector('#anima-data');
+    if (junk) junk.parentNode.removeChild(junk);
+    return (clone.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+  function bootItem(postEl, d) {
+    rt.d = d; rt.cur = 0; rt.srv = 0;
+    var head = postEl.querySelector('.post-header');
+    if (head) head.style.display = 'none';
+    var body = postEl.querySelector('.post-body');
+    if (body) body.style.display = 'none';
+    var box = document.createElement('div');
+    box.className = 'ap-post';
+    box.innerHTML = postHTML(d);
+    postEl.insertBefore(box, postEl.firstChild);
+    try {
+      var u = new URL(window.location.href);
+      var ep = parseInt(u.searchParams.get('ep') || '1', 10);
+      if (ep >= 1 && ep <= d.episodes.length) { rt.cur = ep - 1; paint(); }
+    } catch (e) {}
+    syncUI();
+    countViews(d.slug, true);
+  }
+  function bootIndex(posts) {
+    var wrap = document.querySelector('.blog-posts');
+    if (!wrap) return;
+    var pager = document.querySelector('.blog-pager');
+    if (pager && pager.parentNode) pager.parentNode.removeChild(pager);
+    var cards = posts.map(function (p) {
+      var a = p.querySelector('h3.post-title a, .post-title a');
+      var title = a ? a.textContent.trim() : 'Sem título';
+      var href = a ? a.getAttribute('href') : '#';
+      var body = p.querySelector('.post-body');
+      var img = body ? body.querySelector('img') : null;
+      var snip = body ? cleanText(body).slice(0, 140) : '';
+      return cardHTML(title, href, img ? (img.getAttribute('src') || '') : '', snip);
+    }).join('');
+    wrap.innerHTML = '<div class="ap-grid">' + cards + '</div>';
+    if (pager) wrap.parentNode.insertBefore(pager, wrap.nextSibling);
+    countViews(null, false);
+  }
+  function bootSide() {
+    var side = document.getElementById('apSide');
+    if (!side) return;
+    side.innerHTML = sideShellHTML();
+    var g = document.getElementById('apGenres');
+    if (g) g.innerHTML = GENRES.map(function (x) {
+      return '<a class="ap-genre" href="/search/label/' + encodeURIComponent(x) + '">' + esc(x) + '</a>';
+    }).join('');
+    loadRecent();
+    var q = document.getElementById('apQ'), go = document.getElementById('apGo');
+    function doSearch() {
+      var v = q ? q.value.trim() : '';
+      if (v) location.href = '/search?q=' + encodeURIComponent(v);
+    }
+    if (go) go.addEventListener('click', doSearch);
+    if (q) q.addEventListener('keydown', function (e) { if (e.key === 'Enter') doSearch(); });
+  }
+  function firebaseReady() {
+    try {
+      if (typeof firebase === 'undefined' || !firebase.initializeApp || typeof firebaseConfig === 'undefined') return false;
+      if (firebase.apps && firebase.apps.length) return true;
+      firebase.initializeApp(firebaseConfig);
+      return true;
+    } catch (e) { return true; }
+  }
+  function countViews(slug, isItem) {
+    bootSideTotal();
+    if (typeof ViewCounter === 'undefined' || !firebaseReady()) return;
+    try {
+      ViewCounter.incrementSite().then(function (v) { setTotal(v); });
+      if (isItem && slug) {
+        ViewCounter.increment(slug).then(function (v) {
+          var el = document.getElementById('apViews');
+          if (el) el.textContent = v + ' visualizações';
+        });
+      }
+    } catch (e) {}
+  }
+  function bootSideTotal() {
+    if (typeof ViewCounter !== 'undefined' && firebaseReady()) {
+      try { ViewCounter.getSiteViews().then(function (v) { setTotal(v); }); } catch (e) {}
+    }
+  }
+  function setTotal(v) {
+    var el = document.getElementById('apTotal');
+    if (el && v !== undefined && v !== null) el.textContent = v;
+  }
+  function loadRecent() {
+    var box = document.getElementById('apRecent');
+    if (!box || typeof fetch === 'undefined') { if (box) box.innerHTML = ''; return; }
+    fetch('/feeds/posts/default?alt=json&max-results=6').then(function (r) { return r.json(); }).then(function (j) {
+      var entries = (j && j.feed && j.feed.entry) || [];
+      if (!entries.length) { box.innerHTML = ''; return; }
+      box.innerHTML = entries.map(function (e) {
+        var title = (e.title && e.title.$t) || 'Sem título';
+        var href = '#', img = '';
+        (e.link || []).forEach(function (l) { if (l.rel === 'alternate') href = l.href; });
+        if (e.media$thumbnail && e.media$thumbnail.url) img = String(e.media$thumbnail.url).replace(/\/s72(-c)?\//, '/s400/');
+        if (!img && e.content && e.content.$t) {
+          var m = String(e.content.$t).match(/<img[^>]+src=["']([^"']+)["']/i);
+          if (m) img = m[1];
+        }
+        return '<a class="ap-recent" href="' + esc(href) + '">' +
+          (img ? '<img src="' + esc(img) + '" alt="" loading="lazy"/>' : '') +
+          '<span>' + esc(title) + '</span></a>';
+      }).join('');
+    }).catch(function () { box.innerHTML = ''; });
+  }
+  function boot() {
+    bootSide();
+    var posts = itemPosts();
+    if (!posts.length) return;
+    if (posts.length === 1) {
+      var d = readData(posts[0]);
+      if (d && d.episodes) { bootItem(posts[0], d); return; }
+    }
+    bootIndex(posts);
+  }
+  return {
+    esc: esc, isDirect: isDirect, heroHTML: heroHTML, serversHTML: serversHTML,
+    episodesHTML: episodesHTML, paintHTML: paintHTML, postHTML: postHTML,
+    cardHTML: cardHTML, sideShellHTML: sideShellHTML, boot: boot,
+    setSrv: setSrv, goEp: function (i) { renderEp(i); },
+    nextEp: function () { renderEp(rt.cur + 1); }, prevEp: function () { renderEp(rt.cur - 1); }
+  };
+})();
+/* eslint-disable-next-line */
+if (typeof document !== 'undefined' && document.addEventListener) { document.addEventListener('DOMContentLoaded', function () { try { APTheme.boot(); } catch (e) {} }); }
+//]]></script>
+</body>
+</html>

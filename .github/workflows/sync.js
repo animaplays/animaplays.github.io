@@ -164,30 +164,27 @@ function buildBloggerHTML(post) {
   };
   const serversOf = (ep) => (ep.videos && ep.videos.length ? ep.videos : (ep.video ? [{ name: 'Servidor 1', url: ep.video }] : []))
     .filter(v => v && v.url).map(v => ({ name: v.name || 'Servidor', url: norm(v.url) })).filter(v => v.url);
-  const isDirect = (s) => /\.(mp4|webm)(\?|#|$)/i.test(s || '');
-  const wrap = (inner) => '<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;background:#000;margin:8px 0 16px 0;">' + inner + '</div>';
-  const embedOf = (url) => {
-    if (!url) return '<p>Nenhum vídeo informado.</p>';
-    if (isDirect(url)) {
-      return wrap('<video controls preload="none" src="' + esc(url) + '" style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;"></video>') +
-        '<p><a href="' + esc(url) + '" target="_blank" rel="noopener">Baixar / assistir em nova aba</a></p>';
-    }
-    return wrap('<iframe src="' + esc(url) + '" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen="true" loading="lazy"></iframe>');
-  };
 
   const hero = absUrl(post._heroImg || post.cardImage || post.image || '');
-  const genres = (post.genres || []).map(g => '<span style="display:inline-block;background:#eee;border-radius:12px;padding:3px 10px;margin:0 6px 6px 0;font-size:12px;color:#333;">' + esc(g) + '</span>').join('');
-  const eps = (post.episodes || []).map((ep, i) => {
-    const list = serversOf(ep);
-    const links = list.map((v, j) => '<a href="' + esc(v.url) + '" target="_blank" rel="noopener" style="display:inline-block;background:#15191d;color:#fff;border-radius:999px;padding:7px 14px;margin:0 8px 8px 0;font-size:13px;text-decoration:none;">' + esc(v.name || ('Servidor ' + (j + 1))) + '</a>').join('');
-    return '<h3>' + esc(ep.title || ('Episódio ' + (i + 1))) + '</h3>' + embedOf((list[0] || {}).url || '') + (list.length > 1 ? '<p><b>Outros servidores:</b><br>' + links + '</p>' : '');
-  }).join('\n');
+  // Formato de dados: o tema do Blogger (bloco #anima-data) renderiza o player completo.
+  const data = {
+    v: 1,
+    title: post.title || '',
+    slug: post.slug || '',
+    cover: hero,
+    synopsis: post.synopsis || '',
+    genres: (post.genres || []).filter(Boolean),
+    defaultVideo: norm(post.defaultVideo),
+    episodes: (post.episodes || []).map((ep, i) => ({
+      title: ep.title || ('Episódio ' + (i + 1)),
+      videos: serversOf(ep)
+    }))
+  };
+  const json = JSON.stringify(data).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026');
 
   return (hero ? '<p><img src="' + esc(hero) + '" alt="' + esc(post.title) + '" style="max-width:100%;height:auto;border-radius:12px;"></p>' : '') +
-    (post.synopsis ? '<p>' + esc(post.synopsis) + '</p>' : '') +
-    (genres ? '<p>' + genres + '</p>' : '') +
-    '<h2>Episódios</h2>' + eps +
-    '<hr><p><a href="https://animaplays.github.io/posts/' + esc(post.slug) + '.html" target="_blank" rel="noopener" style="display:inline-block;background:#e50914;color:#fff;border-radius:8px;padding:10px 18px;font-weight:700;text-decoration:none;">Assistir no Anima Play</a></p>';
+    '<div id="anima-data" style="display:none;">' + json + '</div>' +
+    (post.synopsis ? '<p>' + esc(post.synopsis) + '</p>' : '');
 }
 
 async function bloggerToken() {
