@@ -1,5 +1,27 @@
 [
   {
+    "slug": "narutoclassico",
+    "title": "Naruto Clássico",
+    "image": "../img/narutoclassico-1789014263512-naruto-classico-card.jpg",
+    "subtitle": "Episódio 1 - Surge Naruto Uzumaki!",
+    "genres": [
+      "Ação",
+      "Dublado",
+      "Clássico"
+    ],
+    "author": "kingveio",
+    "episodes": [
+      "https://archive.org/download/naruto-completo-pt-br/Naruto%20-%20Epis%C3%B3dio%20001%20-%20Surge%20Naruto%20Uzumaki!%20.ia.mp4",
+      "https://archive.org/download/naruto-completo-pt-br/Naruto%20-%20Epis%C3%B3dio%20002%20-%20Meu%20nome%20%C3%A9%20Konohamaru!.ia.mp4",
+      "https://archive.org/download/naruto-completo-pt-br/Naruto%20-%20Epis%C3%B3dio%20003%20-%20Sasuke%20e%20Sakura%20Amigos%20ou%20Inimigos.ia.mp4",
+      "https://archive.org/download/naruto-completo-pt-br/Naruto%20-%20Epis%C3%B3dio%20004%20-%20Passar%20ou%20Falhar%20Teste%20de%20Sobreviv%C3%AAncia.ia.mp4",
+      "https://archive.org/details/naruto-completo-pt-br/Naruto+-+Epis%C3%B3dio+005+-+Voc%C3%AA+Falhou!+A+Decis%C3%A3o+Final+de+Kakashi.mp4",
+      "https://archive.org/details/naruto-completo-pt-br/Naruto+-+Epis%C3%B3dio+006+-+Uma+Perigosa+Miss%C3%A3o!+Jornada+para+a+Terra+das+Ondas!.mp4"
+    ],
+    "createdAt": "2026-09-10T04:27:15.754Z",
+    "updatedAt": "2026-09-14T17:34:57.161Z"
+  },
+  {
     "slug": "bleach-Thousand-Year-Blood-War-1-Temporada",
     "title": "Bleach Thousand-Year Blood War 1º Temporada - Dublada",
     "image": "../img/bleach-Thousand-Year-Blood-War-1-Temporada-1789070101806-bleach-card.jpg",
@@ -26,26 +48,6 @@
     ],
     "createdAt": "2026-09-10T19:58:59.900Z",
     "updatedAt": "2026-09-14T05:16:05.075Z"
-  },
-  {
-    "slug": "narutoclassico",
-    "title": "Naruto Clássico",
-    "image": "../img/narutoclassico-1789014263512-naruto-classico-card.jpg",
-    "subtitle": "Naruto Clássico 1 - Surge Naruto Uzumaki!",
-    "genres": [
-      "Ação",
-      "Dublado",
-      "Clássico"
-    ],
-    "author": "kingveio",
-    "episodes": [
-      "https://archive.org/download/naruto-completo-pt-br/Naruto%20-%20Epis%C3%B3dio%20001%20-%20Surge%20Naruto%20Uzumaki!%20.ia.mp4",
-      "https://archive.org/download/naruto-completo-pt-br/Naruto%20-%20Epis%C3%B3dio%20002%20-%20Meu%20nome%20%C3%A9%20Konohamaru!.ia.mp4",
-      "https://archive.org/download/naruto-completo-pt-br/Naruto%20-%20Epis%C3%B3dio%20003%20-%20Sasuke%20e%20Sakura%20Amigos%20ou%20Inimigos.ia.mp4",
-      "https://archive.org/download/naruto-completo-pt-br/Naruto%20-%20Epis%C3%B3dio%20004%20-%20Passar%20ou%20Falhar%20Teste%20de%20Sobreviv%C3%AAncia.ia.mp4"
-    ],
-    "createdAt": "2026-09-10T04:27:15.754Z",
-    "updatedAt": "2026-09-14T00:13:14.872Z"
   },
   {
     "slug": "solo-leveling",
