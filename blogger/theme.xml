@@ -172,7 +172,7 @@ img{display:block;max-width:100%}
 
 <!-- HIDDEN BLOGGER WIDGET -->
 <b:section class='hidden' id='main' name='Main' showaddelement='no'>
-<b:widget id='Blog1' locked='true' title='Postagens do blog' type='Blog'/>
+<b:widget id='Blog1' locked='true' title='Postagens do blog' type='Blog'></b:widget>
 </b:section>
 
 <!-- HEADER -->
