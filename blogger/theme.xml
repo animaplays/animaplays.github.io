@@ -238,7 +238,7 @@ img{display:block;max-width:100%}
 
 <!-- FOOTER -->
 <footer class='main-footer'>
-<p>&copy; 2026 Anima Play. Todos os direitos reservados.</p>
+<p>&#169; 2026 Anima Play. Todos os direitos reservados.</p>
 </footer>
 
 <!-- FIREBASE -->
