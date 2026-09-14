@@ -295,6 +295,9 @@ var AP = (function () {
   function orderServers(ep) {
     if (ep && typeof ep === 'object' && ep.videos && ep.videos.length > 1) {
       ep.videos.sort(function (a, b) { return serverRank(a && a.url) - serverRank(b && b.url); });
+      ep.videos.forEach(function (v, i) {
+        if (v && v.name) v.name = String(v.name).replace(/(.*\D)(\d+)$/, function (m, p, n) { return p + (i + 1); });
+      });
     }
   }
   function normImg(u) { if (!u) return FALLBACK; var s = String(u).trim(); if (s.indexOf('data:') === 0 || s.indexOf('http') === 0) return s; return s; }
