@@ -516,7 +516,13 @@ var AP = (function () {
     document.getElementById('homeContent').classList.add('hidden');
     el.classList.remove('hidden');
     if (!d.episodes || !d.episodes.length) { el.innerHTML = '<p style="padding:40px;color:#888;">Sem episodios</p>'; return; }
-    var cur = 0, srv = 0;
+    var cur = 0, srv = 0, countedView = false;
+    try {
+      var u0 = new URL(window.location.href);
+      var epP0 = parseInt(u0.searchParams.get('ep') || '1', 10);
+      if (epP0 >= 1 && epP0 <= d.episodes.length) cur = epP0 - 1;
+    } catch (x) {}
+    function setEpUrl(n) { try { history.replaceState(null, '', '?ep=' + n); } catch (x) {} }
     function curUrl() {
       var ep = d.episodes[cur];
       if (!ep) return '';
@@ -583,6 +589,7 @@ var AP = (function () {
           e.preventDefault();
           cur = parseInt(this.getAttribute('data-ep'), 10);
           srv = 0;
+          setEpUrl(cur + 1);
           render();
           var vp = document.getElementById('vp');
           if (vp && vp.scrollIntoView) vp.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -590,15 +597,13 @@ var AP = (function () {
       });
       var pv = document.getElementById('btnPrev');
       var nx = document.getElementById('btnNext');
-      if (pv) pv.addEventListener('click', function () { if (cur > 0) { cur--; srv = 0; render(); } });
-      if (nx) nx.addEventListener('click', function () { if (cur < d.episodes.length - 1) { cur++; srv = 0; render(); } });
-      try {
-        var u = new URL(window.location.href);
-        var epP = parseInt(u.searchParams.get('ep') || '1', 10);
-        if (epP >= 1 && epP <= d.episodes.length) { cur = epP - 1; render(); }
-      } catch (x) {}
-      bootFirebase();
-      afterFirebase(function () { if (d.slug) { try { ViewCounter.increment(d.slug).then(function () {}).catch(function () {}); } catch (e) {} } });
+      if (pv) pv.addEventListener('click', function () { if (cur > 0) { cur--; srv = 0; setEpUrl(cur + 1); render(); } });
+      if (nx) nx.addEventListener('click', function () { if (cur < d.episodes.length - 1) { cur++; srv = 0; setEpUrl(cur + 1); render(); } });
+      if (!countedView) {
+        countedView = true;
+        bootFirebase();
+        afterFirebase(function () { if (d.slug) { try { ViewCounter.increment(d.slug).then(function () {}).catch(function () {}); } catch (e) {} } });
+      }
     }
     render();
   }
