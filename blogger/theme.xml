@@ -241,14 +241,36 @@ body#layout .sidebar{position:static}
 <p>&#169; 2026 Anima Play. Todos os direitos reservados.</p>
 </footer>
 
-<script src='https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js'></script>
-<script src='https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js'></script>
-<script src='https://animaplays.github.io/firebase-config.js?v=1'></script>
-<script src='https://animaplays.github.io/views.js?v=3'></script>
 <script>
 //<![CDATA[
-if (typeof firebase !== 'undefined' && typeof firebaseConfig !== 'undefined' && firebase.initializeApp) {
-  try { if (!firebase.apps.length) firebase.initializeApp(firebaseConfig); } catch (e) {}
+var firebaseReady = false;
+var firebaseQueue = [];
+function afterFirebase(fn) {
+  if (firebaseReady && typeof ViewCounter !== 'undefined') { try { fn(); } catch (e) {} return; }
+  firebaseQueue.push(fn);
+}
+function bootFirebase() {
+  if (firebaseReady) return;
+  function inject(src, next) {
+    var s = document.createElement('script');
+    s.src = src;
+    s.async = true;
+    s.onload = next;
+    s.onerror = next;
+    document.body.appendChild(s);
+  }
+  inject('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js', function () {
+    inject('https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js', function () {
+      inject('https://animaplays.github.io/firebase-config.js?v=1', function () {
+        try { if (typeof firebase !== 'undefined' && typeof firebaseConfig !== 'undefined' && firebase.initializeApp && !firebase.apps.length) firebase.initializeApp(firebaseConfig); } catch (e) {}
+        inject('https://animaplays.github.io/views.js?v=3', function () {
+          firebaseReady = true;
+          var q = firebaseQueue.splice(0);
+          q.forEach(function (f) { try { f(); } catch (e) {} });
+        });
+      });
+    });
+  });
 }
 var AP = (function () {
   var BLOG = 'https://animedplay.blogspot.com';
@@ -275,6 +297,12 @@ var AP = (function () {
     });
   }
 
+  function decodeEntities(s) {
+    var ta = document.createElement('textarea');
+    ta.innerHTML = s || '';
+    return ta.value;
+  }
+
   function parseEntry(e) {
     var title = (e.title && e.title.$t) || '';
     var href = '#';
@@ -285,12 +313,11 @@ var AP = (function () {
     (e.category || []).forEach(function (c) { if (c.term) labels.push(c.term); });
     var synopsis = '', genres = [], episodes = [], slug = '', cover = '', subtitle = '', updatedAt = '';
     if (e.content && e.content.$t) {
-      var tmp = document.createElement('div');
-      tmp.innerHTML = e.content.$t;
-      var dataEl = tmp.querySelector('#anima-data');
-      if (dataEl) {
+      var content = e.content.$t;
+      var m = content.match(/<div id=anima-data[^>]*>([\s\S]*?)<\/div>/i);
+      if (m && m[1]) {
         try {
-          var d = JSON.parse(dataEl.textContent);
+          var d = JSON.parse(decodeEntities(m[1]));
           if (d.title) title = d.title;
           if (d.slug) slug = d.slug;
           if (d.cover) cover = d.cover;
@@ -300,7 +327,7 @@ var AP = (function () {
           if (d.subtitle) subtitle = d.subtitle;
         } catch (x) {}
       }
-      if (!synopsis) synopsis = (tmp.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 140);
+      if (!synopsis) synopsis = decodeEntities(content).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 140);
     }
     if (e.updated && e.updated.$t) updatedAt = e.updated.$t;
     var ec = episodes.length;
@@ -373,18 +400,19 @@ var AP = (function () {
     var box = document.getElementById('genreRows');
     if (!box) return;
     var slugs = posts.map(function (p) { return p.slug; });
-    var views = {};
-    if (typeof ViewCounter !== 'undefined') {
-      try { if (ViewCounter.getMultiple) ViewCounter.getMultiple(slugs).then(function (v) { views = v; }).catch(function () {}); } catch (e) {}
+    function top10HTML(views) {
+      if (views && Object.keys(views).length) {
+        return posts.slice().sort(function (a, b) { return (views[b.slug] || 0) - (views[a.slug] || 0); }).slice(0, 10);
+      }
+      return posts.slice().sort(function (a, b) { return (b.updatedAt || '').localeCompare(a.updatedAt || ''); }).slice(0, 10);
     }
-    var byOrder = posts.slice().sort(function (a, b) { return (b.updatedAt || '').localeCompare(a.updatedAt || ''); });
-    var top10 = byOrder.slice(0, 10);
-    if (Object.keys(views).length) {
-      top10 = posts.slice().sort(function (a, b) { return (views[b.slug] || 0) - (views[a.slug] || 0); }).slice(0, 10);
+    function topRowHTML(list) {
+      var h = '<div class="genre-row"><h3 class="genre-row-title"><span class="top10-title">Top 10 mais vistos</span><span class="top10-sub">Em alta no site</span></h3><div class="genre-row-scroll-wrap"><button class="row-btn prev" onclick="scrollRow(this,-1)">&#8249;</button><div class="genre-row-scroll">';
+      list.forEach(function (a, i) { h += '<div class="top10-item"><span class="rank-big">' + (i + 1) + '</span>' + cardHTML(a) + '</div>'; });
+      h += '</div><button class="row-btn next" onclick="scrollRow(this,1)">&#8250;</button></div></div>';
+      return h;
     }
-    var html = '<div class="genre-row"><h3 class="genre-row-title"><span class="top10-title">Top 10 mais vistos</span><span class="top10-sub">Em alta no site</span></h3><div class="genre-row-scroll-wrap"><button class="row-btn prev" onclick="scrollRow(this,-1)">&#8249;</button><div class="genre-row-scroll">';
-    top10.forEach(function (a, i) { html += '<div class="top10-item"><span class="rank-big">' + (i + 1) + '</span>' + cardHTML(a) + '</div>'; });
-    html += '</div><button class="row-btn next" onclick="scrollRow(this,1)">&#8250;</button></div></div>';
+    var html = topRowHTML(top10HTML());
     var allL = {};
     posts.forEach(function (p) { (p.labels || []).forEach(function (l) { allL[l] = 1; }); });
     Object.keys(allL).sort().forEach(function (label) {
@@ -395,6 +423,16 @@ var AP = (function () {
       html += '</div></div>';
     });
     box.innerHTML = html;
+    afterFirebase(function () {
+      try {
+        if (ViewCounter && ViewCounter.getMultiple) {
+          ViewCounter.getMultiple(slugs).then(function (v) {
+            var first = box.querySelector('.genre-row');
+            if (first) { first.outerHTML = topRowHTML(top10HTML(v)); }
+          }).catch(function () {});
+        }
+      } catch (e) {}
+    });
   }
 
   function renderPostLinks() {
@@ -442,14 +480,15 @@ var AP = (function () {
     renderRec();
     renderGenreFilters();
     startCarouselAuto();
-    if (typeof ViewCounter !== 'undefined') {
+    bootFirebase();
+    afterFirebase(function () {
       try {
         ViewCounter.incrementSite().then(function (v) {
           var el = document.getElementById('siteViews');
           if (el) el.textContent = Number(v || 0).toLocaleString('pt-BR');
         }).catch(function () {});
       } catch (e) {}
-    }
+    });
   }
 
   function renderPost(d) {
@@ -539,9 +578,8 @@ var AP = (function () {
         var epP = parseInt(u.searchParams.get('ep') || '1', 10);
         if (epP >= 1 && epP <= d.episodes.length) { cur = epP - 1; render(); }
       } catch (x) {}
-      if (typeof ViewCounter !== 'undefined' && d.slug) {
-        try { ViewCounter.increment(d.slug).then(function (v) {}).catch(function () {}); } catch (e) {}
-      }
+      bootFirebase();
+      afterFirebase(function () { if (d.slug) { try { ViewCounter.increment(d.slug).then(function () {}).catch(function () {}); } catch (e) {} } });
     }
     render();
   }
