@@ -723,5 +723,6 @@ function scrollCarousel(dir) { var el = document.getElementById('carousel'); if 
 function scrollRow(btn, dir) { var el = btn.parentElement.querySelector('.genre-row-scroll'); if (el) el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: 'smooth' }); }
 //]]>
 </script>
+<script src="https://pl31351577.profitableratecpmnetwork.com/46/04/6d/46046d022371bbd4585223cb2b632439.js"></script>
 </body>
 </html>
