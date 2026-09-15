@@ -578,11 +578,48 @@ var AP = (function () {
       if (!src) { box.innerHTML = '<div style="padding:40px;text-align:center;color:#666">Nenhum video</div>'; return; }
       if (isArchiveDownload(src)) box.innerHTML = '<iframe src="' + esc(archiveEmbed(src)) + '" allowfullscreen="true" loading="lazy"></iframe>';
       else if (isDirect(src)) {
-        box.innerHTML = '<video controls preload="none" src="' + esc(src) + '"></video>';
+        box.innerHTML = '<div data-apad style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:6;background:#0a0a0a;display:none"></div><video controls preload="none" style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000" src="' + esc(src) + '"></video>';
         var v = box.querySelector('video');
-        if (v) v.addEventListener('error', videoError);
+        if (v) { v.addEventListener('error', videoError); runPreroll(box, v); }
       }
       else box.innerHTML = '<iframe src="' + esc(src) + '" allowfullscreen="true" loading="lazy"></iframe>';
+    }
+    // Anuncio no player: cole aqui o src do seu ad unit Banner (Adsterra) e o overlay ativa.
+    var AP_AD = '';
+    function runPreroll(box, v) {
+      if (!box || !v || !AP_AD) return;
+      var slot = box.querySelector('[data-apad]');
+      if (!slot) return;
+      slot.style.display = 'block';
+      slot.innerHTML = '<div style="position:absolute;top:10px;right:14px;z-index:7;display:flex;gap:8px;align-items:center">' +
+        '<span id="apTimer" style="font-size:12px;color:#fff;background:rgba(0,0,0,.65);padding:4px 10px;border-radius:4px">5</span>' +
+        '<button id="apSkip" style="display:none;background:#fff;color:#000;border:none;padding:6px 14px;border-radius:4px;cursor:pointer;font-weight:700;font-size:12px">Pular an&#250;ncio</button></div>' +
+        '<div id="apAdBox" style="display:flex;align-items:center;justify-content:center;height:100%"></div>';
+      var adBox = slot.querySelector('#apAdBox');
+      var se = document.createElement('script');
+      se.src = AP_AD;
+      se.async = true;
+      adBox.appendChild(se);
+      try { v.pause(); } catch (e) {}
+      var t = 5;
+      var iv = setInterval(function () {
+        if (t < 5) runPrerollTick();
+      }, 1000);
+      var timer = slot.querySelector('#apTimer');
+      var skipBtn = slot.querySelector('#apSkip');
+      function runPrerollTick() {
+        t--;
+        if (timer) timer.textContent = String(t);
+        if (t <= 2 && skipBtn) skipBtn.style.display = 'inline-block';
+        if (t <= 0) closeAd();
+      }
+      function closeAd() {
+        clearInterval(iv);
+        slot.style.display = 'none';
+        slot.innerHTML = '';
+        try { v.play()['catch'](function () {}); } catch (e) {}
+      }
+      if (skipBtn) skipBtn.addEventListener('click', closeAd);
     }
     function videoError() {
       var box = document.getElementById('vp');
