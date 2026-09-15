@@ -576,13 +576,13 @@ var AP = (function () {
       if (!box) return;
       var src = curUrl();
       if (!src) { box.innerHTML = '<div style="padding:40px;text-align:center;color:#666">Nenhum video</div>'; return; }
-      if (isArchiveDownload(src)) box.innerHTML = '<iframe src="' + esc(archiveEmbed(src)) + '" allowfullscreen="true" loading="lazy" sandbox="allow-scripts allow-same-origin allow-popups allow-presentation allow-forms"></iframe>';
+      if (isArchiveDownload(src)) box.innerHTML = '<iframe src="' + esc(archiveEmbed(src)) + '" allowfullscreen="true" loading="lazy"></iframe>';
       else if (isDirect(src)) {
         box.innerHTML = '<div data-apad style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:6;background:#0a0a0a;display:none"></div><video controls preload="none" style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000" src="' + esc(src) + '"></video>';
         var v = box.querySelector('video');
         if (v) { v.addEventListener('error', videoError); runPreroll(box, v); }
       }
-      else box.innerHTML = '<iframe src="' + esc(src) + '" allowfullscreen="true" loading="lazy" sandbox="allow-scripts allow-same-origin allow-popups allow-presentation allow-forms"></iframe>';
+      else box.innerHTML = '<iframe src="' + esc(src) + '" allowfullscreen="true" loading="lazy"></iframe>';
     }
     // Anuncios no player: overlay de 5s (contador + Pular) antes do video. Troque o conteudo de AP_AD_HTML pelos seus blocos.
     var AP_AD_HTML = "<script>atOptions = {'key' : '7e140f325594d9cf924372506e58954e','format' : 'iframe','height' : 250,'width' : 300,'params' : {}};<\/script><script src='https://www.highrevenueformat.com/7e140f325594d9cf924372506e58954e/invoke.js'><\/script><script>atOptions = {'key' : 'a78fc6bb291e8b9295b8309e16445686','format' : 'iframe','height' : 90,'width' : 728,'params' : {}};<\/script><script src='https://www.highrevenueformat.com/a78fc6bb291e8b9295b8309e16445686/invoke.js'><\/script>";
@@ -650,7 +650,7 @@ var AP = (function () {
       if (!box) return;
       var src = curUrl();
       if (isArchiveDownload(src)) {
-        box.innerHTML = '<iframe src="' + esc(archiveEmbed(src)) + '" allowfullscreen="true" loading="lazy" sandbox="allow-scripts allow-same-origin allow-popups allow-presentation allow-forms"></iframe>';
+        box.innerHTML = '<iframe src="' + esc(archiveEmbed(src)) + '" allowfullscreen="true" loading="lazy"></iframe>';
         return;
       }
       var ep = d.episodes[cur];
@@ -678,7 +678,7 @@ var AP = (function () {
       var vids = (typeof ep === 'object' && ep && ep.videos) ? ep.videos : [];
       if (vids.length > 1) {
         h += '<div class="server-tabs" id="svTabs">';
-        vids.forEach(function (v, j) { h += '<button class="' + (j === srv ? 'active' : '') + '" data-srv="' + j + '">' + esc(v.name || ('Servidor ' + (j + 1))) + '</button>'; });
+        vids.forEach(function (v, j) { h += '<button type="button" class="' + (j === srv ? 'active' : '') + '" data-srv="' + j + '">' + esc(v.name || ('Servidor ' + (j + 1))) + '</button>'; });
         h += '</div>';
       }
       h += '<div class="ep-nav">';
@@ -705,10 +705,12 @@ var AP = (function () {
       paintPlayer();
       el.querySelectorAll('[data-srv]').forEach(function (btn) {
         btn.addEventListener('click', function () {
+          var sy = window.pageYOffset || document.documentElement.scrollTop || 0;
           srv = parseInt(this.getAttribute('data-srv'), 10);
           paintPlayer();
           el.querySelectorAll('[data-srv]').forEach(function (b) { b.classList.remove('active'); });
           btn.classList.add('active');
+          try { window.scrollTo(0, sy); } catch (e) {}
         });
       });
       el.querySelectorAll('[data-ep]').forEach(function (item) {
