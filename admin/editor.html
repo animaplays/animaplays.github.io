@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editor â€” Anima Play</title>
+    <title>Editor — Anima Play</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background: #0a0a0a; color: #fff; min-height: 100vh; }
@@ -123,7 +123,7 @@
     <div class="top-bar">
         <div class="logo">Anima Play</div>
         <div class="nav-links">
-            <a href="/">â† Voltar ao site</a>
+            <a href="/">← Voltar ao site</a>
             <div id="userArea" class="hidden">
                 <div class="user-badge">
                     <img id="userAvatar" class="user-avatar" src="" alt="">
@@ -152,14 +152,14 @@
     <div id="editorPage" class="editor-layout hidden">
         <div class="form-panel">
             <h2>Nova Postagem</h2>
-            <p class="form-hint">Preencha sÃ³ o essencial. O slug gera sozinho. VÃ­deo aceita YouTube, iframe de qualquer site ou MP4.</p>
+            <p class="form-hint">Preencha só o essencial. O slug gera sozinho. Vídeo aceita YouTube, iframe de qualquer site ou MP4.</p>
             <div class="btn-group" style="margin-top:0;margin-bottom:16px;">
-                <button class="btn-ghost" onclick="clearForm();window.scrollTo({top:0,behavior:'smooth'})">ï¼‹ Nova postagem (limpar tudo)</button>
+                <button class="btn-ghost" onclick="clearForm();window.scrollTo({top:0,behavior:'smooth'})">＋ Nova postagem (limpar tudo)</button>
             </div>
             <div class="status-msg" id="statusMsg"></div>
 
             <div class="field-group">
-                <label>TÃ­tulo *</label>
+                <label>Título *</label>
                 <input type="text" id="title" placeholder="Ex: One Piece" oninput="onTitleInput()">
             </div>
 
@@ -170,31 +170,31 @@
             </div>
 
             <div class="field-group">
-                <label>Capa (pÃ¡gina da postagem) â€” URL ou upload</label>
+                <label>Capa (página da postagem) — URL ou upload</label>
                 <div class="cover-row">
                     <input type="text" id="image" placeholder="https://exemplo.com/capa.jpg" oninput="onImageInput()">
-                    <label class="btn-upload" for="imageFileCapa">ðŸ“¤ Enviar</label>
+                    <label class="btn-upload" for="imageFileCapa">📤 Enviar</label>
                     <input type="file" id="imageFileCapa" accept="image/*" style="display:none" onchange="uploadImage(this,'image','coverPreview')">
-                    <img id="coverPreview" class="cover-preview" alt="PrÃ©via da capa">
+                    <img id="coverPreview" class="cover-preview" alt="Prévia da capa">
                 </div>
                 <div class="video-hint">URL externa ou envie uma imagem do computador.</div>
             </div>
 
             <div class="field-group">
-                <label>Imagem do card (home) â€” URL ou upload</label>
+                <label>Imagem do card (home) — URL ou upload</label>
                 <div class="cover-row">
                     <input type="text" id="cardImage" placeholder="https://... (se vazio, usa a capa)" oninput="onCardInput()">
-                    <label class="btn-upload" for="imageFileCard">ðŸ“¤ Enviar</label>
+                    <label class="btn-upload" for="imageFileCard">📤 Enviar</label>
                     <input type="file" id="imageFileCard" accept="image/*" style="display:none" onchange="uploadImage(this,'cardImage','cardPreview')">
-                    <img id="cardPreview" class="cover-preview" alt="PrÃ©via do card">
+                    <img id="cardPreview" class="cover-preview" alt="Prévia do card">
                 </div>
-                <div class="video-hint">Ã‰ esta imagem que aparece no card da pÃ¡gina principal.</div>
+                <div class="video-hint">É esta imagem que aparece no card da página principal.</div>
             </div>
 
             <div class="field-group">
                 <label>Categorias</label>
                 <div class="cat-grid" id="catGrid"></div>
-                <input type="text" id="genresExtra" placeholder="Outras (vÃ­rgula): Ex: Dublado, 2024" oninput="updatePreview()" style="margin-top:8px;">
+                <input type="text" id="genresExtra" placeholder="Outras (vírgula): Ex: Dublado, 2024" oninput="updatePreview()" style="margin-top:8px;">
             </div>
 
             <div class="field-group">
@@ -203,16 +203,16 @@
             </div>
 
             <div class="field-group">
-                <label>VÃ­deo principal â€” YouTube, Archive.org, iframe ou MP4</label>
+                <label>Vídeo principal — YouTube, Archive.org, iframe ou MP4</label>
                 <textarea id="defaultVideo" placeholder="Cole aqui: iframe completo, link youtube.com/watch, youtu.be, embed, archive.org/details, archive.org/embed ou .mp4" oninput="updatePreview()" style="min-height:64px;"></textarea>
-                <div class="video-hint" id="videoTypeHint">Detectado: â€”</div>
-                <button class="btn-arc" onclick="openArcSearch('defaultVideo')">â†• Buscar vÃ­deo no Archive.org</button>
+                <div class="video-hint" id="videoTypeHint">Detectado: —</div>
+                <button class="btn-arc" onclick="openArcSearch('defaultVideo')">↕ Buscar vídeo no Archive.org</button>
             </div>
 
             <div class="field-group">
-                <label>EpisÃ³dios</label>
+                <label>Episódios</label>
                 <div class="episode-editor" id="episodeList"></div>
-                <button class="btn-add-ep" onclick="addEpisode()">+ Adicionar episÃ³dio</button>
+                <button class="btn-add-ep" onclick="addEpisode()">+ Adicionar episódio</button>
             </div>
 
             <div class="btn-group">
@@ -232,7 +232,7 @@
         </div>
 
         <div class="preview-panel">
-            <div class="preview-header"><span><span class="preview-label-dot"></span>PrÃ©via ao vivo</span></div>
+            <div class="preview-header"><span><span class="preview-label-dot"></span>Prévia ao vivo</span></div>
             <iframe class="preview-frame" id="previewFrame"></iframe>
         </div>
     </div>
@@ -263,7 +263,7 @@
                 var user = result.user;
                 if (ALLOWED_EMAILS.length > 0 && ALLOWED_EMAILS.indexOf(user.email) === -1) {
                     auth.signOut();
-                    err.textContent = 'E-mail nÃ£o autorizado: ' + user.email;
+                    err.textContent = 'E-mail não autorizado: ' + user.email;
                     err.style.display = 'block';
                     return;
                 }
@@ -289,7 +289,7 @@
                 if (user) {
                     if (ALLOWED_EMAILS.length > 0 && ALLOWED_EMAILS.indexOf(user.email) === -1) {
                         auth.signOut();
-                        showLogin('E-mail nÃ£o autorizado: ' + user.email);
+                        showLogin('E-mail não autorizado: ' + user.email);
                         return;
                     }
                     sessionStorage.setItem('animaplay_uid', user.uid);
@@ -327,7 +327,7 @@
         async function uploadImage(fileInput, inputId, previewId) {
             var file = fileInput.files[0];
             if (!file) return;
-            if (!GH_TOKEN) { setStatus('Token GitHub nÃ£o disponÃ­vel. Aguarde o login.', 'error'); return; }
+            if (!GH_TOKEN) { setStatus('Token GitHub não disponível. Aguarde o login.', 'error'); return; }
             setStatus('Enviando imagem para o GitHub...', 'loading');
             try {
                 var slug = document.getElementById('slug').value || 'post-' + Date.now();
@@ -366,7 +366,7 @@
         function getFormData(notify) {
             var removed = 0;
             var d = {
-                title: document.getElementById('title').value || 'Sem TÃ­tulo',
+                title: document.getElementById('title').value || 'Sem Título',
                 slug: document.getElementById('slug').value || 'sem-titulo',
                 image: document.getElementById('image').value.trim(),
                 cardImage: document.getElementById('cardImage').value.trim(),
@@ -387,14 +387,14 @@
                 })
             };
             if (isSmartBlocked(d.defaultVideo)) { d.defaultVideo = ''; removed++; }
-            if (notify && removed) setStatus(removed + ' servidor(es) com domÃ­nio bloqueado (SmartScreen: null-null.shop/neosoro.gq/.gq) foram removidos automaticamente.', 'error');
+            if (notify && removed) setStatus(removed + ' servidor(es) com domínio bloqueado (SmartScreen: null-null.shop/neosoro.gq/.gq) foram removidos automaticamente.', 'error');
             return d;
         }
 
         async function publishPost() {
             var btn = document.getElementById('btnPublish');
             var data = getFormData(true);
-            if (!data.title || !data.slug) { setStatus('Preencha tÃ­tulo e slug.', 'error'); return; }
+            if (!data.title || !data.slug) { setStatus('Preencha título e slug.', 'error'); return; }
             btn.disabled = true;
             btn.textContent = 'Salvando...';
             setStatus('Salvando no servidor...', 'loading');
@@ -420,7 +420,7 @@
                 var snap = await db.ref('animaplays/posts/' + data.slug).once('value');
                 if (snap.exists()) {
                     entry.createdAt = snap.val().createdAt || now;
-                    // Preserva o vÃ­nculo com o Blogger para republicar atualizando, sem duplicar.
+                    // Preserva o vínculo com o Blogger para republicar atualizando, sem duplicar.
                     if (snap.val().bloggerPostId) entry.bloggerPostId = snap.val().bloggerPostId;
                     if (snap.val().bloggerUrl) entry.bloggerUrl = snap.val().bloggerUrl;
                 }
@@ -429,7 +429,7 @@
                 setStatus('Salvo! Publicando no site...', 'success');
                 loadPostList();
             } catch (e) {
-                setStatus('âŒ ' + e.message, 'error');
+                setStatus('❌ ' + e.message, 'error');
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Publicar';
@@ -454,7 +454,7 @@
                 setStatus('Apagada: ' + slug, 'success');
                 loadPostList();
             } catch (e) {
-                setStatus('âŒ ' + e.message, 'error');
+                setStatus('❌ ' + e.message, 'error');
             }
         }
         var remotePosts = [];
@@ -484,7 +484,7 @@
                     return;
                 }
                 box.innerHTML = merged.map(function (p) {
-                    var badge = p.status === 'published' ? 'âœ…' : p.status === 'antigo' ? 'ðŸ“¦' : 'â³';
+                    var badge = p.status === 'published' ? '✅' : p.status === 'antigo' ? '📦' : '⏳';
                     return '<div class="post-row"><a href="https://animaplays.github.io/posts/' + p.slug + '.html" target="_blank">' + badge + ' ' + (p.title || p.slug) + '</a><span><button onclick="loadPostForEdit(\'' + p.slug + '\')">Editar</button> <button onclick="deletePost(\'' + p.slug + '\')">Apagar</button></span></div>';
                 }).join('');
             } catch (e) {
@@ -502,7 +502,7 @@
                     return;
                 }
                 var res = await fetch('https://raw.githubusercontent.com/' + REPO + '/main/posts/' + slug + '.html?t=' + Date.now());
-                if (!res.ok) throw new Error('Postagem nÃ£o encontrada.');
+                if (!res.ok) throw new Error('Postagem não encontrada.');
                 var html = await res.text();
                 var doc = new DOMParser().parseFromString(html, 'text/html');
                 var meta = function (n) { var m = doc.querySelector('meta[name="' + n + '"]'); return m ? (m.getAttribute('content') || '') : ''; };
@@ -528,7 +528,7 @@
                 fillForm(d, slug);
                 setStatus('Post antigo carregado do GitHub. Clique Publicar para migrar para o Firebase.', 'success');
             } catch (e) {
-                setStatus('âŒ ' + e.message, 'error');
+                setStatus('❌ ' + e.message, 'error');
             }
         }
 
@@ -558,7 +558,7 @@
                     });
                     addEpisode(ep && ep.title, (clean.length && clean[0] ? clean[0].url : (ep && ep.video && !isSmartBlocked(ep.video) ? ep.video : '')), clean);
                 });
-                if (dropped) setStatus(dropped + ' servidor(es) com domÃ­nio bloqueado (SmartScreen) foram removidos ao carregar. Revise e clique Publicar para limpar no Blogger.', 'error');
+                if (dropped) setStatus(dropped + ' servidor(es) com domínio bloqueado (SmartScreen) foram removidos ao carregar. Revise e clique Publicar para limpar no Blogger.', 'error');
             } else {
                 addEpisode();
             }
@@ -570,7 +570,7 @@
         // --- Form helpers (mantidos do editor original) ---
         var REPO = 'animaplays/animaplays.github.io';
         var GH_TOKEN = '';
-        var CATS = ['AÃ§Ã£o','Aventura','ComÃ©dia','Drama','Fantasia','Terror','Romance','Suspense','FicÃ§Ã£o','Esporte','Dublado','Legendado','ClÃ¡ssico','Filme'];
+        var CATS = ['Ação','Aventura','Comédia','Drama','Fantasia','Terror','Romance','Suspense','Ficção','Esporte','Dublado','Legendado','Clássico','Filme'];
 
         function buildCatGrid() {
             var g = document.getElementById('catGrid');
@@ -610,12 +610,12 @@
             if (!list.length && video) list = [{ name: 'Servidor 1', url: video }];
             if (!list.length) list = [{ name: 'Servidor 1', url: '' }];
             list.forEach(function (s, i) {
-                serverRows += '<div class="server-row"><span class="server-label">Servidor ' + (i + 1) + '</span><input type="text" class="ep-server" placeholder="Link do servidor ' + (i + 1) + '" value="' + (s.url || '').replace(/"/g, '&quot;') + '" oninput="updatePreview()"><span class="server-name"><input type="text" class="ep-server-name" placeholder="Nome (ex: Servidor 1, HD)" value="' + (s.name || ('Servidor ' + (i + 1))).replace(/"/g, '&quot;') + '"></span><button class="btn-remove-server" onclick="removeServerRow(this)" title="Remover servidor">âœ•</button></div>';
+                serverRows += '<div class="server-row"><span class="server-label">Servidor ' + (i + 1) + '</span><input type="text" class="ep-server" placeholder="Link do servidor ' + (i + 1) + '" value="' + (s.url || '').replace(/"/g, '&quot;') + '" oninput="updatePreview()"><span class="server-name"><input type="text" class="ep-server-name" placeholder="Nome (ex: Servidor 1, HD)" value="' + (s.name || ('Servidor ' + (i + 1))).replace(/"/g, '&quot;') + '"></span><button class="btn-remove-server" onclick="removeServerRow(this)" title="Remover servidor">✕</button></div>';
             });
             div.innerHTML = '<span class="ep-num">EP ' + String(epCount).padStart(2, '0') + '</span>' +
-                '<div class="field-group"><label>TÃ­tulo</label><input type="text" class="ep-title" placeholder="EpisÃ³dio ' + epCount + '" value="' + (title || '').replace(/"/g, '&quot;') + '" oninput="updatePreview()"></div>' +
-                '<div class="field-group"><label>Servidores de vÃ­deo (YouTube, Archive.org, iframe, MP4...)</label><div class="server-list">' + serverRows + '</div><button class="btn-arc" onclick="addServerRow(this)">ï¼‹ Adicionar servidor</button> <button class="btn-arc" onclick="openArcSearchForEpisode(this)">â†• Buscar vÃ­deo no Archive.org</button></div>' +
-                '<button class="btn-remove-ep" onclick="removeEpisode(this)">âœ• Remover</button>';
+                '<div class="field-group"><label>Título</label><input type="text" class="ep-title" placeholder="Episódio ' + epCount + '" value="' + (title || '').replace(/"/g, '&quot;') + '" oninput="updatePreview()"></div>' +
+                '<div class="field-group"><label>Servidores de vídeo (YouTube, Archive.org, iframe, MP4...)</label><div class="server-list">' + serverRows + '</div><button class="btn-arc" onclick="addServerRow(this)">＋ Adicionar servidor</button> <button class="btn-arc" onclick="openArcSearchForEpisode(this)">↕ Buscar vídeo no Archive.org</button></div>' +
+                '<button class="btn-remove-ep" onclick="removeEpisode(this)">✕ Remover</button>';
             document.getElementById('episodeList').appendChild(div);
             updatePreview();
         }
@@ -625,7 +625,7 @@
             var n = list.querySelectorAll('.server-row').length;
             var row = document.createElement('div');
             row.className = 'server-row';
-            row.innerHTML = '<span class="server-label">Servidor ' + (n + 1) + '</span><input type="text" class="ep-server" placeholder="Link do servidor ' + (n + 1) + '" oninput="updatePreview()"><span class="server-name"><input type="text" class="ep-server-name" placeholder="Nome (ex: Servidor ' + (n + 1) + ', HD)" value="Servidor ' + (n + 1) + '"></span><button class="btn-remove-server" onclick="removeServerRow(this)" title="Remover servidor">âœ•</button>';
+            row.innerHTML = '<span class="server-label">Servidor ' + (n + 1) + '</span><input type="text" class="ep-server" placeholder="Link do servidor ' + (n + 1) + '" oninput="updatePreview()"><span class="server-name"><input type="text" class="ep-server-name" placeholder="Nome (ex: Servidor ' + (n + 1) + ', HD)" value="Servidor ' + (n + 1) + '"></span><button class="btn-remove-server" onclick="removeServerRow(this)" title="Remover servidor">✕</button>';
             list.appendChild(row);
             updatePreview();
         }
@@ -667,13 +667,13 @@
             return m ? m[1] : '';
         }
         function detectVideoType(input) {
-            if (!input) return 'â€”';
+            if (!input) return '—';
             var s = extractSrc(input).toLowerCase();
             if (s.includes('youtube.com') || s.includes('youtu.be')) return 'YouTube';
             if (s.includes('archive.org')) return 'Archive.org';
-            if (/\.(mp4|webm|m3u8)(\?|#|$)/.test(s)) return 'VÃ­deo direto (MP4/WebM)';
-            if (s.startsWith('http')) return 'Incorporado genÃ©rico (iframe)';
-            return 'â€”';
+            if (/\.(mp4|webm|m3u8)(\?|#|$)/.test(s)) return 'Vídeo direto (MP4/WebM)';
+            if (s.startsWith('http')) return 'Incorporado genérico (iframe)';
+            return '—';
         }
         function normalizeVideo(input) {
             if (!input) return '';
@@ -698,9 +698,9 @@
         }
         function videoPlayerHTML(url) {
             var src = normalizeVideo(url);
-            if (!src) return '<div style="padding:40px;text-align:center;color:#666;">Nenhum vÃ­deo informado</div>';
+            if (!src) return '<div style="padding:40px;text-align:center;color:#666;">Nenhum vídeo informado</div>';
             if (/\.(mp4|webm)(\?|#|$)/i.test(src)) return '<video controls preload="none" style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;" src="' + esc(src) + '"></video>';
-            return '<iframe src="' + esc(src) + '" title="VÃ­deo" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"></iframe>';
+            return '<iframe src="' + esc(src) + '" title="Vídeo" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" loading="lazy" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"></iframe>';
         }
         function thumbHTML(video, idx) {
             var id = ytId(video);
@@ -720,7 +720,7 @@
             try {
                 document.getElementById('previewFrame').srcdoc = buildHTML(d);
             } catch (e) {
-                document.getElementById('previewFrame').srcdoc = '<pre style="color:red;padding:20px;">Erro na prÃ©via: ' + e.message + '</pre>';
+                document.getElementById('previewFrame').srcdoc = '<pre style="color:red;padding:20px;">Erro na prévia: ' + e.message + '</pre>';
             }
         }
         function buildHTML(d) {
@@ -737,18 +737,18 @@
                 var src = srcs[i] || '';
                 return '<a href="?ep=' + (i + 1) + '" data-idx="' + i + '" class="episode-item' + (isNew ? ' active' : '') + '" onclick="goEp(' + i + ');return false;">' +
                     thumbHTML(ep.video || d.defaultVideo, i + 1) +
-                    '<div class="episode-info"><div class="ep-title">' + esc(ep.title || 'EpisÃ³dio ' + (i + 1)) + '</div><div class="ep-meta">Toque para assistir</div></div>' +
+                    '<div class="episode-info"><div class="ep-title">' + esc(ep.title || 'Episódio ' + (i + 1)) + '</div><div class="ep-meta">Toque para assistir</div></div>' +
                     (isNew ? '<span class="episode-badge">NOVO</span>' : '') +
-                    '<button class="btn-play">â–¶</button></a>';
+                    '<button class="btn-play">▶</button></a>';
             }).join('\n');
             var epJson = JSON.stringify(srcs);
             var epServersJson = JSON.stringify(epServers);
-            var epTitles = JSON.stringify(d.episodes.map(function (ep, i) { return ep.title || ('EpisÃ³dio ' + (i + 1)); }));
+            var epTitles = JSON.stringify(d.episodes.map(function (ep, i) { return ep.title || ('Episódio ' + (i + 1)); }));
             var cardImg = d.cardImage || d.image || '';
             return '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">' +
-'<title>' + esc(d.title) + ' â€” Anima Play</title>' +
+'<title>' + esc(d.title) + ' — Anima Play</title>' +
 '<meta name="description" content="' + esc((d.synopsis || '').slice(0, 160) || d.title + ' - Assista online no Anima Play.') + '">' +
-'<meta property="og:title" content="' + esc(d.title) + ' â€” Anima Play">' +
+'<meta property="og:title" content="' + esc(d.title) + ' — Anima Play">' +
 '<meta property="og:description" content="' + esc((d.synopsis || '').slice(0, 160) || d.title + ' - Assista online no Anima Play.') + '">' +
 '<meta property="og:type" content="video.other">' +
 '<meta property="og:url" content="https://animaplays.github.io/posts/' + esc(d.slug) + '.html">' +
@@ -760,11 +760,11 @@
 '<meta name="anima-author" content="' + esc(d.author || '') + '">' +
 '<style>*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}body{background:#0a0a0a;color:#fff;min-height:100vh;overflow-x:hidden}.main-header{display:flex;align-items:center;padding:20px 40px;background:linear-gradient(180deg,rgba(10,10,10,1) 0%,rgba(10,10,10,0) 100%)}.logo{font-size:42px;font-weight:800;color:#e50914;text-transform:uppercase}.main-footer{text-align:center;padding:40px;color:#555;font-size:12px;border-top:1px solid #1a1a1a}.back-link{display:inline-block;color:#e50914;text-decoration:none;font-size:14px;margin-bottom:20px;padding:0 40px}.post-hero{position:relative;width:100%;height:400px;overflow:hidden}.post-hero img{width:100%;height:100%;object-fit:cover}.post-hero-overlay{position:absolute;bottom:0;left:0;right:0;padding:50px 40px 25px;background:linear-gradient(transparent,#0a0a0a)}.post-hero-overlay h1{font-size:32px;font-weight:800}.post-meta{display:flex;gap:10px;flex-wrap:wrap}.post-meta span{background:rgba(255,255,255,0.15);padding:3px 10px;border-radius:12px;font-size:12px;color:#ccc}.post-body{max-width:900px;margin:0 auto;padding:20px 40px 40px}.post-synopsis{color:#aaa;font-size:14px;line-height:1.7;margin-bottom:30px}.section-label{font-size:13px;color:#e50914;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;font-weight:700}.video-player{position:relative;width:100%;padding-top:56.25%;background:#1a1a1a;border-radius:12px;overflow:hidden;margin-bottom:12px}.ep-nav{display:flex;gap:10px;align-items:center;margin-bottom:24px;flex-wrap:wrap}.ep-nav button{background:#15191d;color:#fff;border:1px solid #2a2a2a;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer}.ep-nav button:hover:not(:disabled){border-color:#e50914;color:#e50914}.ep-nav button:disabled{opacity:.35;cursor:not-allowed}.ep-nav button.primary{background:#e50914;border-color:#e50914}.ep-nav button.primary:hover:not(:disabled){background:#f0151f;color:#fff}#epLabel{color:#aaa;font-size:13px}.episode-list{display:flex;flex-direction:column;gap:8px;margin-bottom:30px}.episode-item{display:flex;align-items:center;gap:14px;padding:10px 14px;background:#111;border:1px solid #1a1a1a;border-radius:10px;cursor:pointer;text-decoration:none;color:#fff;transition:border-color .2s}.episode-item:hover{border-color:#e50914}.episode-item.active{border-color:#e50914;background:#1a0a0a}.episode-thumb{width:72px;height:48px;border-radius:6px;object-fit:cover;flex-shrink:0}.episode-info{flex:1;min-width:0}.ep-title{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ep-meta{font-size:11px;color:#666;margin-top:2px}.episode-badge{background:#e50914;color:#fff;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:700;margin-left:8px;flex-shrink:0}.btn-play{background:none;border:1px solid #333;color:#aaa;border-radius:50%;width:32px;height:32px;font-size:12px;cursor:pointer;flex-shrink:0}.episode-item:hover .btn-play{border-color:#e50914;color:#e50914}.post-layout{display:flex;gap:0;max-width:1400px;margin:0 auto}.post-main{flex:1;min-width:0}.post-side{width:300px;flex-shrink:0;border-left:1px solid #1a1a1a;padding:20px;display:none}.server-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}.server-tabs button{background:#15191d;color:#ccc;border:1px solid #2a2a2a;padding:7px 14px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer}.server-tabs button.active{background:#e50914;border-color:#e50914;color:#fff}@media(min-width:1024px){.post-side{display:block}}@media(max-width:768px){.main-header{padding:14px 16px}.back-link{padding:0 16px}.post-body{padding:12px 12px 28px}.video-player{border-radius:8px}.main-footer{padding:24px 16px}}</style>' +
 '<body><header class="main-header"><div class="logo"><a href="/" style="color:inherit;text-decoration:none">Anima Play</a></div></header>' +
-'<div class="post-layout"><div class="post-main"><a href="/" class="back-link">â† Voltar</a>' +
+'<div class="post-layout"><div class="post-main"><a href="/" class="back-link">← Voltar</a>' +
 '<div class="post-hero"><img src="' + esc(d.image || 'https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200&auto=format&fit=crop') + '" alt="' + esc(d.title) + '"><div class="post-hero-overlay"><h1>' + esc(d.title) + '</h1><div class="post-meta">' + d.genres.map(function (g) { return '<span>' + esc(g) + '</span>'; }).join('') + (d.author ? '<span>Por @' + esc(d.author) + '</span>' : '') + '<span id="viewCount"></span></div></div></div>' +
-'<main class="post-body">' + (d.synopsis ? '<p class="post-synopsis">' + esc(d.synopsis) + '</p>' : '') + '<div class="section-label">Assistir</div><div class="video-player" id="vp">' + videoPlayerHTML(d.defaultVideo) + '</div><div class="server-tabs" id="svTabs"></div><div class="ep-nav"><button onclick="location.href=\'/\'">â† InÃ­cio</button><button id="btnPrev" onclick="prevEp()">â† Anterior</button><span id="epLabel"></span><button id="btnNext" class="primary" onclick="nextEp()">PrÃ³ximo â†’</button></div><div class="section-label">EpisÃ³dios</div><div class="episode-list">\n' + eps + '\n</div><div class="section-label">ComentÃ¡rios</div><div id="disqus_thread"></div><script>var disqus_config=function(){this.page.url=\'https://animaplays.github.io/posts/' + esc(d.slug) + '.html\';this.page.identifier=\'' + esc(d.slug) + '\';};(function(){var b=document,s=b.createElement(\'script\');s.src=\'https://anima-play.disqus.com/embed.js\';s.setAttribute(\'data-timestamp\',+new Date());(b.head||b.body).appendChild(s);})();<\/script><noscript>Ative o JavaScript para ver os comentÃ¡rios.</noscript></main></div><aside class="post-side" id="postSide"></aside></div>' +
+'<main class="post-body">' + (d.synopsis ? '<p class="post-synopsis">' + esc(d.synopsis) + '</p>' : '') + '<div class="section-label">Assistir</div><div class="video-player" id="vp">' + videoPlayerHTML(d.defaultVideo) + '</div><div class="server-tabs" id="svTabs"></div><div class="ep-nav"><button onclick="location.href=\'/\'">← Início</button><button id="btnPrev" onclick="prevEp()">← Anterior</button><span id="epLabel"></span><button id="btnNext" class="primary" onclick="nextEp()">Próximo →</button></div><div class="section-label">Episódios</div><div class="episode-list">\n' + eps + '\n</div><div class="section-label">Comentários</div><div id="disqus_thread"></div><script>var disqus_config=function(){this.page.url=\'https://animaplays.github.io/posts/' + esc(d.slug) + '.html\';this.page.identifier=\'' + esc(d.slug) + '\';};(function(){var b=document,s=b.createElement(\'script\');s.src=\'https://anima-play.disqus.com/embed.js\';s.setAttribute(\'data-timestamp\',+new Date());(b.head||b.body).appendChild(s);})();<\/script><noscript>Ative o JavaScript para ver os comentários.</noscript></main></div><aside class="post-side" id="postSide"></aside></div>' +
 '<footer class="main-footer"><p>&copy; 2026 Anima Play</p></footer>' +
-'<script>function esc(s){return String(s||\'\').replace(/&/g,\'&amp;\').replace(/</g,\'&lt;\').replace(/>/g,\'&gt;\').replace(/"/g,\'&quot;\');}var EPISODES=' + epJson + ';var EP_SERVERS=' + epServersJson + ';var EP_TITLES=' + epTitles + ';var cur=0;var srv=0;function isDirect(s){return /\\\\.(mp4|webm)(\\\\?|#|$)/i.test(s||\'\');}function paint(src){var box=document.getElementById(\'vp\');if(!src){box.innerHTML=\'<div style="padding:40px;text-align:center;color:#666;">Nenhum vÃ­deo</div>\';return;}if(isDirect(src)){box.innerHTML=\'<video controls preload="none" style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;" src="\'+esc(src)+\'"></video>\';}else{box.innerHTML=\'<iframe src="\'+esc(src)+\'" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"></iframe>\';}}function curSrc(){var list=(EP_SERVERS&&EP_SERVERS[cur])||[];return (list[srv]&&list[srv].url)||EPISODES[cur]||\'\';}function renderServers(){var box=document.getElementById(\'svTabs\');if(!box)return;var list=((EP_SERVERS&&EP_SERVERS[cur])||[{url:EPISODES[cur]}]).filter(function(x){return x&&x.url;});if(list.length<2){box.innerHTML=\'\';return;}box.innerHTML=list.map(function(x,j){return \'<button type="button" class="\'+(j===srv?\'active\':\'\')+\'" onclick="setSrv(\'+j+\')">\'+esc(x.name||(\'Servidor \'+(j+1)))+\'</button>\';}).join(\'\');}function setSrv(j){var sy=window.pageYOffset||document.documentElement.scrollTop||0;srv=j;paint(curSrc());renderServers();try{window.scrollTo(0,sy);}catch(e){}}function syncUI(){var items=document.querySelectorAll(\'.episode-item\');items.forEach(function(el,i){el.classList.toggle(\'active\',i===cur);});var label=document.getElementById(\'epLabel\');if(label){label.textContent=(EP_TITLES[cur]||(\'EpisÃ³dio \'+(cur+1)))+\' â€¢ \'+(cur+1)+\' / \'+EPISODES.length;}var pv=document.getElementById(\'btnPrev\');var nx=document.getElementById(\'btnNext\');if(pv){pv.disabled=cur<=0;}if(nx){nx.disabled=cur>=EPISODES.length-1;}renderServers();try{var u=new URL(window.location.href);u.searchParams.set(\'ep\',String(cur+1));window.history.replaceState(null,\'\',u);}catch(e){}}function renderEp(i){if(i<0||i>=EPISODES.length||!EPISODES[i])return;cur=i;srv=0;paint(curSrc());syncUI();var vp=document.getElementById(\'vp\');if(vp&&vp.scrollIntoView){vp.scrollIntoView({behavior:\'smooth\',block:\'center\'});}}function goEp(i){renderEp(i);}function nextEp(){if(cur<EPISODES.length-1){renderEp(cur+1);}}function prevEp(){if(cur>0){renderEp(cur-1);}}try{var u=new URL(window.location.href);var epParam=parseInt(u.searchParams.get(\'ep\')||\'1\',10);if(epParam>=1&&epParam<=EPISODES.length)renderEp(epParam-1);else renderEp(0);}catch(e){renderEp(0);}<\/script>' +
+'<script>function esc(s){return String(s||\'\').replace(/&/g,\'&amp;\').replace(/</g,\'&lt;\').replace(/>/g,\'&gt;\').replace(/"/g,\'&quot;\');}var EPISODES=' + epJson + ';var EP_SERVERS=' + epServersJson + ';var EP_TITLES=' + epTitles + ';var cur=0;var srv=0;function isDirect(s){return /\\\\.(mp4|webm)(\\\\?|#|$)/i.test(s||\'\');}function paint(src){var box=document.getElementById(\'vp\');if(!src){box.innerHTML=\'<div style="padding:40px;text-align:center;color:#666;">Nenhum vídeo</div>\';return;}if(isDirect(src)){box.innerHTML=\'<video controls preload="none" style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;" src="\'+esc(src)+\'"></video>\';}else{box.innerHTML=\'<iframe src="\'+esc(src)+\'" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"></iframe>\';}}function curSrc(){var list=(EP_SERVERS&&EP_SERVERS[cur])||[];return (list[srv]&&list[srv].url)||EPISODES[cur]||\'\';}function renderServers(){var box=document.getElementById(\'svTabs\');if(!box)return;var list=((EP_SERVERS&&EP_SERVERS[cur])||[{url:EPISODES[cur]}]).filter(function(x){return x&&x.url;});if(list.length<2){box.innerHTML=\'\';return;}box.innerHTML=list.map(function(x,j){return \'<button type="button" class="\'+(j===srv?\'active\':\'\')+\'" onclick="setSrv(\'+j+\')">\'+esc(x.name||(\'Servidor \'+(j+1)))+\'</button>\';}).join(\'\');}function setSrv(j){var sy=window.pageYOffset||document.documentElement.scrollTop||0;srv=j;paint(curSrc());renderServers();try{window.scrollTo(0,sy);}catch(e){}}function syncUI(){var items=document.querySelectorAll(\'.episode-item\');items.forEach(function(el,i){el.classList.toggle(\'active\',i===cur);});var label=document.getElementById(\'epLabel\');if(label){label.textContent=(EP_TITLES[cur]||(\'Episódio \'+(cur+1)))+\' • \'+(cur+1)+\' / \'+EPISODES.length;}var pv=document.getElementById(\'btnPrev\');var nx=document.getElementById(\'btnNext\');if(pv){pv.disabled=cur<=0;}if(nx){nx.disabled=cur>=EPISODES.length-1;}renderServers();try{var u=new URL(window.location.href);u.searchParams.set(\'ep\',String(cur+1));window.history.replaceState(null,\'\',u);}catch(e){}}function renderEp(i){if(i<0||i>=EPISODES.length||!EPISODES[i])return;cur=i;srv=0;paint(curSrc());syncUI();var vp=document.getElementById(\'vp\');if(vp&&vp.scrollIntoView){vp.scrollIntoView({behavior:\'smooth\',block:\'center\'});}}function goEp(i){renderEp(i);}function nextEp(){if(cur<EPISODES.length-1){renderEp(cur+1);}}function prevEp(){if(cur>0){renderEp(cur-1);}}try{var u=new URL(window.location.href);var epParam=parseInt(u.searchParams.get(\'ep\')||\'1\',10);if(epParam>=1&&epParam<=EPISODES.length)renderEp(epParam-1);else renderEp(0);}catch(e){renderEp(0);}<\/script>' +
 '<script src="../post-layout.js?v=11"><\/script>' +
 '<script src="../update-check.js?v=5"><\/script>' +
 '<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"><\/script>' +
@@ -772,7 +772,7 @@
 '<script src="../firebase-config.js?v=1"><\/script>' +
 '<script>if(typeof firebase!=="undefined"&&firebase.initializeApp)firebase.initializeApp(firebaseConfig);<\/script>' +
 '<script src="../views.js?v=3"><\/script>' +
-'<script>if(typeof ViewCounter!=="undefined"){ViewCounter.increment(\'' + esc(d.slug) + '\').then(function(v){var el=document.getElementById("viewCount");if(el)el.textContent=v+" visualizaÃ§Ãµes";});}<\/script>' +
+'<script>if(typeof ViewCounter!=="undefined"){ViewCounter.increment(\'' + esc(d.slug) + '\').then(function(v){var el=document.getElementById("viewCount");if(el)el.textContent=v+" visualizações";});}<\/script>' +
 '</body></html>';
         }
         function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -806,7 +806,7 @@
             arcTargetInput = inputId;
             var val = document.getElementById(inputId) ? document.getElementById(inputId).value : '';
             document.getElementById('arcQuery').value = val || '';
-            document.getElementById('arcStatus').textContent = 'Pesquise por um anime, filme ou nome do episÃ³dio. Depois escolha o arquivo de vÃ­deo desejado.';
+            document.getElementById('arcStatus').textContent = 'Pesquise por um anime, filme ou nome do episódio. Depois escolha o arquivo de vídeo desejado.';
             document.getElementById('arcResults').innerHTML = '';
             document.getElementById('arcModal').classList.remove('hidden');
             if (!val) document.getElementById('arcQuery').focus();
@@ -847,7 +847,7 @@
             arcJsonp(url, function (data) {
                 if (!data) {
                     st.textContent = 'Erro ao buscar no Archive.org.';
-                    out.innerHTML = '<div class="arc-empty">Falha de conexÃ£o. Tente novamente.</div>';
+                    out.innerHTML = '<div class="arc-empty">Falha de conexão. Tente novamente.</div>';
                     return;
                 }
                 var docs = (data.response && data.response.docs) || [];
@@ -879,7 +879,7 @@
                     return /\.(mp4|webm|mkv|m4v|ogv)(\?|#|$)/i.test(f.name || '');
                 });
                 if (!files.length) {
-                    sub.innerHTML = '<div class="arc-empty">Nenhum arquivo de vÃ­deo neste item.</div>';
+                    sub.innerHTML = '<div class="arc-empty">Nenhum arquivo de vídeo neste item.</div>';
                     return;
                 }
                 function rank(f) {
@@ -891,8 +891,8 @@
                 sub.innerHTML = files.map(function (f) {
                     var sizeLabel = f.size ? (f.size > 1048576 ? Math.round(f.size / 1048576) + ' MB' : Math.round(f.size / 1024) + ' KB') : '';
                     var direct = /\.(mp4|webm)(\?|#|$)/i.test(f.name || '');
-                    var badge = direct ? '<span class="arc-badge">âœ“ toca direto</span>' : '<span class="arc-badge arc-badge-warn">' + esc(f.format || '') + '</span>';
-                    return '<div class="arc-file' + (direct ? ' arc-file-best' : '') + '" onclick="pickArcFile(this)" data-id="' + esc(id).replace(/"/g, '&quot;') + '" data-file="' + esc(f.name).replace(/"/g, '&quot;') + '" title="Clique para usar este vÃ­deo">' +
+                    var badge = direct ? '<span class="arc-badge">✓ toca direto</span>' : '<span class="arc-badge arc-badge-warn">' + esc(f.format || '') + '</span>';
+                    return '<div class="arc-file' + (direct ? ' arc-file-best' : '') + '" onclick="pickArcFile(this)" data-id="' + esc(id).replace(/"/g, '&quot;') + '" data-file="' + esc(f.name).replace(/"/g, '&quot;') + '" title="Clique para usar este vídeo">' +
                         '<span class="arc-file-name">' + esc(f.name) + '</span>' +
                         badge +
                         '<span class="arc-file-meta">' + sizeLabel + '</span></div>';
@@ -908,7 +908,7 @@
                 document.getElementById(arcTargetInput).dispatchEvent(new Event('input'));
             }
             document.getElementById('arcResults').innerHTML = '';
-            document.getElementById('arcStatus').textContent = 'VÃ­deo escolhido para: ' + link;
+            document.getElementById('arcStatus').textContent = 'Vídeo escolhido para: ' + link;
             closeArcSearch();
             updatePreview();
         }
@@ -917,15 +917,15 @@
     <div id="arcModal" class="arc-modal-overlay hidden">
         <div class="arc-modal">
             <div class="arc-modal-head">
-                <span class="arc-modal-title">Buscar vÃ­deo no Archive.org</span>
-                <button class="arc-modal-close" onclick="closeArcSearch()" aria-label="Fechar">âœ•</button>
+                <span class="arc-modal-title">Buscar vídeo no Archive.org</span>
+                <button class="arc-modal-close" onclick="closeArcSearch()" aria-label="Fechar">✕</button>
             </div>
             <div class="arc-modal-body">
                 <div class="arc-search-row">
-                    <input type="text" id="arcQuery" placeholder="Ex: Naruto ClÃ¡ssico dublado episÃ³dio 1" onkeydown="if(event.key==='Enter'){searchArchive();return false;}">
+                    <input type="text" id="arcQuery" placeholder="Ex: Naruto Clássico dublado episódio 1" onkeydown="if(event.key==='Enter'){searchArchive();return false;}">
                     <button class="btn-publish" style="padding:10px 18px;" onclick="searchArchive()">Buscar</button>
                 </div>
-                <div id="arcStatus" class="arc-status">Pesquise por um anime, filme ou nome do episÃ³dio. Depois escolha o arquivo de vÃ­deo desejado.</div>
+                <div id="arcStatus" class="arc-status">Pesquise por um anime, filme ou nome do episódio. Depois escolha o arquivo de vídeo desejado.</div>
                 <div id="arcResults"></div>
             </div>
         </div>
