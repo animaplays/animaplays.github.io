@@ -623,15 +623,22 @@ var AP = (function () {
       slot.innerHTML = '<div style="position:absolute;top:12px;right:12px;z-index:7;display:flex;gap:8px;align-items:center">' +
         '<span id="apTimer" style="font-size:14px;color:#fff;background:rgba(0,0,0,.7);padding:6px 12px;border-radius:6px">5</span>' +
         '<button id="apSkip" style="display:none;background:#fff;color:#000;border:none;padding:12px 22px;border-radius:8px;cursor:pointer;font-weight:700;font-size:15px">Pular an&#250;ncio</button></div>' +
+        '<div id="apWait" style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;z-index:6;font-size:14px;color:#fff;background:rgba(0,0,0,.5)">Carregando an&#250;ncio...</div>' +
         '<div id="apAdBox" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;height:100%"></div>';
       var adBox = slot.querySelector('#apAdBox');
       injectAds(adBox, AP_AD_HTML);
       try { v.pause(); } catch (e) {}
-      var t = 5;
+      var t = 5, Started = false, Waited = 0;
       var iv = setInterval(function () { runPrerollTick(); }, 1000);
       var timer = slot.querySelector('#apTimer');
       var skipBtn = slot.querySelector('#apSkip');
+      var waitLabel = slot.querySelector('#apWait');
       function runPrerollTick() {
+        if (!Started) {
+          Waited++;
+          if ((slot && slot.querySelector('iframe')) || Waited >= 3) { Started = true; if (waitLabel) waitLabel.style.display = 'none'; }
+          return;
+        }
         t--;
         if (timer) timer.textContent = String(t);
         if (t <= 2 && skipBtn) skipBtn.style.display = 'inline-block';
