@@ -1,5 +1,37 @@
 [
   {
+    "slug": "dragonballz",
+    "title": "Dragon Ball Z Kai - Saga dos Saiyajins",
+    "image": "../img/dragonballz-1789010293147-dragon-ball-z-card.jpg",
+    "subtitle": "Episódio 1 - Surge um Mini-Goku! Seu Nome é Gohan",
+    "genres": [
+      "Ação",
+      "Dublado",
+      "Clássico"
+    ],
+    "author": "kingveio",
+    "episodes": [
+      "https://playmogo.com/e/6okvj7cl4w9z",
+      "https://playmogo.com/e/g1c0mrauz1qg",
+      "https://playmogo.com/e/klsgj2s3eaiv",
+      "https://playmogo.com/e/zt6r728suv83",
+      "https://playmogo.com/e/yluzm67kuap0",
+      "https://playmogo.com/e/xoe7clh9tnn8",
+      "https://playmogo.com/e/2mnxnppp78dr",
+      "https://playmogo.com/e/l3htsqo2le1l",
+      "https://playmogo.com/e/seyhyemrhllp",
+      "https://playmogo.com/e/8m4nr2o2xz0y",
+      "https://playmogo.com/e/ptra52ol5l72",
+      "https://playmogo.com/e/iouibevd448u",
+      "https://playmogo.com/e/b0qvfgx5s3te",
+      "https://playmogo.com/e/prsy76u25sas",
+      "https://playmogo.com/e/98b0w29dpt3e",
+      "https://playmogo.com/e/z5b15oum7wg4"
+    ],
+    "createdAt": "2026-09-10T03:22:44.208Z",
+    "updatedAt": "2026-09-15T23:28:40.741Z"
+  },
+  {
     "slug": "bleach-Thousand-Year-Blood-War-1-Temporada",
     "title": "Bleach Thousand-Year Blood War 1º Temporada - Dublada",
     "image": "../img/bleach-Thousand-Year-Blood-War-1-Temporada-1789070101806-bleach-card.jpg",
@@ -68,38 +100,6 @@
     ],
     "createdAt": "2026-09-10T19:01:45.642Z",
     "updatedAt": "2026-09-14T00:13:07.138Z"
-  },
-  {
-    "slug": "dragonballz",
-    "title": "Dragon Ball Z Kai - Saga dos Saiyajins",
-    "image": "../img/dragonballz-1789010293147-dragon-ball-z-card.jpg",
-    "subtitle": "Episódio 1 - Surge um Mini-Goku! Seu Nome é Gohan",
-    "genres": [
-      "Ação",
-      "Dublado",
-      "Clássico"
-    ],
-    "author": "kingveio",
-    "episodes": [
-      "https://playmogo.com/e/6okvj7cl4w9z",
-      "https://playmogo.com/e/g1c0mrauz1qg",
-      "https://playmogo.com/e/klsgj2s3eaiv",
-      "https://playmogo.com/e/zt6r728suv83",
-      "https://playmogo.com/e/yluzm67kuap0",
-      "https://playmogo.com/e/xoe7clh9tnn8",
-      "https://playmogo.com/e/2mnxnppp78dr",
-      "https://playmogo.com/e/l3htsqo2le1l",
-      "https://playmogo.com/e/seyhyemrhllp",
-      "https://playmogo.com/e/8m4nr2o2xz0y",
-      "https://playmogo.com/e/ptra52ol5l72",
-      "https://playmogo.com/e/iouibevd448u",
-      "https://playmogo.com/e/b0qvfgx5s3te",
-      "https://playmogo.com/e/prsy76u25sas",
-      "https://playmogo.com/e/98b0w29dpt3e",
-      "https://playmogo.com/e/z5b15oum7wg4"
-    ],
-    "createdAt": "2026-09-10T03:22:44.208Z",
-    "updatedAt": "2026-09-14T00:13:02.468Z"
   },
   {
     "slug": "dragon-ball-z-kai-a-saga-de-freeza-episodios-17-ao-54",
