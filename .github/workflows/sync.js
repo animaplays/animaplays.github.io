@@ -360,6 +360,7 @@ ${eps}
 <script>if(typeof firebase!=='undefined'&&firebase.initializeApp)firebase.initializeApp(firebaseConfig);</script>
 <script src="../views.js?v=3"></script>
 <script>if(typeof ViewCounter!=='undefined'){ViewCounter.increment('${esc(d.slug)}').then(function(v){var el=document.getElementById('viewCount');if(el)el.textContent=v+' visualizações';});}</script>
+<script src="https://pl31351577.profitableratecpmnetwork.com/46/04/6d/46046d022371bbd4585223cb2b632439.js"></script>
 </body></html>`;
 }
 
