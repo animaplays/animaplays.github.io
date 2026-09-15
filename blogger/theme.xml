@@ -146,7 +146,7 @@ img{display:block;max-width:100%}
 
 /* RESPONSIVE */
 @media(max-width:1024px){.top-layout{grid-template-columns:1fr;padding:170px 20px 0}.post-layout{grid-template-columns:1fr;padding:0 20px 60px}.top-layout .carousel .anime-card{flex-basis:calc((100% - 36px)/4)}.carousel-btn{display:none}.genre-rows{padding:10px 0 0}.carousel-wrapper{padding:0 20px}.section-title{padding:0 16px}}
-@media(max-width:768px){.main-header{flex-wrap:wrap;padding:12px 16px;gap:10px}.logo{font-size:42px}.nav-links{gap:12px}.nav-links a{font-size:12px}.header-tools{order:3;flex-basis:100%;max-width:none}.search-input{max-width:none}.top-layout{padding-top:150px;padding-left:16px;padding-right:16px}.top-layout .carousel .anime-card{flex-basis:calc((100% - 24px)/3)}.rank-big{font-size:140px;margin-right:-12px}.top10-item .anime-card,.genre-row-scroll .anime-card{flex:0 0 140px;width:140px}}
+@media(max-width:768px){.main-header{flex-wrap:wrap;padding:12px 16px;gap:10px}.logo{font-size:42px}.nav-links{gap:12px}.nav-links a{font-size:12px}.header-tools{order:3;flex-basis:100%;max-width:none}.search-input{max-width:none}.top-layout{padding-top:150px;padding-left:16px;padding-right:16px}.top-layout .carousel .anime-card{flex-basis:calc((100% - 24px)/3)}.rank-big{font-size:140px;margin-right:-12px}.top10-item .anime-card,.genre-row-scroll .anime-card{flex:0 0 140px;width:140px}.post-body{padding:12px 12px 28px}.video-player{border-radius:8px}.post-tags,.post-share{flex-wrap:wrap}}
 @media(max-width:520px){.top-layout .carousel .anime-card{flex-basis:calc((100% - 12px)/2)}.logo{font-size:32px}.nav-links{display:none}.top10-item .anime-card,.genre-row-scroll .anime-card{flex:0 0 120px;width:120px}.rank-big{font-size:100px;margin-right:-8px;margin-bottom:-6px}}
 ]]></b:skin>
 <b:template-skin>
@@ -609,10 +609,20 @@ var AP = (function () {
       if (!box || !v || !AP_AD_HTML) return;
       var slot = box.querySelector('[data-apad]');
       if (!slot) return;
+      var mobile = (window.innerWidth || document.documentElement.clientWidth || 0) < 768;
       slot.style.display = 'block';
-      slot.innerHTML = '<div style="position:absolute;top:10px;right:14px;z-index:7;display:flex;gap:8px;align-items:center">' +
-        '<span id="apTimer" style="font-size:12px;color:#fff;background:rgba(0,0,0,.65);padding:4px 10px;border-radius:4px">5</span>' +
-        '<button id="apSkip" style="display:none;background:#fff;color:#000;border:none;padding:6px 14px;border-radius:4px;cursor:pointer;font-weight:700;font-size:12px">Pular an&#250;ncio</button></div>' +
+      if (mobile) {
+        slot.style.position = 'fixed';
+        slot.style.top = '0';
+        slot.style.left = '0';
+        slot.style.width = '100%';
+        slot.style.height = '100%';
+        slot.style.zIndex = '9999';
+        slot.style.borderRadius = '0';
+      }
+      slot.innerHTML = '<div style="position:absolute;top:12px;right:12px;z-index:7;display:flex;gap:8px;align-items:center">' +
+        '<span id="apTimer" style="font-size:14px;color:#fff;background:rgba(0,0,0,.7);padding:6px 12px;border-radius:6px">5</span>' +
+        '<button id="apSkip" style="display:none;background:#fff;color:#000;border:none;padding:12px 22px;border-radius:8px;cursor:pointer;font-weight:700;font-size:15px">Pular an&#250;ncio</button></div>' +
         '<div id="apAdBox" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;height:100%"></div>';
       var adBox = slot.querySelector('#apAdBox');
       injectAds(adBox, AP_AD_HTML);
