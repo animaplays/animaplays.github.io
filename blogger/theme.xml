@@ -761,8 +761,14 @@ var AP = (function () {
     var fail = function () {
       var cr = document.getElementById('carousel');
       if (cr) cr.innerHTML = '<p style="text-align:center;color:#888;padding:40px;">Erro ao carregar</p>';
+      var pc = document.getElementById('postContent');
+      if (pc) pc.innerHTML = '<p style="text-align:center;color:#888;padding:40px;">Erro ao carregar este episodio. Tente novamente em alguns segundos.</p>';
     };
     if (isPostPage()) {
+      var hc = document.getElementById('homeContent');
+      var pl = document.getElementById('postLayout');
+      if (hc) hc.classList.add('hidden');
+      if (pl) pl.classList.remove('hidden');
       var cur = normalizeUrl(window.location.href);
       fetchAll(1).then(function () {
         var match = null;
