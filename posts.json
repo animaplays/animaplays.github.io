@@ -1,5 +1,32 @@
 [
   {
+    "slug": "solo-leveling",
+    "title": "Solo Leveling 1º temporada dublada",
+    "image": "../img/card-1789066500736-solo-leveling-card.jpg",
+    "subtitle": "Episódio 1 - Estou Acostumado",
+    "genres": [
+      "Ação",
+      "Dublado"
+    ],
+    "author": "kingveio",
+    "episodes": [
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E01%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E02%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E03%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E04%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E05%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E06%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E07%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E08%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E09%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E10%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E11%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E12%20PT-BR.mp4"
+    ],
+    "createdAt": "2026-09-10T19:01:45.642Z",
+    "updatedAt": "2026-09-16T02:24:55.869Z"
+  },
+  {
     "slug": "dragonballz",
     "title": "Dragon Ball Z Kai - Saga dos Saiyajins",
     "image": "../img/dragonballz-1789010293147-dragon-ball-z-card.jpg",
@@ -80,26 +107,6 @@
     ],
     "createdAt": "2026-09-10T04:27:15.754Z",
     "updatedAt": "2026-09-14T17:34:57.161Z"
-  },
-  {
-    "slug": "solo-leveling",
-    "title": "Solo Leveling 1º temporada dublada",
-    "image": "../img/card-1789066500736-solo-leveling-card.jpg",
-    "subtitle": "Episódio 1 - Estou Acostumado",
-    "genres": [
-      "Ação",
-      "Dublado"
-    ],
-    "author": "kingveio",
-    "episodes": [
-      "https://xn--l---------------------------_________________________-2w85c.null-null.shop/tos-alisg-avt-0068/proxy?container=videos&refresh=31536000&url=https://neosoro.gq/V/RCServer25/ondemand/SLOLVLNGT01EP01.mp4?sv=107&cc=y&secure_uri=true&nu3zAQc9HC3GbwJq=1789066401-d5NkA4UEy9v5fdYZeYAgJx%2FjlW6l5A8CtfgtHOjA4b8%3D",
-      "https://xn--l---------------------------_________________________-2w85c.null-null.shop/tos-alisg-avt-0068/proxy?container=videos&refresh=31536000&url=https://neosoro.gq/V/RCServer25/ondemand/SLOLVLNGT01EP02.mp4?sv=43&cc=y&secure_uri=true&nu3zAQc9HC3GbwJq=1789067490-XPNl9UTKx8Vf5ifmbM2vgwPmSzq4eGde4%2FUQfFtLz7k%3D",
-      "https://xn--l---------------------------_________________________-2w85c.null-null.shop/tos-alisg-avt-0068/proxy?container=videos&refresh=31536000&url=https://neosoro.gq/V/RCServer25/ondemand/SLOLVLNGT01EP03.mp4?sv=95&cc=y&secure_uri=true&nu3zAQc9HC3GbwJq=1789067570-9Wp8OtnBppJS8oHSDkJnBmuDZR68Ri21tuNjDJCbTic%3D",
-      "https://xn--l---------------------------_________________________-2w85c.null-null.shop/tos-alisg-avt-0068/proxy?container=videos&refresh=31536000&url=https://neosoro.gq/V/RCServer25/ondemand/SLOLVLNGT01EP04.mp4?sv=40&cc=y&secure_uri=true&nu3zAQc9HC3GbwJq=1789067638-7aNSZLk2QLQyKnuIOKO1X%2FSKf9LO%2Fh9KbsXjdllRxXI%3D",
-      "https://xn--l---------------------------_________________________-2w85c.null-null.shop/tos-alisg-avt-0068/proxy?container=videos&refresh=31536000&url=https://neosoro.gq/V/RCServer25/ondemand/SLOLVLNGT01EP05.mp4?sv=24&cc=y&secure_uri=true&nu3zAQc9HC3GbwJq=1789067679-aEaPT59JWeZzLb2pqklkMfb9XuXQDmoqyx%2FL2NJhk2I%3D"
-    ],
-    "createdAt": "2026-09-10T19:01:45.642Z",
-    "updatedAt": "2026-09-14T00:13:07.138Z"
   },
   {
     "slug": "dragon-ball-z-kai-a-saga-de-freeza-episodios-17-ao-54",
