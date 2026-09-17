@@ -331,6 +331,9 @@ function buildPostHTML(d) {
   const heroImg = d._heroImg || d.image || d.cardImage || '';
 
   return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link href="https://animaplays.github.io/img/logo/favicon-32x32.png" rel="icon" type="image/png" sizes="32x32"/>
+<link href="https://animaplays.github.io/img/logo/favicon-16x16.png" rel="icon" type="image/png" sizes="16x16"/>
+<link href="https://animaplays.github.io/img/logo/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
 <title>${esc(d.title)} — Anima Play</title>
 <meta name="description" content="${esc((d.synopsis || '').slice(0, 160) || d.title + ' - Assista online no Anima Play.')}">
 <meta property="og:title" content="${esc(d.title)} — Anima Play">
