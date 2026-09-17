@@ -1,5 +1,32 @@
 [
   {
+    "slug": "solo-leveling",
+    "title": "Solo Leveling 1º temporada dublada",
+    "image": "../img/card-1789066500736-solo-leveling-card.jpg",
+    "subtitle": "Episódio 1 - Estou Acostumado",
+    "genres": [
+      "Ação",
+      "Dublado"
+    ],
+    "author": "kingveio",
+    "episodes": [
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E01%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E02%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E03%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E04%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E05%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E06%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E07%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E08%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E09%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E10%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E11%20PT-BR.mp4",
+      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E12%20PT-BR.mp4"
+    ],
+    "createdAt": "2026-09-10T19:01:45.642Z",
+    "updatedAt": "2026-09-17T07:02:18.271Z"
+  },
+  {
     "slug": "dragonballz",
     "title": "Dragon Ball Z Kai - Saga dos Saiyajins",
     "image": "../img/dragonballz-1789010293147-dragon-ball-z-card.jpg",
@@ -58,33 +85,6 @@
     ],
     "createdAt": "2026-09-10T19:58:59.900Z",
     "updatedAt": "2026-09-17T04:39:01.520Z"
-  },
-  {
-    "slug": "solo-leveling",
-    "title": "Solo Leveling 1º temporada dublada",
-    "image": "../img/card-1789066500736-solo-leveling-card.jpg",
-    "subtitle": "Episódio 1 - Estou Acostumado",
-    "genres": [
-      "Ação",
-      "Dublado"
-    ],
-    "author": "kingveio",
-    "episodes": [
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E01%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E02%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E03%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E04%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E05%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E06%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E07%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E08%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E09%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E10%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E11%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E12%20PT-BR.mp4"
-    ],
-    "createdAt": "2026-09-10T19:01:45.642Z",
-    "updatedAt": "2026-09-16T03:06:14.917Z"
   },
   {
     "slug": "narutoclassico",
