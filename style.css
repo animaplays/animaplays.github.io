@@ -28,12 +28,14 @@ body {
 }
 
 .logo {
-    font-size: 96px;
-    font-weight: 800;
-    color: #e50914;
-    letter-spacing: -1px;
-    text-transform: uppercase;
     flex-shrink: 0;
+}
+
+.logo img {
+    display: block;
+    height: auto;
+    max-height: 240px;
+    width: auto;
 }
 
 .header-tools {
@@ -571,8 +573,8 @@ body {
         gap: 10px;
     }
 
-    .logo {
-        font-size: 42px;
+    .logo img {
+        max-height: 80px;
     }
 
     .nav-links { gap: 12px; }
@@ -619,7 +621,7 @@ body {
         flex-basis: calc((100% - 12px) / 2);
     }
 
-    .logo { font-size: 32px; }
+    .logo img { max-height: 60px; }
 
     .nav-links { display: none; }
 
