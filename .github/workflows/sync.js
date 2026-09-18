@@ -190,6 +190,7 @@ function buildBloggerHTML(post) {
     title: post.title || '',
     slug: post.slug || '',
     cover: hero,
+    cardImg: absUrl(post.cardImage || ''),
     synopsis: post.synopsis || '',
     genres: (post.genres || []).filter(Boolean),
     defaultVideo: norm(post.defaultVideo),
