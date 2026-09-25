@@ -95,6 +95,12 @@ body {
 .top-main { min-width: 0; }
 .top-main .genre-rows { padding: 10px 0 0; }
 
+/* Anuncios */
+.ap-ad { display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+.ap-ad-leader { margin: 10px auto 26px; padding: 10px 0; min-height: 100px; }
+.ap-ad-rect { margin-bottom: 24px; min-height: 260px; border-bottom: 1px solid rgba(255,255,255,.06); padding-bottom: 24px; }
+.ap-ad iframe { max-width: 100%; }
+
 .section-title {
     font-size: 20px;
     font-weight: 600;

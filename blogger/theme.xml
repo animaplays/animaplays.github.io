@@ -2,12 +2,14 @@
 <!DOCTYPE html>
 <html b:css='false' b:defaultwidgetversion='2' b:js='true' b:layoutsVersion='3' b:responsive='true' expr:dir='data:blog.languageDirection' expr:lang='data:blog.locale' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
 <head>
+<link href='https://animaplays.github.io/img/logo/favicon-32x32.png' rel='icon' type='image/png' sizes='32x32'/>
+<link href='https://animaplays.github.io/img/logo/favicon-16x16.png' rel='icon' type='image/png' sizes='16x16'/>
+<link href='https://animaplays.github.io/img/logo/apple-touch-icon.png' rel='apple-touch-icon' sizes='180x180'/>
 <b:include data='blog' name='all-head-content'/>
 <meta charset='UTF-8'/>
 <meta content='width=device-width,initial-scale=1' name='viewport'/>
 <title><data:blog.pageTitle/></title>
 <link expr:href='data:view.url.canonical' rel='canonical'/>
-<link expr:href='data:blog.blogspotFaviconUrl' rel='icon' type='image/x-icon'/>
 <meta expr:content='data:blog.title' property='og:site_name'/>
 <b:skin><![CDATA[
 /* Variable definitions
@@ -28,7 +30,7 @@ img{display:block;max-width:100%}
 
 /* HEADER */
 .main-header{display:flex;align-items:center;justify-content:space-between;padding:20px 40px;background:linear-gradient(180deg,rgba(10,10,10,1) 0%,rgba(10,10,10,0) 100%);position:fixed;top:0;left:0;right:0;z-index:100;gap:24px}
-.logo{font-size:96px;font-weight:800;color:#e50914;letter-spacing:-1px;text-transform:uppercase;flex-shrink:0}
+.logo img{height:auto;max-height:240px;width:auto}.logo a{display:block}
 .header-tools{display:flex;align-items:center;gap:16px;flex:1;max-width:600px}
 .search-input{flex:1;max-width:300px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:10px 16px;color:#fff;font-size:14px;outline:none;transition:border-color .2s,background .2s}
 .search-input::placeholder{color:#888}
@@ -42,6 +44,13 @@ img{display:block;max-width:100%}
 .top-main{min-width:0}
 .top-main .genre-rows{padding:10px 0 0}
 .section-title{font-size:20px;font-weight:600;margin-bottom:16px;padding:0 40px;color:#e5e5e5}
+
+/* ADS */
+.ap-ad{display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+.ap-ad-leader{margin:10px auto 26px;padding:10px 0;min-height:100px}
+.ap-ad-rect{margin-bottom:24px;min-height:260px;border-bottom:1px solid rgba(255,255,255,.06);padding-bottom:24px}
+.ap-ad iframe{max-width:100%}
+.ap-inline-ad{display:flex;justify-content:center;align-items:center;min-height:90px;margin:16px 0;padding:10px 0;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);overflow:hidden}
 
 /* CAROUSEL */
 .carousel-section{position:relative;min-width:0}
@@ -146,8 +155,8 @@ img{display:block;max-width:100%}
 
 /* RESPONSIVE */
 @media(max-width:1024px){.top-layout{grid-template-columns:1fr;padding:170px 20px 0}.post-layout{grid-template-columns:1fr;padding:0 20px 60px}.top-layout .carousel .anime-card{flex-basis:calc((100% - 36px)/4)}.carousel-btn{display:none}.genre-rows{padding:10px 0 0}.carousel-wrapper{padding:0 20px}.section-title{padding:0 16px}}
-@media(max-width:768px){.main-header{flex-wrap:wrap;padding:12px 16px;gap:10px}.logo{font-size:42px}.nav-links{gap:12px}.nav-links a{font-size:12px}.header-tools{order:3;flex-basis:100%;max-width:none}.search-input{max-width:none}.top-layout{padding-top:150px;padding-left:16px;padding-right:16px}.top-layout .carousel .anime-card{flex-basis:calc((100% - 24px)/3)}.rank-big{font-size:140px;margin-right:-12px}.top10-item .anime-card,.genre-row-scroll .anime-card{flex:0 0 140px;width:140px}.post-body{padding:12px 12px 28px}.video-player{border-radius:8px}.post-tags,.post-share{flex-wrap:wrap}}
-@media(max-width:520px){.top-layout .carousel .anime-card{flex-basis:calc((100% - 12px)/2)}.logo{font-size:32px}.nav-links{display:none}.top10-item .anime-card,.genre-row-scroll .anime-card{flex:0 0 120px;width:120px}.rank-big{font-size:100px;margin-right:-8px;margin-bottom:-6px}}
+@media(max-width:768px){.main-header{flex-wrap:wrap;padding:12px 16px;gap:10px}.logo img{max-height:80px}.nav-links{gap:12px}.nav-links a{font-size:12px}.header-tools{order:3;flex-basis:100%;max-width:none}.search-input{max-width:none}.top-layout{padding-top:150px;padding-left:16px;padding-right:16px}.top-layout .carousel .anime-card{flex-basis:calc((100% - 24px)/3)}.rank-big{font-size:140px;margin-right:-12px}.top10-item .anime-card,.genre-row-scroll .anime-card{flex:0 0 140px;width:140px}.post-body{padding:12px 12px 28px}.video-player{border-radius:8px}.post-tags,.post-share{flex-wrap:wrap}}
+@media(max-width:520px){.top-layout .carousel .anime-card{flex-basis:calc((100% - 12px)/2)}.logo img{max-height:60px}.nav-links{display:none}.top10-item .anime-card,.genre-row-scroll .anime-card{flex:0 0 120px;width:120px}.rank-big{font-size:100px;margin-right:-8px;margin-bottom:-6px}}
 ]]></b:skin>
 <b:template-skin>
 <![CDATA[
@@ -190,7 +199,7 @@ body#layout .sidebar{position:static}
 </b:section>
 
 <header class='main-header'>
-<div class='logo'>Anima Play</div>
+<div class='logo'><a href='/'><img src='https://animaplays.github.io/img/logo/logo-header.png' alt='Anima Play' width='150' height='150' style='display:block;height:auto'/></a></div>
 <div class='header-tools'>
 <input type='search' id='searchInput' class='search-input' placeholder='Buscar anime...'/>
 </div>
@@ -212,9 +221,11 @@ body#layout .sidebar{position:static}
 <button class='carousel-btn next' onclick='scrollCarousel(1)'>&#8250;</button>
 </div>
 </section>
+<div class='ap-ad ap-ad-leader' id='apHomeAd'></div>
 <section class='genre-rows' id='genreRows'></section>
 </div>
 <aside class='sidebar' id='sidebar'>
+<div class='ap-ad ap-ad-rect' id='apSideAd'></div>
 <div class='sidebar-section'>
 <h3 class='sidebar-title'>Total de visitas ao site</h3>
 <div class='visits-widget'>
@@ -359,6 +370,7 @@ var AP = (function () {
             if (d.title) title = d.title;
             if (d.slug) slug = d.slug;
             if (d.cover) cover = d.cover;
+            if (d.cardImg) cover = d.cardImg;
             if (d.synopsis) synopsis = d.synopsis;
             if (d.genres) genres = d.genres;
             if (d.episodes) episodes = d.episodes;
@@ -493,6 +505,17 @@ var AP = (function () {
     }).join('') : '<p style="font-size:12px;color:#666;">Em breve.</p>';
   }
 
+  function renderHomeAds() {
+    function fill(el, key, w, h) {
+      if (!el) return;
+      var html = "<script>atOptions = {'key' : '" + key + "','format' : 'iframe','height' : " + h + ",'width' : " + w + ",'params' : {}};<\/script><script src='https://www.highrevenueformat.com/" + key + "/invoke.js'><\/script>";
+      injectAds(el, html);
+    }
+    var m = (window.innerWidth || document.documentElement.clientWidth || 0) < 768;
+    fill(document.getElementById('apHomeAd'), m ? '7e140f325594d9cf924372506e58954e' : 'a78fc6bb291e8b9295b8309e16445686', m ? 300 : 728, m ? 250 : 90);
+    fill(document.getElementById('apSideAd'), '7e140f325594d9cf924372506e58954e', 300, 250);
+  }
+
   function renderGenreFilters(root) {
     var box = (root || document).querySelector('#genreFilters');
     if (!box) return;
@@ -536,6 +559,7 @@ var AP = (function () {
     renderPostLinks();
     renderRec();
     renderGenreFilters();
+    renderHomeAds();
     startCarouselAuto();
     bootFirebase();
     afterFirebase(function () {
@@ -557,7 +581,7 @@ var AP = (function () {
     if (lay) lay.classList.remove('hidden');
     el.classList.remove('hidden');
     if (!d.episodes || !d.episodes.length) { el.innerHTML = '<p style="padding:40px;color:#888;">Sem episodios</p>'; return; }
-    var cur = 0, srv = 0, countedView = false;
+    var cur = 0, srv = 0, countedView = false, apPrerollIV = null;
     try {
       var u0 = new URL(window.location.href);
       var epP0 = parseInt(u0.searchParams.get('ep') || '1', 10);
@@ -571,7 +595,15 @@ var AP = (function () {
       var vids = (ep.videos || []).filter(function (v) { return v && v.url && !isBad(v.url); });
       return toSecure((vids[srv] && vids[srv].url) || (vids[0] && vids[0].url) || '');
     }
+    function stopPlayer() {
+      if (apPrerollIV) { clearInterval(apPrerollIV); apPrerollIV = null; }
+      var box = document.getElementById('vp');
+      if (!box) return;
+      var vs = box.querySelectorAll('video');
+      for (var i = 0; i < vs.length; i++) { try { vs[i].pause(); } catch (e) {} }
+    }
     function paintPlayer() {
+      stopPlayer();
       var box = document.getElementById('vp');
       if (!box) return;
       var src = curUrl();
@@ -581,8 +613,13 @@ var AP = (function () {
         var v = box.querySelector('video');
         if (v) { v.addEventListener('error', videoError); runPreroll(box, v); }
       }
-      else if (isArchiveDownload(src)) box.innerHTML = '<iframe src="' + esc(archiveEmbed(src)) + '" allowfullscreen="true" loading="lazy"></iframe>';
-      else box.innerHTML = '<iframe src="' + esc(src) + '" allowfullscreen="true" loading="lazy"></iframe>';
+      else {
+        var im = isArchiveDownload(src) ? archiveEmbed(src) : src;
+        box.innerHTML = '<div data-apad style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:6;background:#0a0a0a;display:none"></div>';
+        runPreroll(box, null, function () {
+          box.innerHTML = '<iframe src="' + esc(im) + '" allowfullscreen="true" loading="lazy"></iframe>';
+        });
+      }
     }
     // Anuncios no player: overlay de 5s (contador + Pular) antes do video. Troque o conteudo de AP_AD_HTML pelos seus blocos.
     var AP_AD_HTML = "<script>atOptions = {'key' : '7e140f325594d9cf924372506e58954e','format' : 'iframe','height' : 250,'width' : 300,'params' : {}};<\/script><script src='https://www.highrevenueformat.com/7e140f325594d9cf924372506e58954e/invoke.js'><\/script><script>atOptions = {'key' : 'a78fc6bb291e8b9295b8309e16445686','format' : 'iframe','height' : 90,'width' : 728,'params' : {}};<\/script><script src='https://www.highrevenueformat.com/a78fc6bb291e8b9295b8309e16445686/invoke.js'><\/script>";
@@ -605,10 +642,10 @@ var AP = (function () {
         container.appendChild(s);
       }
     }
-    function runPreroll(box, v) {
-      if (!box || !v || !AP_AD_HTML) return;
+    function runPreroll(box, v, done) {
+      if (!box || !AP_AD_HTML) { if (done) { try { done(); } catch (e) {} } return; }
       var slot = box.querySelector('[data-apad]');
-      if (!slot) return;
+      if (!slot) { if (done) { try { done(); } catch (e) {} } return; }
       var mobile = (window.innerWidth || document.documentElement.clientWidth || 0) < 768;
       slot.style.display = 'block';
       if (mobile) {
@@ -627,9 +664,10 @@ var AP = (function () {
         '<div id="apAdBox" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;height:100%"></div>';
       var adBox = slot.querySelector('#apAdBox');
       injectAds(adBox, AP_AD_HTML);
-      try { v.pause(); } catch (e) {}
+      try { if (v) v.pause(); } catch (e) {}
       var t = 5, Started = false, Waited = 0;
       var iv = setInterval(function () { runPrerollTick(); }, 1000);
+      apPrerollIV = iv;
       var timer = slot.querySelector('#apTimer');
       var skipBtn = slot.querySelector('#apSkip');
       var waitLabel = slot.querySelector('#apWait');
@@ -641,14 +679,15 @@ var AP = (function () {
         }
         t--;
         if (timer) timer.textContent = String(t);
-        if (t <= 2 && skipBtn) skipBtn.style.display = 'inline-block';
+        if (Started && skipBtn) skipBtn.style.display = 'inline-block';
         if (t <= 0) closeAd();
       }
       function closeAd() {
         clearInterval(iv);
+        apPrerollIV = null;
         slot.style.display = 'none';
         slot.innerHTML = '';
-        try { v.play()['catch'](function () {}); } catch (e) {}
+        if (done) { try { done(); } catch (e) {} }
       }
       if (skipBtn) skipBtn.addEventListener('click', closeAd);
     }
@@ -707,9 +746,20 @@ var AP = (function () {
         h += '<button class="btn-play">&#9654;</button></a>';
       });
       h += '</div>';
+      h += '<div class="ap-inline-ad" id="apInlineAd"></div>';
       if (d.slug) h += '<a class="ap-watch-main" href="https://animaplays.github.io/posts/' + esc(d.slug) + '.html">Assistir no Anima Play</a>';
       el.innerHTML = h;
       paintPlayer();
+      (function () {
+        var adEl = document.getElementById('apInlineAd');
+        if (!adEl) return;
+        var m = (window.innerWidth || document.documentElement.clientWidth || 0) < 768;
+        var key = m ? '7e140f325594d9cf924372506e58954e' : 'a78fc6bb291e8b9295b8309e16445686';
+        var w = m ? 300 : 728;
+        var hh = m ? 250 : 90;
+        var html = "<script>atOptions = {'key' : '" + key + "','format' : 'iframe','height' : " + hh + ",'width' : " + w + ",'params' : {}};<\/script><script src='https://www.highrevenueformat.com/" + key + "/invoke.js'><\/script>";
+        injectAds(adEl, html);
+      })();
       el.querySelectorAll('[data-srv]').forEach(function (btn) {
         btn.addEventListener('click', function () {
           var sy = window.pageYOffset || document.documentElement.scrollTop || 0;

@@ -48,9 +48,12 @@
             </div>
         </section>
 
+        <div class="ap-ad ap-ad-leader" id="apHomeAd"></div>
+
         <section class="genre-rows" id="genreRows" aria-label="Categorias"></section>
         </div>
         <aside class="sidebar" id="sidebar">
+            <div class="ap-ad ap-ad-rect" id="apSideAd"></div>
             <div class="sidebar-section">
                 <h3 class="sidebar-title">Total de visitas ao site</h3>
                 <div id="siteViews" class="visits-widget"><span class="visits-count">—</span></div>
@@ -422,6 +425,25 @@
                 if (el) el.textContent = Number(v || 0).toLocaleString('pt-BR');
             }).catch(function () {});
         }
+    </script>
+    <script>
+        function injectAd(el, key, w, h) {
+            if (!el || typeof el.getAttribute !== 'function') return;
+            var s = document.createElement('script');
+            s.text = 'atOptions = {\'key\' : \'' + key + '\',\'format\' : \'iframe\',\'height\' : ' + h + ',\'width\' : ' + w + ',\'params\' : {}};';
+            el.appendChild(s);
+            s = document.createElement('script');
+            s.src = 'https://www.highrevenueformat.com/' + key + '/invoke.js';
+            s.async = true;
+            el.appendChild(s);
+        }
+        (function () {
+            var m = (window.innerWidth || document.documentElement.clientWidth || 0) < 768;
+            var leader = document.getElementById('apHomeAd');
+            if (leader) injectAd(leader, m ? '06c518660615af32f3c9e04aef5689b2' : '34b1f76f3987ebbc70b3e36a829a3da8', m ? 300 : 728, m ? 250 : 90);
+            var rect = document.getElementById('apSideAd');
+            if (rect) injectAd(rect, '06c518660615af32f3c9e04aef5689b2', 300, 250);
+        })();
     </script>
     <script src="update-check.js?v=5"></script>
     <script src="https://pl31351577.profitableratecpmnetwork.com/46/04/6d/46046d022371bbd4585223cb2b632439.js"></script>
