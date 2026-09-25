@@ -1,0 +1,28 @@
+name: Update DBZ Freeza (voe Player 1)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.WORKFLOW_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install firebase-admin
+        run: npm install firebase-admin@13.2.0
+
+      - name: Update saga de Freeza episodes (voe.sx as Player 1)
+        env:
+          FIREBASE_DB_URL: ${{ secrets.FIREBASE_DB_URL }}
+          FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
+        run: node .github/workflows/update-dbz-freeza.js
