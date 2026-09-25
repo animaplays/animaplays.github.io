@@ -509,6 +509,26 @@ var AP = (function () {
     }).join('') : '<p style="font-size:12px;color:#666;">Em breve.</p>';
   }
 
+  function injectAds(container, html) {
+    if (!container || !html) return;
+    var tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    var scripts = [];
+    var kids = tmp.childNodes;
+    for (var i = 0; i < kids.length; i++) {
+      var k = kids[i];
+      if (k.nodeType === 1 && k.tagName.toLowerCase() === 'script') scripts.push(k);
+      else container.appendChild(k);
+    }
+    for (var j = 0; j < scripts.length; j++) {
+      var s = document.createElement('script');
+      var srcAttr = scripts[j].getAttribute('src');
+      if (srcAttr) s.src = srcAttr; else s.text = scripts[j].textContent || '';
+      s.async = false;
+      container.appendChild(s);
+    }
+  }
+
   function renderHomeAds() {
     function fill(el, key, w, h) {
       if (!el) return;
@@ -627,25 +647,6 @@ var AP = (function () {
     }
     // Anuncios no player: overlay de 5s (contador + Pular) antes do video. Troque o conteudo de AP_AD_HTML pelos seus blocos.
     var AP_AD_HTML = "<script>atOptions = {'key' : '7e140f325594d9cf924372506e58954e','format' : 'iframe','height' : 250,'width' : 300,'params' : {}};<\/script><script src='https://www.highrevenueformat.com/7e140f325594d9cf924372506e58954e/invoke.js'><\/script><script>atOptions = {'key' : 'a78fc6bb291e8b9295b8309e16445686','format' : 'iframe','height' : 90,'width' : 728,'params' : {}};<\/script><script src='https://www.highrevenueformat.com/a78fc6bb291e8b9295b8309e16445686/invoke.js'><\/script>";
-    function injectAds(container, html) {
-      if (!container || !html) return;
-      var tmp = document.createElement('div');
-      tmp.innerHTML = html;
-      var scripts = [];
-      var kids = tmp.childNodes;
-      for (var i = 0; i < kids.length; i++) {
-        var k = kids[i];
-        if (k.nodeType === 1 && k.tagName.toLowerCase() === 'script') scripts.push(k);
-        else container.appendChild(k);
-      }
-      for (var j = 0; j < scripts.length; j++) {
-        var s = document.createElement('script');
-        var srcAttr = scripts[j].getAttribute('src');
-        if (srcAttr) s.src = srcAttr; else s.text = scripts[j].textContent || '';
-        s.async = false;
-        container.appendChild(s);
-      }
-    }
     function runPreroll(box, v, done) {
       if (!box || !AP_AD_HTML) { if (done) { try { done(); } catch (e) {} } return; }
       var slot = box.querySelector('[data-apad]');
