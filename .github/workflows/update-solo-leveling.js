@@ -3,20 +3,20 @@ const admin = require('firebase-admin');
 const DB_URL = process.env.FIREBASE_DB_URL;
 const SA_RAW = process.env.FIREBASE_SA;
 
-// Player 1 (links que já estão publicados)
+// Player 1 (links voe.sx NA ORDEM CERTA dos episódios 1 ao 12)
 const VOE_URLS = [
-  'https://voe.sx/e/nakuacv3tp75',
-  'https://voe.sx/e/ajye0tcuuo56',
-  'https://voe.sx/e/wifo6ri5mc2t',
-  'https://voe.sx/e/1gzlzyawaqd4',
-  'https://voe.sx/e/y7dcobtbukkd',
-  'https://voe.sx/e/la1gb08jjezi',
-  'https://voe.sx/e/wm7bjekq7p0m',
-  'https://voe.sx/e/b4vnh3hs1lji',
-  'https://voe.sx/e/lg8me8uvtm4j',
+  'https://voe.sx/e/awnutoohbehz',
   'https://voe.sx/e/gxv9m9c6ogj3',
   'https://voe.sx/e/lihowaegd2gy',
-  'https://voe.sx/e/awnutoohbehz'
+  'https://voe.sx/e/lg8me8uvtm4j',
+  'https://voe.sx/e/b4vnh3hs1lji',
+  'https://voe.sx/e/1gzlzyawaqd4',
+  'https://voe.sx/e/wifo6ri5mc2t',
+  'https://voe.sx/e/wm7bjekq7p0m',
+  'https://voe.sx/e/y7dcobtbukkd',
+  'https://voe.sx/e/la1gb08jjezi',
+  'https://voe.sx/e/nakuacv3tp75',
+  'https://voe.sx/e/ajye0tcuuo56'
 ];
 
 // Player 2 (second server)
@@ -49,14 +49,11 @@ async function main() {
   if (!post) throw new Error('Post solo-leveling não encontrado no Firebase');
 
   const episodes = (post.episodes || []).map((ep, i) => {
-    // mantém o servidor atual (voe.sx) preservando o nome, e adiciona o Streamtape como 2º
-    const existing = ep.videos || [];
-    const voeName = (existing[0] && existing[0].name) || 'Servidor 1';
-    const stUrl = STREAMTAPE_URLS[i];
+    // Recompõe servidores de forma determinística: 1º voe.sx, 2º streamtape (evita duplicar em re-execuções)
     const voe = VOE_URLS[i];
+    const stUrl = STREAMTAPE_URLS[i];
     const videos = [];
-    if (voe) videos.push({ name: voeName, url: voe });
-    if (voe && existing.length > 1) videos.push(...existing.slice(1));
+    if (voe) videos.push({ name: 'Servidor 1', url: voe });
     if (stUrl) videos.push({ name: 'Servidor 2', url: stUrl });
     return {
       ...ep,
