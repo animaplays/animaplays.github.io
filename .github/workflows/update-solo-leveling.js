@@ -3,7 +3,8 @@ const admin = require('firebase-admin');
 const DB_URL = process.env.FIREBASE_DB_URL;
 const SA_RAW = process.env.FIREBASE_SA;
 
-const NEW_URLS = [
+// Player 1 (links que já estão publicados)
+const VOE_URLS = [
   'https://voe.sx/e/nakuacv3tp75',
   'https://voe.sx/e/ajye0tcuuo56',
   'https://voe.sx/e/wifo6ri5mc2t',
@@ -16,6 +17,22 @@ const NEW_URLS = [
   'https://voe.sx/e/gxv9m9c6ogj3',
   'https://voe.sx/e/lihowaegd2gy',
   'https://voe.sx/e/awnutoohbehz'
+];
+
+// Player 2 (second server)
+const STREAMTAPE_URLS = [
+  'https://streamtape.com/e/YmRMkQVb47CvglQ/Solo_Leveling_S01E01_PT-BR.mp4',
+  'https://streamtape.com/e/QyVoRxY4rdu0O86/Solo_Leveling_S01E02_PT-BR.mp4',
+  'https://streamtape.com/e/Lq49me4qQWCRwKj/Solo_Leveling_S01E03_PT-BR.mp4',
+  'https://streamtape.com/e/jY2pLy6WXRHz3G7/Solo_Leveling_S01E04_PT-BR.mp4',
+  'https://streamtape.com/e/z3axqRp8B1cozR/Solo_Leveling_S01E05_PT-BR.mp4',
+  'https://streamtape.com/e/DXY3Aaoy3ytk0DM/Solo_Leveling_S01E06_PT-BR.mp4',
+  'https://streamtape.com/e/4xWwjgeKxwUKllZ/Solo_Leveling_S01E07_PT-BR.mp4',
+  'https://streamtape.com/e/BLQM88dxQlfyBRP/Solo_Leveling_S01E08_PT-BR.mp4',
+  'https://streamtape.com/e/R6GjWky33xFdzYD/Solo_Leveling_S01E09_PT-BR.mp4',
+  'https://streamtape.com/e/eYqOJwmkg9iYYlz/Solo_Leveling_S01E10_PT-BR.mp4',
+  'https://streamtape.com/e/pzKrGxYKAPFlgR/Solo_Leveling_S01E11_PT-BR.mp4',
+  'https://streamtape.com/e/3WbkPVa6rasdB19/Solo_Leveling_S01E12_PT-BR.mp4'
 ];
 
 async function main() {
@@ -32,13 +49,19 @@ async function main() {
   if (!post) throw new Error('Post solo-leveling não encontrado no Firebase');
 
   const episodes = (post.episodes || []).map((ep, i) => {
-    const url = NEW_URLS[i];
-    if (!url) return ep;
-    const name = (ep.videos && ep.videos[0] && ep.videos[0].name) || 'Servidor 1';
+    // mantém o servidor atual (voe.sx) preservando o nome, e adiciona o Streamtape como 2º
+    const existing = ep.videos || [];
+    const voeName = (existing[0] && existing[0].name) || 'Servidor 1';
+    const stUrl = STREAMTAPE_URLS[i];
+    const voe = VOE_URLS[i];
+    const videos = [];
+    if (voe) videos.push({ name: voeName, url: voe });
+    if (voe && existing.length > 1) videos.push(...existing.slice(1));
+    if (stUrl) videos.push({ name: 'Servidor 2', url: stUrl });
     return {
       ...ep,
-      video: url,
-      videos: [{ name, url }]
+      video: voe || ep.video,
+      videos
     };
   });
 
@@ -52,10 +75,10 @@ async function main() {
   };
 
   await ref.set(updated);
-  console.log('OK: solo-leveling atualizado com ' + episodes.length + ' episódios (voe.sx)');
+  console.log('OK: solo-leveling atualizado — ' + episodes.length + ' eps, 2 servidores cada (voe.sx + streamtape)');
 
-  const titles = episodes.map((e, i) => e.title || '').filter(Boolean).length;
-  console.log('Títulos preservados: ' + titles + ' de ' + episodes.length);
+  const twoServers = episodes.filter((e) => (e.videos || []).length >= 2).length;
+  console.log('Episódios com 2 servidores: ' + twoServers + ' de ' + episodes.length);
 
   await admin.app().delete();
   setTimeout(() => process.exit(0), 100);
