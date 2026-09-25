@@ -1,5 +1,37 @@
 [
   {
+    "slug": "dragonballz",
+    "title": "Dragon Ball Z Kai - Saga dos Saiyajins",
+    "image": "../img/dragonballz-1789010293147-dragon-ball-z-card.jpg",
+    "subtitle": "Episódio 1 - Surge um Mini-Goku! Seu Nome é Gohan",
+    "genres": [
+      "Ação",
+      "Dublado",
+      "Clássico"
+    ],
+    "author": "kingveio",
+    "episodes": [
+      "https://voe.sx/e/awtx257l2upn",
+      "https://voe.sx/e/af2nrtxluf5u",
+      "https://voe.sx/e/2ipzubzrfddw",
+      "https://voe.sx/e/ecumqw1mg1p2",
+      "https://voe.sx/e/cskv7bgueurn",
+      "https://voe.sx/e/epelhvhod1qd",
+      "https://voe.sx/e/lrtgrd9aoh7a",
+      "https://voe.sx/e/7i5t9adnvnzd",
+      "https://voe.sx/e/ceigwe49uibt",
+      "https://voe.sx/e/bbboyuqlbzdm",
+      "https://voe.sx/e/njtce50hmic5",
+      "https://voe.sx/e/a9kkwtx8cejd",
+      "https://voe.sx/e/bd8rlk7bz9fp",
+      "https://voe.sx/e/eljcjx2hzlkj",
+      "https://voe.sx/e/efo0wuxmyvlv",
+      "https://voe.sx/e/k1jitwmomh4x"
+    ],
+    "createdAt": "2026-09-10T03:22:44.208Z",
+    "updatedAt": "2026-09-25T22:10:59.402Z"
+  },
+  {
     "slug": "solo-leveling",
     "title": "Solo Leveling 1º temporada dublada",
     "image": "../img/card-1789066500736-solo-leveling-card.jpg",
@@ -277,38 +309,6 @@
     ],
     "createdAt": "2026-09-10T19:58:59.900Z",
     "updatedAt": "2026-09-18T00:02:14.044Z"
-  },
-  {
-    "slug": "dragonballz",
-    "title": "Dragon Ball Z Kai - Saga dos Saiyajins",
-    "image": "../img/dragonballz-1789010293147-dragon-ball-z-card.jpg",
-    "subtitle": "Episódio 1 - Surge um Mini-Goku! Seu Nome é Gohan",
-    "genres": [
-      "Ação",
-      "Dublado",
-      "Clássico"
-    ],
-    "author": "kingveio",
-    "episodes": [
-      "https://archive.org/download/14-o-kamehameha-salvador-a-grande-transformacao-de-vegeta/01%20-%20O%20Inicio%20da%20Batalha%20-%20Son%20Goku%20Est%C3%A1%20de%20Volta.mp4",
-      "https://archive.org/download/14-o-kamehameha-salvador-a-grande-transformacao-de-vegeta/02%20-%20O%20Guerreiro%20Mais%20Poderoso%2C%20O%20Segredo%20dos%20Saiyajins.mp4",
-      "https://archive.org/download/14-o-kamehameha-salvador-a-grande-transformacao-de-vegeta/03%20-%20A%20Batalha%20Onde%20se%20Arrisca%20a%20Vida%20-%20O%20Ataque%20Feroz%20de%20Goku%20e%20Piccolo.mp4",
-      "https://archive.org/download/14-o-kamehameha-salvador-a-grande-transformacao-de-vegeta/04%20-%20Corra%20no%20Outro%20Mundo%20Son%20Goku%20-%20O%20Caminho%20da%20Serpente%20de%201%20Milh%C3%A3o%20de%20Quil%C3%B4metros.mp4",
-      "https://archive.org/download/14-o-kamehameha-salvador-a-grande-transformacao-de-vegeta/05%20-%20Sobreviv%C3%AAncia%20no%20Deserto%20-%20A%20Lua%20Chama%20Gohan.mp4",
-      "https://archive.org/download/14-o-kamehameha-salvador-a-grande-transformacao-de-vegeta/06%20-%20O%20Teste%20da%20Persegui%C3%A7%C3%A3o%20-%20O%20Treinamento%20do%20Kaioh-%20Sama.mp4",
-      "https://archive.org/download/14-o-kamehameha-salvador-a-grande-transformacao-de-vegeta/07%20-%20A%20Luta%20Contra%20a%20Gravidade%20Aumentada%2010%20Vezes%20-%20O%20Treino%20de%20Corrida%20de%20Goku.mp4",
-      "https://archive.org/download/14-o-kamehameha-salvador-a-grande-transformacao-de-vegeta/08%20-%20Os%20Saiyajins%20Finalmente%20Chegam%20%C3%A0%20Terra%20-%20O%20Drag%C3%A3o%20Shen%20Long.mp4",
-      "https://archive.org/download/14-o-kamehameha-salvador-a-grande-transformacao-de-vegeta/09%20-%20A%20Perda%20de%20Yancha.mp4",
-      "https://archive.org/download/14-o-kamehameha-salvador-a-grande-transformacao-de-vegeta/10%20-%20Espere%2C%20Chaos%20-%20O%20Kikouhou%20de%20Tenshin%20Han.mp4",
-      "https://archive.org/download/14-o-kamehameha-salvador-a-grande-transformacao-de-vegeta/11%20-%20Son%20Goku%20Chegar%C3%A1%20a%20Tempo_%20Tr%C3%AAs%20Horas%20At%C3%A9%20o%20Campo%20de%20Batalho.mp4",
-      "https://archive.org/download/14-o-kamehameha-salvador-a-grande-transformacao-de-vegeta/12%20-%20A%20L%C3%A1grima%20de%20Piccolo%20-%20O%20Contra-Ataque%20da%20Raiva%20de%20Son%20Goku.mp4",
-      "https://archive.org/download/14-o-kamehameha-salvador-a-grande-transformacao-de-vegeta/13%20-%20Este%20%C3%A9%20o%20Kaioken%20-%20A%20Batalha%20at%C3%A9%20o%20Limite%2C%20Goku%20Vs%20Vegeta.mp4",
-      "https://archive.org/download/14-o-kamehameha-salvador-a-grande-transformacao-de-vegeta/14%20-%20O%20Kamehameha%20Salvador%20-%20A%20Grande%20Transforma%C3%A7%C3%A3o%20de%20Vegeta.mp4",
-      "https://archive.org/download/14-o-kamehameha-salvador-a-grande-transformacao-de-vegeta/15%20-%20Goku%20em%20Absoluto%20Perigo%20-%20Confiem%20as%20Vossas%20Esperan%C3%A7as%20na%20Genki%20Dama.mp4",
-      "https://archive.org/download/14-o-kamehameha-salvador-a-grande-transformacao-de-vegeta/16%20-%20O%20Imortal%20Vegeta%21%20Fa%C3%A7a%20um%20Milagre%2C%20Son%20Gohan.mp4"
-    ],
-    "createdAt": "2026-09-10T03:22:44.208Z",
-    "updatedAt": "2026-09-17T06:49:37.655Z"
   },
   {
     "slug": "narutoclassico",
