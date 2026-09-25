@@ -1,5 +1,32 @@
 [
   {
+    "slug": "solo-leveling",
+    "title": "Solo Leveling 1º temporada dublada",
+    "image": "../img/card-1789066500736-solo-leveling-card.jpg",
+    "subtitle": "Episódio 1 - Estou Acostumado",
+    "genres": [
+      "Ação",
+      "Dublado"
+    ],
+    "author": "kingveio",
+    "episodes": [
+      "https://voe.sx/e/nakuacv3tp75",
+      "https://voe.sx/e/ajye0tcuuo56",
+      "https://voe.sx/e/wifo6ri5mc2t",
+      "https://voe.sx/e/1gzlzyawaqd4",
+      "https://voe.sx/e/y7dcobtbukkd",
+      "https://voe.sx/e/la1gb08jjezi",
+      "https://voe.sx/e/wm7bjekq7p0m",
+      "https://voe.sx/e/b4vnh3hs1lji",
+      "https://voe.sx/e/lg8me8uvtm4j",
+      "https://voe.sx/e/gxv9m9c6ogj3",
+      "https://voe.sx/e/lihowaegd2gy",
+      "https://voe.sx/e/awnutoohbehz"
+    ],
+    "createdAt": "2026-09-10T19:01:45.642Z",
+    "updatedAt": "2026-09-25T01:03:49.365Z"
+  },
+  {
     "slug": "dragon-ball-z-kai-a-saga-de-majin-boo-episodios-99-ao-167",
     "title": "Dragon Ball Z Kai - A Saga de Majin Boo",
     "image": "../img/dragon-ball-z-kai-a-saga-de-majin-boo-card.jpg",
@@ -250,33 +277,6 @@
     ],
     "createdAt": "2026-09-10T19:58:59.900Z",
     "updatedAt": "2026-09-18T00:02:14.044Z"
-  },
-  {
-    "slug": "solo-leveling",
-    "title": "Solo Leveling 1º temporada dublada",
-    "image": "../img/card-1789066500736-solo-leveling-card.jpg",
-    "subtitle": "Episódio 1 - Estou Acostumado",
-    "genres": [
-      "Ação",
-      "Dublado"
-    ],
-    "author": "kingveio",
-    "episodes": [
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E01%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E02%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E03%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E04%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E05%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E06%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E07%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E08%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E09%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E10%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E11%20PT-BR.mp4",
-      "https://archive.org/download/solo-leveling-1-temporada-dublada/Solo%20Leveling%20S01E12%20PT-BR.mp4"
-    ],
-    "createdAt": "2026-09-10T19:01:45.642Z",
-    "updatedAt": "2026-09-17T07:02:18.271Z"
   },
   {
     "slug": "dragonballz",
